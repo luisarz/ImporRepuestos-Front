@@ -26,4 +26,5 @@
           KTLayout.init();
       });
   });
+
   </script>

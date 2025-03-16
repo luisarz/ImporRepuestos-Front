@@ -72,7 +72,7 @@ export default {
         localStorage.setItem('auth_token', response.access_token);
 
         // Redirige al dashboard después de un inicio de sesión exitoso
-        this.$router.push('/dashboard');
+        this.$router.push('/');
       } catch (error) {
         // Si ocurre un error, muestra un mensaje de error
         this.errorMessage = error.message;

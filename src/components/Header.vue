@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="menu-item px-4 py-1.5">
-                                <a class="btn btn-sm btn-light justify-center" href="html/demo1/authentication/classic/sign-in.html">
+                                <a class="btn btn-sm btn-light justify-center" @click="logout">
                                 Log out
                                 </a>
                             </div>
@@ -96,3 +96,22 @@
         </div>
     </header>
 </template>
+<script>
+import authService from "@/services/authService.js";
+
+export default {
+    methods: {
+      async logout() {
+      try {
+        // Llama al servicio de login
+        await authService.logout();
+        this.$router.push('/sign-in');
+      } catch (error) {
+        // Si ocurre un error, muestra un mensaje de error
+        this.errorMessage = error.message;
+      }
+    }
+    }
+  }
+
+</script>

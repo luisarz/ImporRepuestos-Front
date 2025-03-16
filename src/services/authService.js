@@ -3,18 +3,19 @@ import configApi from "./config.js";
 const authService = {
     login: async (username, password) => {
       try {
-        const response = await configApi.post(`/api/v1/login`, {
+        const response = await configApi.post(`/v1/login`, {
           email:username,
           password:password
         });
-        console.log(response)
+        //console.log(response)
         return response.data; // Devuelve el token recibido
       } catch (error) {
         console.log(error)
         throw new Error('Usuario o contraseña incorrectos');
       }
     },
-    logout: () => {
+    logout: async () => {
+      await configApi.post("/v1/logout");
       localStorage.removeItem('auth_token');
     },
     getToken: () => {
