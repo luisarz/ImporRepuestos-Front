@@ -22,8 +22,6 @@
   
   onMounted(() => {
       nextTick(() => {
-          KTComponent.init();
-          KTLayout.init();
       });
   });
 

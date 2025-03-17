@@ -43,7 +43,7 @@
       </span>
      </label>
      <button type="submit" class="btn btn-primary flex justify-center grow">
-      Sign In
+      Entrar
      </button>
     </form>
    </div>
@@ -82,7 +82,7 @@ export default {
 };
 onMounted(() => {
       nextTick(() => {
-          KTComponent.init();
+          //KTComponent.init();
       });
   });
 </script>

@@ -3,7 +3,7 @@
         <!-- begin: container -->
         <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container">
             <div class="flex gap-1 lg:hidden items-center -ml-1">
-                <a class="shrink-0" href="html/demo1.html">
+                <a class="shrink-0" href="/">
                 <img class="max-h-[25px] w-full" src="/media/app/mini-logo.svg"/>
                 </a>
                 <div class="flex items-center">

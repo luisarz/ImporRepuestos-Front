@@ -2,8 +2,10 @@
 import axios from 'axios';
 import authService from './authService';
 
-const api = axios.create({
-  baseURL: 'http://204.48.22.137:8000/api',  // Cambia esto por la URL base de tu API
+export const urlApi = 'https://impor-api.laravel.cloud/api';
+
+export const configApi = axios.create({
+  baseURL: urlApi,  // Cambia esto por la URL base de tu API
   timeout: 10000,  // Tiempo de espera para la solicitud (en milisegundos)
   headers: {
     'Content-Type': 'application/json',  // Especifica que estamos enviando datos JSON
@@ -11,7 +13,7 @@ const api = axios.create({
 });
 
 // Interceptor para añadir el token a cada solicitud (si existe)
-api.interceptors.request.use(
+configApi.interceptors.request.use(
   (config) => {
     const token = authService.getToken(); // Obtener el token del servicio de autenticación
     if (token) {
@@ -26,7 +28,7 @@ api.interceptors.request.use(
 );
 
 // Interceptor para manejar respuestas y errores
-api.interceptors.response.use(
+configApi.interceptors.response.use(
   (response) => {
     return response; // Si la respuesta es exitosa, la retornamos
   },
@@ -41,4 +43,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+

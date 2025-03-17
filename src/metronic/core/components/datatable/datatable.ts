@@ -338,7 +338,6 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 	 */
 	private async _updateData(): Promise<void> {
 		this._showSpinner(); // Show spinner before fetching data
-
 		// Fetch data from the DOM and initialize the checkbox plugin
 		return (typeof this._config.apiEndpoint === 'undefined')
 			? this._fetchDataFromLocal().then(this._finalize.bind(this) as () => Promise<void>)
@@ -560,17 +559,20 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 			return;
 		}
 
-		this._fireEvent('fetched', { response: responseData });
-		this._dispatchEvent('fetched', { response: responseData });
+		this._fireEvent('fetched', { response: responseData.data });
+		this._dispatchEvent('fetched', { response: responseData.data });
 
 		// Use the mapResponse function to transform the data if provided
 		if (typeof this._config.mapResponse === 'function') {
-			responseData = this._config.mapResponse.call(this, responseData);
+			responseData = this._config.mapResponse.call(this, responseData.data);
 		}
 
-		this._data = responseData.data;
+		//alert(231);
 
-		this._config._state.totalItems = responseData.totalCount;
+		this._data = responseData.data.data;
+		this._config._state.pageSize = responseData.data.per_page;
+		this._config._state.totalPages = responseData.data.last_page;
+		this._config._state.totalItems = responseData.data.data.length;
 
 		await this._draw();
 	}
@@ -588,7 +590,7 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 
 		// Add the current page number and page size to the query params
 		queryParams.set('page', String(page));
-		queryParams.set('size', String(pageSize));
+		queryParams.set('per_page', String(pageSize));
 
 		// If there is a sort order and field set, add them to the query params
 		if (sortOrder !== undefined) {
@@ -652,7 +654,9 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 	 * @returns {Promise<void>} A promise that resolves when the table and pagination controls are updated
 	 */
 	private async _draw(): Promise<void> {
-		this._config._state.totalPages = Math.ceil(this.getState().totalItems / this.getState().pageSize) || 0;
+		//se comento esto porque ahora se asigna el que viene del servicio
+		//this._config._state.totalPages = Math.ceil(this.getState().totalItems / this.getState().pageSize) || 0;
+		//alert(this._config._state.totalPages)
 
 		this._fireEvent('draw');
 		this._dispatchEvent('draw');
@@ -999,6 +1003,7 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 		};
 
 		// Add Previous Button
+		//console.log("page",this._config.pagination);
 		paginationContainer.appendChild(
 			createButton(previous.text, `${previous.class}${currentPage === 1 ? ' disabled' : ''}`, currentPage === 1, () => this._paginateData(currentPage - 1))
 		);
