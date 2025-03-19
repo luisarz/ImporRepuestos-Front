@@ -1,6 +1,6 @@
 <template>
     <div class="modal" data-modal="true" :id="id">
-        <div class="modal-content  modal-center-y max-w-[600px]">
+        <div class="modal-content   max-w-[600px]">
             <div class="modal-header">
                 <h3 class="modal-title">
                 </h3>
@@ -16,7 +16,7 @@
                     </i>
                     <h2 class="text-xl font-medium leading-none text-gray-900">¿Deseas Elminiar este Registro?</h2>
                     <div class="flex items-center gap-2 font-medium justify-center">
-                        <p class="text-sm text-gray-600">este registro no podra ser recuperado cuando se elimine</p>
+                        <p class="text-sm text-gray-600">Este registro no podrá ser recuperado cuando se elimine</p>
                     </div>
                 </center>
             </div>

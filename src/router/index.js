@@ -4,6 +4,7 @@ import Category from '../views/category/index.vue';
 import MainLayout from '../views/layouts/MainLayout.vue';
 import SignIn from '../views/authentication/SignIn.vue';
 import NotFound from '../views/layouts/404.vue';
+import Module from '../views/module/index.vue';
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
       {
         path: '/category',
         component: Category,
+        meta: { requiresAuth: true }  // Esta ruta requiere autenticación
+      },
+      {
+        path: '/module',
+        component: Module,
         meta: { requiresAuth: true }  // Esta ruta requiere autenticación
       }
     ]
