@@ -1,0 +1,21 @@
+# Dependencias instaladas por Bun
+bun.lockb
+node_modules/
+
+# Archivos de compilación y caché
+dist/
+build/
+.cache/
+*.log
+
+# Configuraciones del entorno
+.env
+.env.local
+.env.*.local
+
+# Editor/IDE archivos temporales
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
