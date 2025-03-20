@@ -108,6 +108,52 @@
             </button>
         </template>
     </GeneralModal>
+
+    <GeneralModal id="modal_edit" title="Editar Categoria">
+        <template #body>
+            <input type="hidden" name="idcategory" v-model="category.id">
+            <div class="w-full">
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label max-w-32">
+                        Codigo
+                    </label>
+                    <div class="flex flex-col w-full gap-1">
+                        <input class="input" @change="validationForm"
+                            :class="{ 'border-danger': !form.code.validationSuccess }" name="codigo"
+                            v-model="category.code" placeholder="Codigo de la Categoria" type="text" value="" />
+                        <span class="form-hint text-danger" v-if="!form.code.validationSuccess">
+                            * Campo Obligatorio
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="w-full">
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label max-w-32">
+                        Desccripcion
+                    </label>
+                    <div class="flex flex-col w-full gap-1">
+                        <input class="input" @change="validationForm"
+                            :class="{ 'border-danger': !form.description.validationSuccess }" name="description"
+                            v-model="category.description" placeholder="Descripcion de la Categoria" type="text"
+                            value="" />
+                        <span class="form-hint text-danger" v-if="!form.description.validationSuccess">
+                            * Campo Obligatorio
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template #footer>
+            <button class="btn btn-light" data-modal-dismiss="true">
+                Cancel
+            </button>
+            <button class="btn btn-primary" @click="updateCategory()">
+                Guardar
+            </button>
+        </template>
+    </GeneralModal>
     <QuestionModal title="title" id="modal-question">
         <template #footer>
             <button class="btn btn-danger" @click="destroy()">
@@ -162,6 +208,19 @@ export default {
 
             }
         },
+        async updateCategory() {
+            try {
+                if (!this.validationForm()) return;
+                if (this.loading) return;
+                this.loading = true;
+                await categoryService.update(this.category)
+                this.loading = false;
+                window.location.reload()
+
+            } catch (error) {
+
+            }
+        },
         validationForm() {
             // Validar cada campo por separado y guardar el estado de validación
             this.form.code.validationSuccess = this.category.code.trim() !== '';
@@ -169,28 +228,30 @@ export default {
 
             // Retornar `true` solo si ambos campos son válidos
             return this.form.code.validationSuccess && this.form.description.validationSuccess;
-        }
-    },
-    setup() {
-        const _category = ref([]);
-        let loading = false
-        let idCategory = 0;
-        const destroy=async (cc)=>{
-            if(loading) return;
-            loading = true;
-            await categoryService.destroy(idCategory);
-            loading = false;
+        },
+        async destroy(){
+            if (this.loading) return;
+            this.loading = true;
+            await categoryService.destroy(this.category.id);
+            this.loading = false;
             window.location.reload();
-        }
-
-        const deleteRow = (id) =>{
+        },
+        deleteRow(id){
             const modalElement = document.querySelector("#modal-question");
             const modal = KTModal.getInstance(modalElement);
             modal.show();
-            idCategory = id;
-        }
-
-        const initDataTable = () => {
+            this.category.id = id;
+        },
+        editRow(data){
+            const modalElement = document.querySelector("#modal_edit");
+            const modal = KTModal.getInstance(modalElement);
+            modal.show();
+            this.category.id = data.id
+            this.category.code = data.code
+            this.category.description = data.description
+            this.category.commission_percentage= data.commission_percentage
+        },
+        async initDataTable() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
                 apiEndpoint: categoryService.getUrl(),
@@ -206,7 +267,13 @@ export default {
                     },
                     edit: {
                         render: (item) => `<i class="ki-outline ki-notepad-edit">
-                                        </i>`
+                                        </i>`,
+                        createdCell(cell, cellData, rowData) {
+                            // Agregar evento de clic
+                            cell.addEventListener('click', function () {
+                                editRow(rowData)
+                            });
+                        },
                     },
                     delete: {
                         render: (item) => `<a onclick="destroy(1)"><i class="ki-outline ki-trash" >
@@ -226,16 +293,22 @@ export default {
                 sortable: true,
             };
             new KTDataTable(tableElement, options);
-        };
-        onMounted(async () => {
-            initDataTable(); // Cargamos las categorías al montar el componente
-            nextTick(() => {
-                KTDataTable.init();
-                KTModal.init();
-            });
-        });
+        }
+    },
+    async mounted() {
+        window.editRow = this.editRow.bind(this);
+        window.deleteRow = this.deleteRow.bind(this);
+        this.$nextTick(()=>{
+            this.initDataTable();
 
-        return { _category, destroy };
+        });
     },
 };
+
+onMounted(async () => { // Cargamos las categorías al montar el componente
+    nextTick(() => {
+        KTDataTable.init();
+        KTModal.init();
+    });
+});
 </script>

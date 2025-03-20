@@ -20,6 +20,15 @@ const categoryService = {
         throw new Error('Error al Obtener las Categorias');
       }
     },
+    update: async (category) => {
+      try {
+        const response = await configApi.put(`/v1/categories/${category.id}`,category);
+        return response.data;
+      } catch (error) {
+        console.log(error)
+        throw new Error('Error al Obtener las Categorias');
+      }
+    },
     destroy: async (id) => {
       try {
         const response = await configApi.delete(`/v1/categories/${id}`);

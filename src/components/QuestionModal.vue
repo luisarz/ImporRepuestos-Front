@@ -1,14 +1,6 @@
 <template>
     <div class="modal" data-modal="true" :id="id">
-        <div class="modal-content   max-w-[600px]">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                </h3>
-                <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
-                    <i class="ki-outline ki-cross">
-                    </i>
-                </button>
-            </div>
+        <div class="modal-content modal-center-y  max-w-[600px]">
             <div class="modal-body">
                 <br>
                 <center>
