@@ -229,6 +229,145 @@
       </button>
     </template>
   </GeneralModal>
+  <GeneralModal id="modal_edit" data-modal-backdrop-static="true" data-modal-autofocus="true" title="Modificar Modulo">
+    <template #body>
+      <input type="hidden" name="idmodulo" v-model="modulo.id">
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Módulo
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.nombre.validationSuccess }"
+                   name="nombre" v-model="modulo.nombre" placeholder="Nombre del modulo" type="text" value=""/>
+            <span class="form-hint text-danger" v-if="!form.nombre.validationSuccess"> * Campo Obligatorio</span>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Ruta
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.ruta.validationSuccess }"
+                   name="ruta" v-model="modulo.ruta"
+                   placeholder="Ruta del menu " type="text" value=""/>
+            <span class="form-hint text-danger" v-if="!form.ruta.validationSuccess"> * Campo Obligatorio </span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Es menú principal
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <label class="switch">
+              <input name="is_padre" type="checkbox" v-model="modulo.is_padre" :true-value="1" :false-value="0"/>
+            </label>
+
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Menú principal
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <input class="input" @change="validationForm"
+                   name="id_padre" v-model="modulo.id_padre"
+                   placeholder="Modulo padre " type="text" value=""/>
+            <!--            <span class="form-hint text-danger" > * Campo Obligatorio </span>-->
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Orden
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.orden.validationSuccess }"
+                   name="orden" v-model="modulo.orden"
+                   placeholder="Ruta del menu " type="text" value=""/>
+            <span class="form-hint text-danger"> * Campo Obligatorio </span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Icono
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.icono.validationSuccess }"
+                   name="icono" v-model="modulo.icono"
+                   placeholder="Ruta del menu " type="text" value=""/>
+            <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Menu minimizado
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <label class="switch">
+              <input name="is_minimazed" type="checkbox" v-model="modulo.is_minimazed" :true-value="1"
+                     :false-value="0"/>
+            </label>
+
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Ventana Nueva
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <label class="switch">
+              <input name="target" type="checkbox" v-model="modulo.target" :true-value="1" :false-value="0"/>
+            </label>
+
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="w-full">
+        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+          <label class="form-label max-w-32">
+            Activo
+          </label>
+          <div class="flex flex-col w-full gap-1">
+            <label class="switch">
+              <input name="is_active" type="checkbox" v-model="modulo.is_active" :true-value="1" :false-value="0"/>
+            </label>
+
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <button class="btn btn-light" data-modal-dismiss="true">
+        Cancel
+      </button>
+      <button class="btn btn-primary" @click="updateModule()">
+        Guardar
+      </button>
+    </template>
+  </GeneralModal>
   <QuestionModal title="title" id="modal-question">
     <template #footer>
       <button class="btn btn-danger" @click="destroy()">
@@ -250,7 +389,6 @@ export default {
   components: {GeneralModal, QuestionModal},
   data() {
     return {
-      isEditMode: false,
       loading: false,
       modulo: {
         id: 0,
@@ -295,6 +433,19 @@ export default {
         console.log(error)
       }
     },
+    async updateModule() {
+      try {
+        if (!this.validationForm()) return;
+        if (this.loading) return;
+        this.loading = true;
+        await moduleService.update(this.modulo)
+        this.loading = false;
+        window.location.reload()
+
+      } catch (error) {
+
+      }
+    },
     validationForm() {
       this.form.nombre.validationSuccess = this.modulo.nombre.trim() !== '';
       this.form.ruta.validationSuccess = this.modulo.ruta.trim() !== '';
@@ -305,71 +456,34 @@ export default {
       this.form.target.validationSuccess = Number.isInteger(this.modulo.is_minimazed);
       return this.form.nombre.validationSuccess && this.form.ruta.validationSuccess;
     },
-
-
-  },
-  setup() {
-    const _modulo = ref([]);
-    let loading = ref(false);
-    let idModulo = 0;
-    const modulo = ref({ // Definir modulo como ref en setup
-      id: 0,
-      nombre: '',
-      icono: '',
-      ruta: '',
-      id_padre: 0,
-      is_padre: 0,
-      orden: 0,
-      is_minimazed: 0,
-      target: 0,
-      is_active: 0,
-    });
-
-
-    const showEditModal = async (moduloId) => {
-      try {
-        loading.value = true;
-        const fetchedModulo = await moduleService.getOne(moduloId);
-        modulo.value = {...fetchedModulo}; // Actualizar modulo.value
-        loading.value = false;
-        const modalElement = document.querySelector("#modal_store");
-        const modal = KTModal.getInstance(modalElement);
-        modal.show();
-      } catch (error) {
-        console.error("Error al obtener el módulo:", error);
-        loading.value = false;
-      }
-    };
-
-    const destroy = async (cc) => {
-      // if (loading) return;
-      // loading = true;
-      await ModuleService.destroy(idModulo);
-      loading = false;
+    async destroy() {
+      if (this.loading) return;
+      this.loading = true;
+      await ModuleService.destroy(this.modulo.id);
+      this.loading = false;
       window.location.reload();
-    }
-    const getModulo = async () => {
-      loading.value = true;
-      try {
-        const response = await moduleService.get();
-        console.log(response)
-        _modulo.value = response;
-        loading.value = false;
-      } catch (error) {
-        console.log(error)
-      } finally {
-        loading.value = false;
-      }
-    }
-
-    const deleteRow = (id, module) => {
+    },
+    deleteRow(id) {
       const modalElement = document.querySelector("#modal-question");
       const modal = KTModal.getInstance(modalElement);
       modal.show();
-      idModulo = id;
-    }
-
-    const initDataTable = () => {
+      this.modulo.id = id;
+    },
+    editRow(data) {
+      const modalElement = document.querySelector("#modal_edit");
+      const modal = KTModal.getInstance(modalElement);
+      modal.show();
+      this.modulo.id = data.id
+      this.modulo.nombre = data.nombre
+      this.modulo.icono = data.icono
+      this.modulo.ruta = data.ruta
+      this.modulo.id_padre = data.id_padre
+      this.modulo.is_padre = data.is_padre
+      this.modulo.orden = data.orden
+      this.modulo.is_minimazed = data.is_minimazed
+      this.modulo.target = data.target
+    },
+    async initDataTable() {
       const tableElement = document.querySelector("#kt_remote_table");
       const options = {
         apiEndpoint: moduleService.getUrl(),
@@ -393,21 +507,20 @@ export default {
             title: 'Orden',
           },
           edit: {
-            render: (item) => `<i class="ki-outline ki-notepad-edit"></i>`,
+            render: (item) => `<i class="ki-outline ki-notepad-edit"> </i>`,
             createdCell(cell, cellData, rowData) {
-              // Agregar evento de clic para editar
-              cell.addEventListener('click', () => {
-                showEditModal(rowData.id);
+              cell.addEventListener('click', function () {
+                editRow(rowData)
               });
             },
           },
           delete: {
-            render: (item) => `<a onclick="destroy(1)"><i class="ki-outline ki-trash text-danger fs-5x" ></i></a>`,
+            render: (item) => `<a onclick="destroy(1)"><i class="ki-outline ki-trash" ></i></a>`,
             createdCell(cell, cellData, rowData) {
               // Agregar evento de clic
-              cell.addEventListener('click', () => {
+              cell.addEventListener('click', function () {
                 console.log(rowData.id)
-                deleteRow(rowData.id, rowData.modulo)
+                deleteRow(rowData.id)
               });
             },
           }
@@ -418,16 +531,21 @@ export default {
         sortable: true,
       };
       new KTDataTable(tableElement, options);
-    };
-    onMounted(async () => {
-      initDataTable(); // Cargamos las categorías al montar el componente
-      nextTick(() => {
-        KTDataTable.init();
-        KTModal.init();
-      });
-    });
+    }
+  },
+  async mounted() {
+    window.editRow = this.editRow.bind(this);
+    window.deleteRow = this.deleteRow.bind(this);
+    this.$nextTick(() => {
+      this.initDataTable();
 
-    return {_modulo, destroy, loading, showEditModal};
+    });
   },
 };
+onMounted(async () => { // Cargamos las categorías al montar el componente
+  nextTick(() => {
+    KTDataTable.init();
+    KTModal.init();
+  });
+});
 </script>
