@@ -443,7 +443,9 @@ export default {
         window.location.reload()
 
       } catch (error) {
-
+        console.error(error);
+      } finally {
+        this.loading = false;
       }
     },
     validationForm() {
@@ -495,13 +497,16 @@ export default {
             title: 'Modulo'
           },
           id_padre: {
-            title: 'Modulo',
+            title: 'Padre',
           },
           ruta: {
             title: 'Ruta',
           },
           icono: {
             title: 'Icono',
+            render: (data, type, row) => {
+              return `<i class="ki-outline ki-${data} fs-3x"></i>`; // Suponiendo que `data` es la clase del icono
+            }
           },
           orden: {
             title: 'Orden',

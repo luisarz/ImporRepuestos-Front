@@ -33,8 +33,9 @@
                         class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
                         tabindex="0">
                         <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-                           <i class="ki-filled ki-element-11 text-lg">
-                           </i>
+                        <i :class="`ki-outline ki-${modulo.icono} text-lg`">
+                          </i>
+
                         </span>
                         <span
                            class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
@@ -57,6 +58,8 @@
                                  <span
                                     class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
                                  </span>
+                                <i :class="`ki-outline ki-${moduloHijo.icono} text-lg`">
+                                </i>
                                  <span
                                     class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
                                     {{ moduloHijo.nombre }}
@@ -74,6 +77,7 @@
                            <i class="ki-filled ki-element-11 text-lg">
                            </i>
                         </span>
+
                         <span
                            class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
                            {{ modulo.nombre }}
