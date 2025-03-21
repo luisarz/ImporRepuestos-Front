@@ -158,7 +158,7 @@
             <input class="input" @change="validationForm" :class="{ 'border-danger': !form.orden.validationSuccess }"
                    name="orden" v-model="modulo.orden"
                    placeholder="Ruta del menu " type="text" value=""/>
-            <span class="form-hint text-danger"> * Campo Obligatorio </span>
+            <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
           </div>
         </div>
       </div>
@@ -283,7 +283,7 @@
             <input class="input" @change="validationForm"
                    name="id_padre" v-model="modulo.id_padre"
                    placeholder="Modulo padre " type="text" value=""/>
-            <!--            <span class="form-hint text-danger" > * Campo Obligatorio </span>-->
+                        <span class="form-hint text-danger" v-if="!form.validationSuccess"> * Campo Obligatorio </span>
           </div>
         </div>
       </div>
@@ -297,7 +297,7 @@
             <input class="input" @change="validationForm" :class="{ 'border-danger': !form.orden.validationSuccess }"
                    name="orden" v-model="modulo.orden"
                    placeholder="Ruta del menu " type="text" value=""/>
-            <span class="form-hint text-danger"> * Campo Obligatorio </span>
+            <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
           </div>
         </div>
       </div>
@@ -505,7 +505,7 @@ export default {
           icono: {
             title: 'Icono',
             render: (data, type, row) => {
-              return `<i class="ki-outline ki-${data} fs-3x"></i>`; // Suponiendo que `data` es la clase del icono
+              return `<i class="ki-outline ki-${data} text-lg"></i>`; // Suponiendo que `data` es la clase del icono
             }
           },
           orden: {

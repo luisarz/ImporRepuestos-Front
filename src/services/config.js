@@ -2,7 +2,8 @@
 import axios from 'axios';
 import authService from './authService';
 
-export const urlApi = 'https://impor-api.laravel.cloud/api';
+// export const urlApi = 'https://impor-api.laravel.cloud/api';
+export const urlApi = 'http://127.0.0.1:8000/api';
 
 export const configApi = axios.create({
   baseURL: urlApi,  // Cambia esto por la URL base de tu API

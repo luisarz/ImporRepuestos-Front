@@ -1,62 +1,74 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import Home from '../views/Home.vue';
 import Category from '../views/category/index.vue';
 import MainLayout from '../views/layouts/MainLayout.vue';
 import SignIn from '../views/authentication/SignIn.vue';
 import NotFound from '../views/layouts/404.vue';
 import Module from '../views/module/index.vue';
+import Company from '../views/company/index.vue';
+import Warehouse from "@/views/warehouse/index.vue";
 
 const routes = [
-  {
-    path: '/',
-    component: MainLayout,
-    children: [
-      {
-        path: '',
-        component: Home,
-        meta: { requiresAuth: true }  // Esta ruta requiere autenticación
-      },
-      {
-        path: '/category',
-        component: Category,
-        meta: { requiresAuth: true }  // Esta ruta requiere autenticación
-      },
-      {
-        path: '/module',
-        component: Module,
-        meta: { requiresAuth: true }  // Esta ruta requiere autenticación
-      }
-    ]
-  },
-  { path: '/sign-in', name: 'sign-in', component: SignIn },
-  // Ruta comodín para manejar el error 404
-  {
-    path: '/:pathMatch(.*)*',
-    component: NotFound
-  }
+    {
+        path: '/',
+        component: MainLayout,
+        children: [
+            {
+                path: '',
+                component: Home,
+                meta: {requiresAuth: true}  // Esta ruta requiere autenticación
+            },
+            {
+                path: '/category',
+                component: Category,
+                meta: {requiresAuth: true}  // Esta ruta requiere autenticación
+            },
+            {
+                path: '/module',
+                component: Module,
+                meta: {requiresAuth: true}  // Esta ruta requiere autenticación
+            },
+            {
+                path: '/company',
+                component: Company,
+                meta: {requiresAuth: true}  // Esta ruta requiere autenticación
+            },
+            {
+                path: '/warehouse',
+                component: Warehouse,
+                meta: {requiresAuth: true}
+            }
+        ]
+    },
+    {path: '/sign-in', name: 'sign-in', component: SignIn},
+    // Ruta comodín para manejar el error 404
+    {
+        path: '/:pathMatch(.*)*',
+        component: NotFound
+    }
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+    history: createWebHistory(),
+    routes
 });
 
 
 // Guard para proteger rutas
 router.beforeEach((to, from, next) => {
-  // Verifica si la ruta requiere autenticación
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    const token = localStorage.getItem('auth_token');  // Obtén el token del almacenamiento
+    // Verifica si la ruta requiere autenticación
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        const token = localStorage.getItem('auth_token');  // Obtén el token del almacenamiento
 
-    // Si no hay token, redirige a la página de inicio de sesión
-    if (!token) {
-      next({ path: '/sign-in' });  // Redirige a SignIn si no hay token
+        // Si no hay token, redirige a la página de inicio de sesión
+        if (!token) {
+            next({path: '/sign-in'});  // Redirige a SignIn si no hay token
+        } else {
+            next();  // Deja continuar a la ruta si hay un token válido
+        }
     } else {
-      next();  // Deja continuar a la ruta si hay un token válido
+        next();  // Deja continuar a rutas que no requieren autenticación
     }
-  } else {
-    next();  // Deja continuar a rutas que no requieren autenticación
-  }
 });
 
 export default router;
