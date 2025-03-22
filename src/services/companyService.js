@@ -4,8 +4,8 @@ const companyService = {
     get: async () => {
         try {
             const response = await configApi.get(`/v1/company`);
-            console.log(response.data)
-            return response.data;
+            // console.log(response.data)
+            return response.data.data;
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Categorias');
