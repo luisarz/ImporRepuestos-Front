@@ -6,7 +6,7 @@
           Administración de Sucursales
         </h1>
         <label class="switch switch-sm">
-          <button class="btn btn-primary" @click="openStoreModal()">
+          <button class="btn btn-success" @click="openStoreModal()">
             <i class="ki-filled ki-plus-squared"></i>
             Aperturar Sucursal
           </button>
@@ -209,7 +209,7 @@
                 </label>
                 <div class="flex flex-col w-full gap-1">
 
-                  <select name="economic_activity_id" class="select select-sm w-full">
+                  <select name="economic_activity_id" class="select select-sm w-full" v-model="warehouse.economic_activity_id" data-control="select2">
                     <option v-for="econnommic_activity in economicActivities" :key="econnommic_activity.id"
                             :value="econnommic_activity.id" >
                       {{ econnommic_activity.code }}

@@ -9,8 +9,6 @@ import DistricService from "@/services/districService.js";
 import CompanyService from "@/services/companyService.js";
 import StablishmentTypeService from "@/services/stablishmentTypeService.js";
 import companyService from "@/services/companyService.js";
-import categoryService from "@/services/categoryService.js";
-
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
@@ -66,6 +64,16 @@ export default {
                 this.loading = true;
                 await warehouseService.store(this.warehouse)
                 this.loading = false;
+
+                Swal.fire({
+                    text: "Here's a basic example of SweetAlert!",
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                });
                 window.location.reload()
 
             } catch (error) {
@@ -185,7 +193,7 @@ export default {
                         title: 'Teléfono',
                     },
                     economic_activity_id: {
-                        title: 'economic_activity_id',
+                        title: 'Actividad económica',
                     },
 
 
