@@ -21,6 +21,7 @@ const warehouseService = {
     },
     update: async (warehouse) => {
         try {
+            // console.log(warehouse.stablishment_type_id);
             const response = await configApi.put(`/v1/warehouse/${warehouse.id}`, warehouse);
             return response.data;
         } catch (error) {
@@ -39,6 +40,14 @@ const warehouseService = {
     },
     getUrl: () => {
         return `${urlApi}/v1/warehouse`;
+    },
+    destroy: async (id) => {
+        try {
+            const response = await configApi.delete(`/v1/warehouse/${id}`);
+        } catch (error) {
+            console.log(error)
+            throw new Error('Error al Obtener las Categorias');
+        }
     },
 
 

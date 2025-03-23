@@ -6,19 +6,20 @@
           Administración de Sucursales
         </h1>
         <label class="switch switch-sm">
-          <button class="btn btn-success" @click="openStoreModal()">
+          <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
             <i class="ki-filled ki-plus-squared"></i>
-            Aperturar Sucursal
+            {{ loading ? 'Preparando datos...' : 'Aperturar Sucursal' }}
+
           </button>
         </label>
       </div>
       <div class="card-body">
         <div>
           <div class="scrollable-x-auto">
-            <table id="#table_modulo" class="table table-auto table-border" data-datatable-table="true">
+            <table id="#table_modulo" class="table table-hover table-border" data-datatable-table="true">
               <thead>
               <tr>
-                <th class="w-[100px] text-center" data-datatable-column="status">
+                <th class="w-[160px] text-center" data-datatable-column="status">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Tipo
@@ -64,8 +65,10 @@
                                         </span>
                 </th>
 
-                <th class="w-[60px]">
+                <th colspan="2" class="w-[60px] text-center">
+                  Acciones
                 </th>
+
 
               </tr>
               </thead>
@@ -90,234 +93,61 @@
       </div>
     </div>
   </div>
-  <LongModal id="modal_store" data-modal-backdrop-static="true" data-modal-autofocus="true" title="">
-
+  <LongModal id="modal_store" :title="modalTitle">
     <template #body>
-      <input type="hidden" name="idwarehouse" v-model="warehouse.id">
+      <input type="hidden" name="id" v-model="warehouse.id"/>
       <div class="card">
-        <div class="card-header">
-          Aperturar Nueva Sucursal
-        </div>
+        <div class="card-header">{{ modalHeader }}</div>
         <div class="card-body">
           <div class="grid grid-cols-2 gap-4">
-            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-              <label class="form-label max-w-32">
-               Empresa
-              </label>
-              <div class="flex flex-col w-full gap-1">
-                <select name="company_id" v-model="warehouse.company_id" data-control="select2"
-                        data-search="true"
-                        class="select  l">
-                  <option v-for="company in companies" :key="company.id"
-                          :value="company.id">
-                    {{ company.company_name }}
-                  </option>
-
-                </select>
-
-              </div>
-            </div>
-
-            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-              <label class="form-label max-w-32">
-                Tipo Establecimiento
-              </label>
-              <div class="flex flex-col w-full gap-1">
-                <select name="stablishment_type" v-model="warehouse.stablishment_type" data-control="select2"
-                        data-search="true"
-                        class="select  l">
-                  <option v-for="stablishment_types in stablishmentTypes" :key="stablishment_types.id"
-                          :value="stablishment_types.id">
-                  {{ stablishment_types.code }}
-                  {{ stablishment_types.description }}
-                  </option>
-
-                </select>
-
-              </div>
-            </div>
-
-
-            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-              <label class="form-label max-w-32">
-                Nombre Sucursal
-              </label>
-              <div class="flex flex-col w-full gap-1">
-                <input class="input" @change="validationForm"
-                       :class="{ 'border-danger': !form.name.validationSuccess }"
-                       name="name" v-model="warehouse.name" placeholder="Nombre de la warehouse" type="text"
-                       value=""/>
-                <span class="form-hint text-danger" v-if="!form.name.validationSuccess"> * Campo Obligatorio</span>
-              </div>
-            </div>
-
-
-
-
-            <div class="w-full">
+            <!-- Campos del formulario -->
+            <div class="w-full" v-for="field in formFields" :key="field.key">
               <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  NRC
-                </label>
+                <label class="form-label max-w-32">{{ field.label }}</label>
                 <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         :class="{ 'border-danger': !form.nrc.validationSuccess }"
-                         name="nrc" v-model="warehouse.nrc"
-                         placeholder="nrc del menu " type="text" value=""/>
-                  <span class="form-hint text-danger" v-if="!form.nrc.validationSuccess"> * Campo Obligatorio </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-full">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  NIT
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         :class="{ 'border-danger': !form.nit.validationSuccess }"
-                         name="nit" v-model="warehouse.nit"
-                         placeholder="NIT de la warehouse " type="text" value=""/>
-                  <span class="form-hint text-danger" v-if="!form.nit.validationSuccess"> * Campo Obligatorio </span>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="w-full">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  Distrito
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <select name="district_id" v-model="warehouse.district_id" class="select select-sm w-full" >
-                    <option v-for="district in districts" :key="district.id" :value="district.id">
-                     {{district.code}} {{ district.description }}
+                  <input
+                      v-if="field.type !== 'select' && field.type !== 'checkbox'"
+                      class="input"
+                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
+                      :type="field.type"
+                      v-model="warehouse[field.key]"
+                      :placeholder="field.placeholder"
+                  />
+                  <select
+                      v-else-if="field.type === 'select'"
+                      class="select"
+                      v-model="warehouse[field.key]"
+                  >
+                    <option v-for="option in field.options" :key="option.value" :value="option.value">
+                      {{ option.text }}
                     </option>
                   </select>
-
+                  <label v-else-if="field.type === 'checkbox'" class="switch">
+                    <input type="checkbox" v-model="warehouse[field.key]" :true-value="1" :false-value="0"/>
+                  </label>
+                  <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
+                    * Campo Obligatorio
+                  </span>
                 </div>
               </div>
-            </div>
-
-
-            <div class="w-full">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  Actividad económica
-                </label>
-                <div class="flex flex-col w-full gap-1">
-
-                  <select name="economic_activity_id" class="select select-sm w-full" v-model="warehouse.economic_activity_id" data-control="select2">
-                    <option v-for="econnommic_activity in economicActivities" :key="econnommic_activity.id"
-                            :value="econnommic_activity.id" >
-                      {{ econnommic_activity.code }}
-                      {{ econnommic_activity.description }}</option>
-                  </select>
-                  <span class="form-hint text-danger"
-                        v-if="!form.economic_activity_id.validationSuccess"> * Campo Obligatorio </span>
-                </div>
-              </div>
-            </div>
-
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  Dirección
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         :class="{ 'border-danger': !form.address.validationSuccess }"
-                         name="address" v-model="warehouse.address"
-                         placeholder="Direccion warehouse " type="text" value=""/>
-                  <span class="form-hint text-danger"
-                        v-if="!form.address.validationSuccess"> * Campo Obligatorio </span>
-
-                </div>
-              </div>
-
-            <div class="w-full">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  Teléfono
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         name="phone" v-model="warehouse.phone"
-                         placeholder="Teléfono warehouse " type="text" value=""/>
-                  <span class="form-hint text-danger"
-                        v-if="!form.phone.validationSuccess"> * Campo Obligatorio </span>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="w-full">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                  E-mail
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         :class="{ 'border-danger': !form.email.validationSuccess }"
-                         name="email" v-model="warehouse.email"
-                         placeholder="nrc del menu " type="text" value=""/>
-                  <span class="form-hint text-danger"
-                        v-if="!form.email.validationSuccess"> * Campo Obligatorio </span>
-                </div>
-              </div>
-            </div>
-
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">
-                 Precios por prodúcto
-                </label>
-                <div class="flex flex-col w-full gap-1">
-                  <input class="input" @change="validationForm"
-                         :class="{ 'border-danger': !form.product_prices.validationSuccess }"
-                         name="product_prices" v-model="warehouse.product_prices"
-                         placeholder="Pagina email" type="text" value=""/>
-                  <span class="form-hint text-danger"
-                        v-if="!form.product_prices.validationSuccess"> * Campo Obligatorio </span>
-
-                </div>
-              </div>
-
-
-
-
-          </div><!--          end grid grid-2-->
-          <div class="w-full py-2">
-            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-              <label class="form-label max-w-32">
-                Logo
-              </label>
-              <div class=" w-full gap-1">
-                <input class="input" @change="validationForm" :class="{ 'border-danger': !form.logo.validationSuccess }"
-                         name="logo" v-model="warehouse.logo"
-                       placeholder="Logo de la warehouse " type="text" value=""/>
-
-              </div>
-            </div>
+              <br/>
+            </div><!--          /Campos-->
           </div>
-
-        </div><!--        End Body Card-->
-
-      </div><!--      En card-->
-
-
+        </div>
+      </div>
     </template>
     <template #footer>
-      <button class="btn btn-light" data-modal-dismiss="true">
-        Cancel
-      </button>
-      <button class="btn btn-primary" @click="store()">
-        Aperturar Sucursal
+      <button class="btn btn-light" data-modal-dismiss="true">Cancelar</button>
+      <button class="btn btn-primary" @click="saveWarehouse" :disabled="loading">
+        {{ isEditing ? 'Modificar Sucursal' : 'Aperturar Sucursal' }}
       </button>
     </template>
   </LongModal>
   <QuestionModal title="title" id="modal-question">
     <template #footer>
+      <div v-if="loading" class="preloader">
+        <div class="spinner"></div>
+      </div>
       <button class="btn btn-danger" @click="destroy()">
         Eliminar
       </button>

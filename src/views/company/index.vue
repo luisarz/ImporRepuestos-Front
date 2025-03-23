@@ -94,184 +94,188 @@
     </div>
   </div>
 
-  <LongModal id="modal_edit" data-modal-backdrop-static="true" data-modal-autofocus="true" title="Modificar empresa">
+  <LongModal id="modal_edit" data-modal-backdrop-static="true" data-modal-autofocus="true" title="">
 
     <template #body>
       <input type="hidden" name="idmodulo" v-model="empresa.id">
-      <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-        <label class="form-label max-w-32">
-          Empresa
-        </label>
-        <div class="flex flex-col w-full gap-1">
-          <input class="input" @change="validationForm"
-                 :class="{ 'border-danger': !form.company_name.validationSuccess }"
-                 name="company_name" v-model="empresa.company_name" placeholder="Nombre de la empresa" type="text"
-                 value=""/>
-          <span class="form-hint text-danger" v-if="!form.company_name.validationSuccess"> * Campo Obligatorio</span>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Rubro
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <select name="economic_activity_id" v-model="empresa.economic_activity_id" data-control="select2" class="select  select2-sm w-full">
-              <option v-for="economic_activities in economicActivities" :key="economic_activities.id"
-                      :value="economic_activities.id">
-                {{ economic_activities.description }}
-              </option>
-            </select>
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Modificar empresa</h3></div>
+        <div class="card-body">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Empresa
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <input class="input" @change="validationForm"
+                       :class="{ 'border-danger': !form.company_name.validationSuccess }"
+                       name="company_name" v-model="empresa.company_name" placeholder="Nombre de la empresa" type="text"
+                       value=""/>
+                <span class="form-hint text-danger"
+                      v-if="!form.company_name.validationSuccess"> * Campo Obligatorio</span>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Rubro
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <select name="economic_activity_id" v-model="empresa.economic_activity_id" data-control="select2"
+                          class="select  select2-sm w-full">
+                    <option v-for="economic_activities in economicActivities" :key="economic_activities.id"
+                            :value="economic_activities.id">
+                      {{ economic_activities.description }}
+                    </option>
+                  </select>
 
-          </div>
-        </div>
-      </div>
-      <br/>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            NRC
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.nrc.validationSuccess }"
-                   name="nrc" v-model="empresa.nrc"
-                   placeholder="nrc del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.nrc.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            NIT
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.nit.validationSuccess }"
-                   name="nit" v-model="empresa.nit"
-                   placeholder="NIT de la empresa " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.nit.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Teléfono
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   name="phone" v-model="empresa.phone"
-                   placeholder="Teléfono empresa " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.phone.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Whatsapp
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.whatsapp.validationSuccess }"
-                   name="whatsapp" v-model="empresa.whatsapp"
-                   placeholder="nrc del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.whatsapp.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            E-mail
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.email.validationSuccess }"
-                   name="email" v-model="empresa.email"
-                   placeholder="nrc del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.email.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Distrito
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <select name="district_id" v-model="empresa.district_id" class="select select-sm w-full">
-              <option v-for="district in districts" :key="district.id" :value="district.id">
-                {{ district.description }}
-              </option>
-            </select>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  NRC
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.nrc.validationSuccess }"
+                         name="nrc" v-model="empresa.nrc"
+                         placeholder="nrc del menu " type="text" value=""/>
+                  <span class="form-hint text-danger" v-if="!form.nrc.validationSuccess"> * Campo Obligatorio </span>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  NIT
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.nit.validationSuccess }"
+                         name="nit" v-model="empresa.nit"
+                         placeholder="NIT de la empresa " type="text" value=""/>
+                  <span class="form-hint text-danger" v-if="!form.nit.validationSuccess"> * Campo Obligatorio </span>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Teléfono
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         name="phone" v-model="empresa.phone"
+                         placeholder="Teléfono empresa " type="text" value=""/>
+                  <span class="form-hint text-danger" v-if="!form.phone.validationSuccess"> * Campo Obligatorio </span>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Whatsapp
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.whatsapp.validationSuccess }"
+                         name="whatsapp" v-model="empresa.whatsapp"
+                         placeholder="nrc del menu " type="text" value=""/>
+                  <span class="form-hint text-danger"
+                        v-if="!form.whatsapp.validationSuccess"> * Campo Obligatorio </span>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  E-mail
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.email.validationSuccess }"
+                         name="email" v-model="empresa.email"
+                         placeholder="nrc del menu " type="text" value=""/>
+                  <span class="form-hint text-danger" v-if="!form.email.validationSuccess"> * Campo Obligatorio </span>
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Distrito
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <select name="district_id" v-model="empresa.district_id" class="select select-sm w-full">
+                    <option v-for="district in districts" :key="district.id" :value="district.id">
+                      {{ district.description }}
+                    </option>
+                  </select>
 
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Dirección
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.address.validationSuccess }"
+                         name="address" v-model="empresa.address"
+                         placeholder="Direccion empresa " type="text" value=""/>
+
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Pagina web
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.web.validationSuccess }"
+                         name="web" v-model="empresa.web"
+                         placeholder="Pagina web" type="text" value=""/>
+
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  API KEY
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.api_key_mh.validationSuccess }"
+                         name="api_key_mh" v-model="empresa.api_key_mh"
+                         placeholder="Api Key hacienda " type="password" value=""/>
+
+                </div>
+              </div>
+            </div>
+            <div class="w-full">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">
+                  Logo
+                </label>
+                <div class="flex flex-col w-full gap-1">
+                  <input class="input" @change="validationForm"
+                         :class="{ 'border-danger': !form.logo.validationSuccess }"
+                         name="logo" v-model="empresa.logo"
+                         placeholder="Logo de la empresa " type="text" value=""/>
+
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Dirección
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.address.validationSuccess }"
-                   name="address" v-model="empresa.address"
-                   placeholder="Direccion empresa " type="text" value=""/>
-
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Pagina web
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.web.validationSuccess }"
-                   name="web" v-model="empresa.web"
-                   placeholder="Pagina web" type="text" value=""/>
-
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            API KEY
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   :class="{ 'border-danger': !form.api_key_mh.validationSuccess }"
-                   name="api_key_mh" v-model="empresa.api_key_mh"
-                   placeholder="Api Key hacienda " type="password" value=""/>
-
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Logo
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.logo.validationSuccess }"
-                   name="logo" v-model="empresa.logo"
-                   placeholder="Logo de la empresa " type="text" value=""/>
-
-          </div>
-        </div>
-      </div>
-      <br>
-
 
     </template>
     <template #footer>
