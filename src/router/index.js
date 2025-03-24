@@ -10,7 +10,9 @@ import Warehouse from "@/views/warehouse/index.vue";
 import JobTitle from "@/views/jobtitle/index.vue";
 import Brand from "@/views/brand/index.vue";
 import UnitMeasurement from "@/views/catalogs/unit_measurements/index.vue";
-
+import DestinationEnviroment from "@/views/catalogs/destinationEnviroment/index.vue";
+import ProviderType from "@/views/providers/provider_types/index.vue";
+import ProviderDocumentType from "@/views/providers/document_types/index.vue";
 const routes = [
     {
         path: '/',
@@ -54,6 +56,21 @@ const routes = [
             {
                 path: '/unit-measurements',
                 component: UnitMeasurement,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/cat-ambiente-destino',
+                component: DestinationEnviroment,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/providers-types',
+                component: ProviderType,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/providers-documents-types',
+                component: ProviderDocumentType,
                 meta: {requiresAuth: true}
             }
         ]

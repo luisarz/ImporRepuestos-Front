@@ -141,7 +141,7 @@
         </div>
       </div>
       <br>
-      <div class="w-full" v-if="modulo.is_padre === 1">
+      <div class="w-full" v-if="modulo.is_padre === 0">
         <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-32">
             Menú principal
@@ -281,16 +281,17 @@
         </div>
       </div>
       <br>
-      <div class="w-full">
+      <div class="w-full" v-if="modulo.is_padre === 0">
         <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-32">
             Menú principal
           </label>
           <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   name="id_padre" v-model="modulo.id_padre"
-                   placeholder="Modulo padre " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.validationSuccess"> * Campo Obligatorio </span>
+            <select class="select" @change="validationForm"
+                    :class="{ 'border-danger': !form.id_padre.validationSuccess }"
+                    name="id_padre" v-model="modulo.id_padre">
+              <option v-for="module in modules" :value="module.id">{{ module.nombre }}</option>
+            </select>
           </div>
         </div>
       </div>

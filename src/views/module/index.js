@@ -113,9 +113,10 @@ export default {
             modal.show();
             this.modulo.id = id;
         },
-        editRow(data) {
+        async editRow(data) {
             const modalElement = document.querySelector("#modal_edit");
             const modal = KTModal.getInstance(modalElement);
+            await this.loadModules();
             modal.show();
             this.modulo.id = data.id
             this.modulo.nombre = data.nombre
@@ -140,6 +141,9 @@ export default {
                     },
                     id_padre: {
                         title: 'Padre',
+                        render: (data, type, row) => {
+                                return type?.padre?.nombre ?? '-';
+                        }
                     },
                     ruta: {
                         title: 'Ruta',
