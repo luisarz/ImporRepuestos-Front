@@ -3,12 +3,15 @@
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
-          Tipos de proveedores
+          Administración  <span class="badge badge-info">
+
+ {{ moduleName }}
+        </span>
         </h1>
         <label class="switch switch-sm">
           <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
             <i class="ki-filled ki-plus-squared"></i>
-            {{ loading ? 'Preparando datos...' : 'Crear Marca' }}
+            {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
 
           </button>
         </label>

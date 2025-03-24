@@ -28,6 +28,10 @@ export default {
         modalTitle() {
             return this.isEditing ? 'Modificar - Tipo de contribuyente' : 'Crear - Tipo de contribuyente';
         },
+        moduleName() {
+            return 'Tipo de Proveedor';
+        },
+
 
         formFields() {
             return [
@@ -124,13 +128,14 @@ export default {
                     code: {title: 'Código'},
                     description: {title: 'Descripción'},
                     edit: {
-                        render: () => `<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i>`,
+                        render: () => `<button class="btn btn-outline btn-info">
+<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.editModal(rowData));
                         },
                     },
                     delete: {
-                        render: () => `<i class="ki-outline ki-trash text-lg text-danger text-center"></i>`,
+                        render: () => `<button class="btn btn-outline btn-danger"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.deleteRow(rowData.id));
                         },

@@ -8,7 +8,7 @@
         <label class="switch switch-sm">
           <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
             <i class="ki-filled ki-plus-squared"></i>
-            {{ loading ? 'Preparando datos...' : 'Aperturar Sucursal' }}
+            {{ loading ? 'Preparando datos...' : 'Crear Cargo' }}
 
           </button>
         </label>
@@ -39,8 +39,9 @@
                 </th>
 
 
-                <th colspan="2" class="w-[60px] text-center">
-                  Acciones
+                <th class="w-[60px]">
+                </th>
+                <th class="w-[60px]">
                 </th>
 
 
@@ -67,13 +68,13 @@
       </div>
     </div>
   </div>
-  <LongModal id="modal_store" :title="modalTitle">
+  <general-modal id="modal_store" :title="modalTitle">
     <template #body>
       <input type="hidden" name="id" v-model="jobTitle.id"/>
       <div class="card">
-        <div class="card-header">{{ modalHeader }}</div>
+<!--        <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4">
             <!-- Campos del formulario -->
             <div class="w-full" v-for="field in formFields" :key="field.key">
               <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
@@ -98,7 +99,9 @@
                     </option>
                   </select>
                   <label v-else-if="field.type === 'checkbox'" class="switch">
-                    <input type="checkbox" v-model="jobTitle[field.key]" :true-value="1" :false-value="0"/>
+                    <input type="checkbox" v-model="jobTitle[field.key]" :true-value="1" :false-value="0"
+                           :checked="jobTitle[field.key] == 1"
+                    />
                   </label>
                   <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
                     * Campo Obligatorio
@@ -117,7 +120,7 @@
         {{ isEditing ? 'Modificar Cargo' : 'Crear Cargo' }}
       </button>
     </template>
-  </LongModal>
+  </general-modal>
   <QuestionModal title="title" id="modal-question">
     <template #footer>
 

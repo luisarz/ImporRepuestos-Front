@@ -13,6 +13,7 @@ import UnitMeasurement from "@/views/catalogs/unit_measurements/index.vue";
 import DestinationEnviroment from "@/views/catalogs/destinationEnviroment/index.vue";
 import ProviderType from "@/views/providers/provider_types/index.vue";
 import ProviderDocumentType from "@/views/providers/document_types/index.vue";
+import EconomicActivity from "@/views/catalogs/economicActivity/index.vue";
 const routes = [
     {
         path: '/',
@@ -71,6 +72,11 @@ const routes = [
             {
                 path: '/providers-documents-types',
                 component: ProviderDocumentType,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/economic-activities',
+                component: EconomicActivity,
                 meta: {requiresAuth: true}
             }
         ]

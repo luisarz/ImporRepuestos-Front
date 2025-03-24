@@ -3,12 +3,15 @@
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
-          Tipos de proveedores
+          Administración  <span class="badge badge-info">
+
+ {{ moduleName }}
+        </span>
         </h1>
         <label class="switch switch-sm">
           <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
             <i class="ki-filled ki-plus-squared"></i>
-            {{ loading ? 'Preparando datos...' : 'Crear ' }}{{moduleName}}
+            {{ loading ? 'Preparando datos...' : 'Crear ' }}{{ moduleName }}
 
           </button>
         </label>
@@ -57,7 +60,7 @@
           class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
         <div class="flex items-center gap-2">
           Mostrar
-          <select class="select select-sm w-16" data-datatable-size="true" name="perpage" >
+          <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
           </select>
           por Pagina
         </div>
@@ -72,7 +75,7 @@
     <template #body>
       <input type="hidden" name="id" v-model="providerDocumentType.id"/>
       <div class="card">
-<!--        <div class="card-header">{{ modalHeader }}</div>-->
+        <!--        <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
           <div class="grid grid-cols-1 gap-4">
             <!-- Campos del formulario -->
@@ -99,7 +102,7 @@
                     </option>
                   </select>
                   <label v-else-if="field.type === 'checkbox'" class="switch">
-                    <input type="checkbox" v-model="providerDocumentType[field.key]" :true-value="1" :false-value="0"/>
+                    <input type="checkbox" v-model="providerDocumentType[field.key]" :true-value="1" :false-value="0" :checked="providerDocumentType[field.key] == 1"/>
                   </label>
                   <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
                     * Campo Obligatorio

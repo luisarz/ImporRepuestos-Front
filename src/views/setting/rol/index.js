@@ -3,7 +3,7 @@ import {KTDataTable, KTModal} from './../../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '../../../components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
-import ProviderDocumentTypeService from '@/services/providers/providerDocumentTypeService.js';
+import EconomicActivityService from '@/services/hacienda/economicActivityService.js';
 
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
@@ -11,7 +11,7 @@ export default {
         return {
             loading: false,
             isEditing: false,
-            providerDocumentType: {
+            entity: {
                 id: 0,
                 code: '',
                 description: '',
@@ -26,10 +26,10 @@ export default {
     },
     computed: {
         modalTitle() {
-            return this.isEditing ? 'Modificar - Tipo de Documento' : 'Crear - Tipo de Documento';
+            return this.isEditing ? `Modificar -${this.moduleName}` : `Crear - ${this.moduleName}`;
         },
         moduleName() {
-            return 'Tipo de Documento';
+            return 'Actividad económica';
         },
 
         formFields() {
@@ -42,9 +42,9 @@ export default {
                 },
                 {
                     key: 'description',
-                    label: 'Tipo Documento',
-                    type: 'input',
-                    placeholder: 'Tipo de Documento',
+                    label: 'Actividad Económica',
+                    type: 'textarea',
+                    placeholder: 'Actividad Económica',
                 },
                 {key: 'is_active', label: 'Activo', type: 'checkbox'},
             ];
@@ -57,9 +57,9 @@ export default {
             this.loading = true;
             try {
                 if (this.isEditing) {
-                    await ProviderDocumentTypeService.update(this.providerDocumentType);
+                    await EconomicActivityService.update(this.entity);
                 } else {
-                    await ProviderDocumentTypeService.store(this.providerDocumentType);
+                    await EconomicActivityService.store(this.entity);
                 }
                 window.location.reload();
             } catch (error) {
@@ -73,7 +73,7 @@ export default {
             let isValid = true;
             Object.keys(this.form).forEach((key) => {
                 if (this.form[key].isRequired) {
-                    this.form[key].validationSuccess = !!this.providerDocumentType[key];
+                    this.form[key].validationSuccess = !!this.entity[key];
                     if (!this.form[key].validationSuccess) {
                         console.log(`El campo ${key} no es válido.`);
                         isValid = false;
@@ -87,7 +87,7 @@ export default {
             if (this.loading) return;
             this.loading = true;
             try {
-                await ProviderDocumentTypeService.destroy(this.providerDocumentType.id);
+                await EconomicActivityService.destroy(this.entity.id);
                 window.location.reload();
             } catch (error) {
                 console.error('Error al eliminar el almacén:', error);
@@ -104,12 +104,12 @@ export default {
         },
         async editModal(data) {
             this.isEditing = true;
-            this.providerDocumentType = {...data};
+            this.entity = {...data};
             KTModal.getInstance(document.querySelector("#modal_store")).show();
         },
 
         resetModal() {
-            this.providerDocumentType = {
+            this.entity = {
                 id: null,
                 code: null,
                 description: null,
@@ -119,7 +119,7 @@ export default {
         initDataTable() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
-                apiEndpoint: ProviderDocumentTypeService.getUrl(),
+                apiEndpoint: EconomicActivityService.getUrl(),
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
@@ -146,7 +146,7 @@ export default {
             new KTDataTable(tableElement, options);
         },
         deleteRow(id) {
-            this.providerDocumentType.id = id;
+            this.entity.id = id;
             KTModal.getInstance(document.querySelector("#modal-question")).show();
         },
     },
