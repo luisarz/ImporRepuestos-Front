@@ -3,43 +3,70 @@
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
-          Categorias
+          Administración  <span class="badge badge-info">
+
+ {{ moduleName }}
+        </span>
         </h1>
         <label class="switch switch-sm">
-          <button class="btn btn-primary" data-modal-toggle="#modal_store">
+          <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
             <i class="ki-filled ki-plus-squared"></i>
-            Agregar Categoria
+            {{ loading ? 'Preparando datos...' : 'Crear ' }}{{ moduleName }}
+
           </button>
         </label>
       </div>
       <div class="card-body">
         <div>
           <div class="scrollable-x-auto">
-            <table id="#table_category" class="table table-auto table-border" data-datatable-table="true">
+            <table id="#table_modulo" class="table table-hover table-border" data-datatable-table="true">
               <thead>
               <tr>
-                <th class="w-[100px] text-center" data-datatable-column="status">
+                <th class="w-[160px] text-center" data-datatable-column="status">
                                         <span class="sort">
                                             <span class="sort-label">
-                                                Codigo
+                                                Código
                                             </span>
                                             <span class="sort-icon">
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[250px]" data-datatable-column="ipAddress">
+                <th class="min-w-[160px]" data-datatable-column="ipAddress">
                                         <span class="sort">
                                             <span class="sort-label">
-                                                Descripcion
+                                                Descripción
                                             </span>
                                             <span class="sort-icon">
                                             </span>
                                         </span>
                 </th>
+                <th class="min-w-[160px]" data-datatable-column="ipAddress">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                            Categoria Padre
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                </th>
+                <th class="min-w-[160px]" data-datatable-column="ipAddress">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                               Comisión
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                </th>
+
+
+
                 <th class="w-[60px]">
                 </th>
                 <th class="w-[60px]">
                 </th>
+
+
               </tr>
               </thead>
               <tbody>
@@ -63,251 +90,75 @@
       </div>
     </div>
   </div>
-  <GeneralModal id="modal_store" title="Agregar Categoria">
+  <general-modal id="modal_store" :title="modalTitle">
     <template #body>
-      <input type="hidden" name="idcategory" v-model="category.id">
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Codigo
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   :class="{ 'border-danger': !form.description.validationSuccess }" name="codigo"
-                   v-model="category.code" placeholder="Codigo de la Categoria" type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.code.validationSuccess">
-                            * Campo Obligatorio
-                        </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Desccripcion
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   :class="{ 'border-danger': !form.description.validationSuccess }" name="description"
-                   v-model="category.description" placeholder="Descripcion de la Categoria" type="text"
-                   value=""/>
-            <span class="form-hint text-danger" v-if="!form.description.validationSuccess">
-                            * Campo Obligatorio
-                        </span>
-          </div>
-        </div>
-      </div>
-    </template>
-    <template #footer>
-      <button class="btn btn-light" data-modal-dismiss="true">
-        Cancel
-      </button>
-      <button class="btn btn-primary" @click="storeCategory()">
-        Guardar
-      </button>
-    </template>
-  </GeneralModal>
+      <input type="hidden" name="id" v-model="entity.id"/>
+      <div class="card">
+        <!--        <div class="card-header">{{ modalHeader }}</div>-->
+        <div class="card-body">
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Campos del formulario -->
+            <div class="w-full" v-for="field in formFields" :key="field.key">
+              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label max-w-32">{{ field.label }}</label>
+                <div class="flex flex-col w-full gap-1">
+                  <input
+                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'textarea'"
+                      class="input"
+                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
+                      :type="field.type"
+                      @change="validationForm"
+                      v-model="entity[field.key]"
+                      :placeholder="field.placeholder"
+                  />
+                  <textarea
+                      v-if="field.type === 'textarea'"
+                      class="textarea"
+                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
+                      v-model="entity[field.key]"
+                      @change="validationForm"
+                      :placeholder="field.placeholder"
+                  ></textarea>
 
-  <GeneralModal id="modal_edit" title="Editar Categoria">
-    <template #body>
-      <input type="hidden" name="idcategory" v-model="category.id">
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Codigo
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   :class="{ 'border-danger': !form.code.validationSuccess }" name="codigo"
-                   v-model="category.code" placeholder="Codigo de la Categoria" type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.code.validationSuccess">
-                            * Campo Obligatorio
-                        </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Desccripcion
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm"
-                   :class="{ 'border-danger': !form.description.validationSuccess }" name="description"
-                   v-model="category.description" placeholder="Descripcion de la Categoria" type="text"
-                   value=""/>
-            <span class="form-hint text-danger" v-if="!form.description.validationSuccess">
-                            * Campo Obligatorio
-                        </span>
+                  <select
+                      v-else-if="field.type === 'select'"
+                      class="select"
+                      data-control="select2"
+                      @change="validationForm"
+                      v-model="entity[field.key]"
+                  >
+                    <option v-for="option in field.options" :key="option.value" :value="option.value">
+                      {{ option.text }}
+                    </option>
+                  </select>
+                  <label v-else-if="field.type === 'checkbox'" class="switch">
+                    <input type="checkbox" v-model="entity[field.key]" :true-value="1" :false-value="0" :checked="entity[field.key] == 1"/>
+                  </label>
+                  <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
+                    * Campo Obligatorio
+                  </span>
+                </div>
+              </div>
+              <br/>
+            </div><!--          /Campos-->
           </div>
         </div>
       </div>
     </template>
     <template #footer>
-      <button class="btn btn-light" data-modal-dismiss="true">
-        Cancel
-      </button>
-      <button class="btn btn-primary" @click="updateCategory()">
-        Guardar
+      <button class="btn btn-light" data-modal-dismiss="true">Cancelar</button>
+      <button class="btn btn-primary" @click="save" :disabled="loading">
+        {{ isEditing ? `Modificar ${moduleName}` :`Crear ${moduleName}` }}
       </button>
     </template>
-  </GeneralModal>
+  </general-modal>
   <QuestionModal title="title" id="modal-question">
     <template #footer>
+
       <button class="btn btn-danger" @click="destroy()">
         Eliminar
       </button>
     </template>
   </QuestionModal>
 </template>
-
-<script>
-import {ref, nextTick, onMounted} from 'vue';
-import {KTDataTable, KTModal} from './../../metronic/core/index';
-import categoryService from '@/services/categoryService';
-import GeneralModal from '@/components/GeneralModal.vue';
-import QuestionModal from '../../components/QuestionModal.vue';
-
-export default {
-  components: {GeneralModal, QuestionModal},
-  data() {
-    return {
-      loading: false,
-      category: {
-        id: 0,
-        code: '',
-        description: '',
-        commission_percentage: 0,
-        is_active: 1
-      },
-      form: {
-        code: {
-          isrequired: true,
-          validationSuccess: true,
-        },
-        description: {
-          isrequired: true,
-          validationSuccess: true,
-        }
-      }
-    };
-  },
-  methods: {
-    async storeCategory() {
-      try {
-        if (!this.validationForm()) return;
-        if (this.loading) return;
-        this.loading = true;
-        await categoryService.store(this.category)
-        this.loading = false;
-        window.location.reload()
-
-      } catch (error) {
-
-      }
-    },
-    async updateCategory() {
-      try {
-        if (!this.validationForm()) return;
-        if (this.loading) return;
-        this.loading = true;
-        await categoryService.update(this.category)
-        this.loading = false;
-        window.location.reload()
-
-      } catch (error) {
-
-      }
-    },
-    validationForm() {
-      // Validar cada campo por separado y guardar el estado de validación
-      this.form.code.validationSuccess = this.category.code.trim() !== '';
-      this.form.description.validationSuccess = this.category.description.trim() !== '';
-
-      // Retornar `true` solo si ambos campos son válidos
-      return this.form.code.validationSuccess && this.form.description.validationSuccess;
-    },
-    async destroy() {
-      if (this.loading) return;
-      this.loading = true;
-      await categoryService.destroy(this.category.id);
-      this.loading = false;
-      window.location.reload();
-    },
-    deleteRow(id) {
-      const modalElement = document.querySelector("#modal-question");
-      const modal = KTModal.getInstance(modalElement);
-      modal.show();
-      this.category.id = id;
-    },
-    editRow(data) {
-      const modalElement = document.querySelector("#modal_edit");
-      const modal = KTModal.getInstance(modalElement);
-      modal.show();
-      this.category.id = data.id
-      this.category.code = data.code
-      this.category.description = data.description
-      this.category.commission_percentage = data.commission_percentage
-    },
-    async initDataTable() {
-      const tableElement = document.querySelector("#kt_remote_table");
-      const options = {
-        apiEndpoint: categoryService.getUrl(),
-        requestHeaders: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        columns: {
-          code: {
-            title: 'Codigo'
-          },
-          description: {
-            title: 'Descripcion',
-          },
-          edit: {
-            render: () => `<button class="btn btn-outline btn-info">
-<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
-            createdCell(cell, cellData, rowData) {
-              // Agregar evento de clic
-              cell.addEventListener('click', function () {
-                editRow(rowData)
-              });
-            },
-          },
-          delete: {
-            render: () => `<button class="btn btn-outline btn-danger"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
-            createdCell(cell, cellData, rowData) {
-              // Agregar evento de clic
-              cell.addEventListener('click', function () {
-                console.log(rowData.id)
-                deleteRow(rowData.id)
-              });
-            },
-          }
-        },
-        layout: {
-          scroll: false,
-        },
-        sortable: true,
-      };
-      new KTDataTable(tableElement, options);
-    }
-  },
-  async mounted() {
-    window.editRow = this.editRow.bind(this);
-    window.deleteRow = this.deleteRow.bind(this);
-    this.$nextTick(() => {
-      this.initDataTable();
-
-    });
-  },
-};
-
-onMounted(async () => { // Cargamos las categorías al montar el componente
-  nextTick(() => {
-    KTDataTable.init();
-    KTModal.init();
-  });
-});
-</script>
+<script src="./index.js"></script>

@@ -1,9 +1,9 @@
 import {ref, onMounted, nextTick} from 'vue';
-import {KTDataTable, KTModal} from './../../../metronic/core/index';
+import {KTDataTable, KTModal} from './../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
-import QuestionModal from '../../../components/QuestionModal.vue';
+import QuestionModal from '@/components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
-import RolService from '@/services/setting/rolService.js';
+import CategoryService from '@/services/categoryService.js';
 
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
@@ -11,16 +11,21 @@ export default {
         return {
             loading: false,
             isEditing: false,
-            permissions: [],
-
+            categories: [],
             entity: {
                 id: 0,
-                name: '',
-                guard_name: '',
+                code: '',
+                description: '',
+                commission_percentage: 0,
+                category_parent_id: 0,
+                is_active: 0,
             },
             form: {
-                name: {isRequired: true, validationSuccess: true},
-                guard_name: {isRequired: true, validationSuccess: true},
+                code: {isRequired: true, validationSuccess: true},
+                description: {isRequired: true, validationSuccess: true},
+                commission_percentage: {isRequired: true, validationSuccess: true},
+                category_parent_id: {isRequired: false, validationSuccess: true},
+                is_active: {isRequired: false, validationSuccess: true},
             },
         };
     },
@@ -29,26 +34,29 @@ export default {
             return this.isEditing ? `Modificar -${this.moduleName}` : `Crear - ${this.moduleName}`;
         },
         moduleName() {
-            return 'Roles';
+            return 'Categorías';
         },
 
         formFields() {
             return [
+                {key: 'code', label: 'Código', type: 'input', placeholder: 'Código de la categoría'},
+                {key: 'description', label: 'Descripción', type: 'input', placeholder: 'Descripción de la categoría'},
                 {
-                    key: 'name',
-                    label: 'Rol',
-                    type: 'input',
-                    placeholder: 'Rol de usuario',
+                    key: 'commission_percentage',
+                    label: 'Porcentaje de Comisión',
+                    type: 'number',
+                    placeholder: 'Porcentaje de Comisión'
                 },
                 {
-                    key: 'guard_name',
-                    label: 'Acceso',
+                    key: 'category_parent_id',
+                    label: 'Categoría Padre',
                     type: 'select',
-                    placeholder: 'Acceso',
-                    options: [
-                        {value: 'Api', text: 'API'},
-                    ],
+                    placeholder: 'Categoría Padre',
+                    options: this.categories.map(c => ({value: c.id, text: c.description}))
+
                 },
+                {key: 'is_active', label: 'Activo', type: 'checkbox', placeholder: 'Activo'}
+
 
             ];
         },
@@ -60,9 +68,9 @@ export default {
             this.loading = true;
             try {
                 if (this.isEditing) {
-                    await RolService.update(this.entity);
+                    await CategoryService.update(this.entity);
                 } else {
-                    await RolService.store(this.entity);
+                    await CategoryService.store(this.entity);
                 }
                 window.location.reload();
             } catch (error) {
@@ -71,7 +79,18 @@ export default {
                 this.loading = false;
             }
         },
+        async loadOptions() {
+            try {
+                const [categories] = await Promise.all([
+                    CategoryService.get(),
+                ]);
+                this.categories = categories.data.data || [];
 
+            } catch (error) {
+                console.error('Error al cargar las opciones:', error);
+                this.categories = [];
+            }
+        },
         validationForm() {
             let isValid = true;
             Object.keys(this.form).forEach((key) => {
@@ -90,7 +109,7 @@ export default {
             if (this.loading) return;
             this.loading = true;
             try {
-                await RolService.destroy(this.entity.id);
+                await CategoryService.destroy(this.entity.id);
                 window.location.reload();
             } catch (error) {
                 console.error('Error al eliminar el almacén:', error);
@@ -102,13 +121,15 @@ export default {
             this.loading = true;
             this.isEditing = false;
             this.resetModal();
-            // this.permissions = await  RolService.getPermission();
+            await this.loadOptions();
             KTModal.getInstance(document.querySelector("#modal_store")).show();
             this.loading = false;
         },
         async editModal(data) {
             this.isEditing = true;
             this.entity = {...data};
+            await this.loadOptions();
+
             KTModal.getInstance(document.querySelector("#modal_store")).show();
         },
 
@@ -122,20 +143,26 @@ export default {
         initDataTable() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
-                apiEndpoint: RolService.getUrl(),
+                apiEndpoint: CategoryService.getUrl(),
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
                 columns: {
-                    name: {title: 'Rol'},
-                    guard_name: {title: 'guard_name'},
-                    permission: {
-                        render: () => `<button class="btn btn-outline btn-success">
-<i class="ki-outline ki-key text-lg text-primary cursor: pointer" ></i></button>`,
-                        createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.editModal(rowData));
-                        },
+                    code: {title: 'Código'},
+                    description: {title: 'description'},
+                    category_parent_id: {
+                        title: 'Categoría Padre',
+                        render: function (data, type, row) {
+                            return type.category_parent?.description ?? '';
+                        }
                     },
+                    commission_percentage: {
+                        title: 'Porcentaje de Comisión',
+                        render: function (data, type, row) {
+                            return data + '%';
+                        }
+                    },
+
                     edit: {
                         render: () => `<button class="btn btn-outline btn-info">
 <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,

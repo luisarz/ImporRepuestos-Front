@@ -46,6 +46,8 @@
                 </th>
                 <th class="w-[60px]">
                 </th>
+                <th class="w-[60px]">
+                </th>
 
 
               </tr>
