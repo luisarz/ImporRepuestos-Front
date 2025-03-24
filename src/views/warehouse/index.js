@@ -142,7 +142,7 @@ export default {
             this.resetWarehouse();
             await this.loadOptions();
             KTModal.getInstance(document.querySelector("#modal_store")).show();
-            // this.loading = false;
+            this.loading = false;
         },
         async editModal(data) {
             this.isEditing = true;
@@ -209,13 +209,13 @@ export default {
                     nit: {title: 'NIT'},
                     phone: {title: 'Teléfono'},
                     edit: {
-                        render: () => `<i class="ki-outline ki-notepad-edit text-lg text-primary"></i>`,
+                        render: () => `<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.editModal(rowData));
                         },
                     },
                     delete: {
-                        render: () => `<i class="ki-outline ki-trash text-lg text-danger"></i>`,
+                        render: () => `<i class="ki-outline ki-trash text-lg text-danger text-center"></i>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.deleteRow(rowData.id));
                         },

@@ -3,7 +3,7 @@
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
-          Administración de Sucursales
+          Administración de Cargos laborales
         </h1>
         <label class="switch switch-sm">
           <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
@@ -22,7 +22,7 @@
                 <th class="w-[160px] text-center" data-datatable-column="status">
                                         <span class="sort">
                                             <span class="sort-label">
-                                                Tipo
+                                                Código
                                             </span>
                                             <span class="sort-icon">
                                             </span>
@@ -31,39 +31,13 @@
                 <th class="min-w-[60px]" data-datatable-column="ipAddress">
                                         <span class="sort">
                                             <span class="sort-label">
-                                                Nombre
+                                                Descripción
                                             </span>
                                             <span class="sort-icon">
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
-                                        <span class="sort">
-                                            <span class="sort-label">
-                                                NRC
-                                            </span>
-                                            <span class="sort-icon">
-                                            </span>
-                                        </span>
-                </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
-                                        <span class="sort">
-                                            <span class="sort-label">
-                                                Distrito
-                                            </span>
-                                            <span class="sort-icon">
-                                            </span>
-                                        </span>
-                </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
-                                        <span class="sort">
-                                            <span class="sort-label">
-                                                Teléfono
-                                            </span>
-                                            <span class="sort-icon">
-                                            </span>
-                                        </span>
-                </th>
+
 
                 <th colspan="2" class="w-[60px] text-center">
                   Acciones
@@ -95,7 +69,7 @@
   </div>
   <LongModal id="modal_store" :title="modalTitle">
     <template #body>
-      <input type="hidden" name="id" v-model="warehouse.id"/>
+      <input type="hidden" name="id" v-model="jobTitle.id"/>
       <div class="card">
         <div class="card-header">{{ modalHeader }}</div>
         <div class="card-body">
@@ -110,21 +84,21 @@
                       class="input"
                       :class="{ 'border-danger': !form[field.key].validationSuccess }"
                       :type="field.type"
-                      v-model="warehouse[field.key]"
+                      v-model="jobTitle[field.key]"
                       :placeholder="field.placeholder"
                   />
                   <select
                       v-else-if="field.type === 'select'"
                       class="select"
                       data-control="select2"
-                      v-model="warehouse[field.key]"
+                      v-model="jobTitle[field.key]"
                   >
                     <option v-for="option in field.options" :key="option.value" :value="option.value">
                       {{ option.text }}
                     </option>
                   </select>
                   <label v-else-if="field.type === 'checkbox'" class="switch">
-                    <input type="checkbox" v-model="warehouse[field.key]" :true-value="1" :false-value="0"/>
+                    <input type="checkbox" v-model="jobTitle[field.key]" :true-value="1" :false-value="0"/>
                   </label>
                   <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
                     * Campo Obligatorio
@@ -139,16 +113,14 @@
     </template>
     <template #footer>
       <button class="btn btn-light" data-modal-dismiss="true">Cancelar</button>
-      <button class="btn btn-primary" @click="saveWarehouse" :disabled="loading">
-        {{ isEditing ? 'Modificar Sucursal' : 'Aperturar Sucursal' }}
+      <button class="btn btn-primary" @click="save" :disabled="loading">
+        {{ isEditing ? 'Modificar Cargo' : 'Crear Cargo' }}
       </button>
     </template>
   </LongModal>
   <QuestionModal title="title" id="modal-question">
     <template #footer>
-      <div v-if="loading" class="preloader">
-        <div class="spinner"></div>
-      </div>
+
       <button class="btn btn-danger" @click="destroy()">
         Eliminar
       </button>

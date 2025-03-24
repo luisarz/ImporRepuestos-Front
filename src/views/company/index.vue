@@ -453,7 +453,7 @@ export default {
 
 
           edit: {
-            render: (item) => `<i class="ki-outline ki-notepad-edit"> </i>`,
+            render: () => `<i class="ki-outline ki-notepad-edit text-lg text-primary"></i>`,
             createdCell(cell, cellData, rowData) {
               cell.addEventListener('click', function () {
                 editRow(rowData);

@@ -7,6 +7,7 @@ import NotFound from '../views/layouts/404.vue';
 import Module from '../views/module/index.vue';
 import Company from '../views/company/index.vue';
 import Warehouse from "@/views/warehouse/index.vue";
+import JobTitle from "@/views/jobtitle/index.vue";
 
 const routes = [
     {
@@ -37,7 +38,12 @@ const routes = [
                 path: '/warehouse',
                 component: Warehouse,
                 meta: {requiresAuth: true}
-            }
+            },
+            {
+                path:'/jobtitles',
+                component: JobTitle,
+                meta: {requiresAuth: true}
+            },
         ]
     },
     {path: '/sign-in', name: 'sign-in', component: SignIn},

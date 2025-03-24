@@ -1,10 +1,13 @@
-
-import {ref, nextTick, onMounted} from 'vue';
+import {nextTick, onMounted} from 'vue';
 import {KTDataTable, KTModal} from './../../metronic/core/index';
 import moduleService from '@/services/moduleService';
+import ModuleService from '@/services/moduleService';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '../../components/QuestionModal.vue';
-import ModuleService from "@/services/moduleService";
+import StablishmentTypeService from "@/services/stablishmentTypeService.js";
+import DistricService from "@/services/districService.js";
+import EconomicActivityService from "@/services/economicActivityService.js";
+import CompanyService from "@/services/companyService.js";
 
 
 export default {
@@ -24,7 +27,7 @@ export default {
                 target: 0,
                 is_active: 0,
             },
-            modulos:[],
+            modules:[],
             form: Object.fromEntries(
                 Object.keys({
                     id: 0,
@@ -43,9 +46,20 @@ export default {
 
     },
     methods: {
-        openStoreModal() {
+       async loadModules() {
+           try {
+              const modules_response = await moduleService.get();
+               this.modules = modules_response.data.data || [];
+               // console.log(this.modules.data.data);
+           } catch (error) {
+               console.error('Error al cargar las opciones:', error);
+               this.modules = [];
+           }
+        },
+        async openStoreModal() {
             const modalElement = document.querySelector("#modal_store");
             const modal = KTModal.getInstance(modalElement);
+            await this.loadModules();
             modal.show();
         },
         async storeModulo() {
