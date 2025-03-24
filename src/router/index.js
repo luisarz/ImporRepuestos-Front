@@ -8,6 +8,8 @@ import Module from '../views/module/index.vue';
 import Company from '../views/company/index.vue';
 import Warehouse from "@/views/warehouse/index.vue";
 import JobTitle from "@/views/jobtitle/index.vue";
+import Brand from "@/views/brand/index.vue";
+import UnitMeasurement from "@/views/catalogs/unit_measurements/index.vue";
 
 const routes = [
     {
@@ -40,10 +42,20 @@ const routes = [
                 meta: {requiresAuth: true}
             },
             {
-                path:'/jobtitles',
+                path: '/jobtitles',
                 component: JobTitle,
                 meta: {requiresAuth: true}
             },
+            {
+                path: '/brands',
+                component: Brand,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/unit-measurements',
+                component: UnitMeasurement,
+                meta: {requiresAuth: true}
+            }
         ]
     },
     {path: '/sign-in', name: 'sign-in', component: SignIn},
