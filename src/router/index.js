@@ -14,7 +14,8 @@ import DestinationEnviroment from "@/views/catalogs/destinationEnviroment/index.
 import ProviderType from "@/views/providers/provider_types/index.vue";
 import ProviderDocumentType from "@/views/providers/document_types/index.vue";
 import EconomicActivity from "@/views/catalogs/economicActivity/index.vue";
-import RolService from "@/views/setting/rol/index.vue";
+import Rol from "@/views/setting/rol/index.vue";
+import Country from "@/views/catalogs/countries/index.vue";
 const routes = [
     {
         path: '/',
@@ -82,7 +83,11 @@ const routes = [
             },
             {
                 path: '/rols',
-                component: RolService,
+                component: Rol,
+                meta: {requiresAuth: true}
+            }, {
+                path: '/countries',
+                component: Country,
                 meta: {requiresAuth: true}
             }
         ]

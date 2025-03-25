@@ -31,7 +31,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[160px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="ipAddress">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Descripción
@@ -40,25 +40,6 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[160px]" data-datatable-column="ipAddress">
-                                        <span class="sort">
-                                            <span class="sort-label">
-                                            Categoria Padre
-                                            </span>
-                                            <span class="sort-icon">
-                                            </span>
-                                        </span>
-                </th>
-                <th class="min-w-[160px]" data-datatable-column="ipAddress">
-                                        <span class="sort">
-                                            <span class="sort-label">
-                                               Comisión
-                                            </span>
-                                            <span class="sort-icon">
-                                            </span>
-                                        </span>
-                </th>
-
 
 
                 <th class="w-[60px]">
@@ -103,16 +84,7 @@
                 <label class="form-label max-w-32">{{ field.label }}</label>
                 <div class="flex flex-col w-full gap-1">
                   <input
-                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'textarea'  && field.type !== 'number'"
-                      class="input"
-                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
-                      :type="field.type"
-                      @change="validationForm"
-                      v-model="entity[field.key]"
-                      :placeholder="field.placeholder"
-                  />
-                  <input
-                      v-if="field.type === 'number'"
+                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'textarea'"
                       class="input"
                       :class="{ 'border-danger': !form[field.key].validationSuccess }"
                       :type="field.type"
@@ -136,7 +108,6 @@
                       @change="validationForm"
                       v-model="entity[field.key]"
                   >
-                    <option value="">Es padre </option>
                     <option v-for="option in field.options" :key="option.value" :value="option.value">
                       {{ option.text }}
                     </option>
