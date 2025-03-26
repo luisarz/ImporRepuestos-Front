@@ -58,7 +58,15 @@ export default {
         moduleName() {
             return ' Proveedores';
         },
-
+        formattedDate: {
+            get() {
+                const date = this.entity.last_purchase; // Ajusta la clave si es diferente
+                return date ? new Date(date).toISOString().split('T')[0] : '';
+            },
+            set(value) {
+                this.entity.last_purchase = value; // Devuelve el formato correcto
+            }
+        },
 
         formFields() {
             return [
@@ -113,6 +121,7 @@ export default {
             this.loading = true;
             try {
                 if (this.isEditing) {
+                    console.log(this.entity);
                     await ProviderService.update(this.entity);
                 } else {
                     await ProviderService.store(this.entity);
@@ -183,6 +192,7 @@ export default {
         async editModal(data) {
             this.isEditing = true;
             this.entity = {...data};
+            console.log(this.entity);
             await this.loadOptions();
 
             KTModal.getInstance(document.querySelector("#modal_store")).show();
@@ -201,7 +211,7 @@ export default {
                 credit_days: 0,
                 credit_limit: 0,
                 debit_balance: 0,
-                last_purchase: 0,
+                last_purchase: null,
                 decimal_purchase: 0,
                 is_active: 0,
             };

@@ -17,6 +17,7 @@ import EconomicActivity from "@/views/catalogs/economicActivity/index.vue";
 import Rol from "@/views/setting/rol/index.vue";
 import Country from "@/views/catalogs/countries/index.vue";
 import Provider from "@/views/providers/provider/index.vue"
+import Products from "@/views/products/index.vue";
 const routes = [
     {
         path: '/',
@@ -95,6 +96,10 @@ const routes = [
             {
                 path: '/providers',
                 component: Provider,
+                meta: {requiresAuth: true}
+            }, {
+                path: '/products',
+                component: Products,
                 meta: {requiresAuth: true}
             }
         ]

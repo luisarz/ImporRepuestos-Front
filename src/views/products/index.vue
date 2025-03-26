@@ -83,14 +83,14 @@
       <div class="card">
         <!--        <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-2">
             <!-- Campos del formulario -->
             <div class="w-full" v-for="field in formFields" :key="field.key">
               <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
                 <label class="form-label max-w-32">{{ field.label }}</label>
                 <div class="flex flex-col w-full gap-1">
                   <input
-                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date'"
+                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date' && field.type !== 'file'"
                       class="input"
                       :class="{ 'border-danger': !form[field.key].validationSuccess }"
                       :type="field.type"
@@ -98,8 +98,8 @@
                       :placeholder="field.placeholder"
                   />
                   <input
-                      v-else-if="field.type === 'date' "
-                      class="input"
+                      v-else-if="field.type === 'file' "
+                      class="file"
                       :class="{ 'border-danger': !form[field.key].validationSuccess }"
                       :type="field.type"
                       v-model="formattedDate"

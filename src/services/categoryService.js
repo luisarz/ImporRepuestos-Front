@@ -5,7 +5,7 @@ const categoryService = {
       try {
         const response = await configApi.get(`/v1/categories`);
         console.log(response.data)
-        return response.data;
+        return response.data.data;
       } catch (error) {
         console.log(error)
         throw new Error('Error al Obtener las Categorias');

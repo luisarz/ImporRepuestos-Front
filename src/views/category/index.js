@@ -85,7 +85,7 @@ export default {
                 const [categories] = await Promise.all([
                     CategoryService.get(),
                 ]);
-                this.categories = categories.data.data || [];
+                this.categories = categories.data || [];
 
             } catch (error) {
                 console.error('Error al cargar las opciones:', error);
