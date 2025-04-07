@@ -18,6 +18,8 @@ import Rol from "@/views/setting/rol/index.vue";
 import Country from "@/views/catalogs/countries/index.vue";
 import Provider from "@/views/providers/provider/index.vue"
 import Products from "@/views/products/index.vue";
+import PlateType from "@/views/parque_vehicular/plate_types/index.vue";
+import VehicleModel from "@/views//parque_vehicular/vehicles_models/index.vue";
 const routes = [
     {
         path: '/',
@@ -97,10 +99,20 @@ const routes = [
                 path: '/providers',
                 component: Provider,
                 meta: {requiresAuth: true}
-            }, {
+            },
+            {
                 path: '/products',
                 component: Products,
                 meta: {requiresAuth: true}
+            },{
+            path: 'plate-types',
+                component: PlateType,
+                meta: {requiresAuth: true}
+            },{
+                path: 'vehicle-models',
+                component: VehicleModel,
+                meta: {requiresAuth: true}
+
             }
         ]
     },

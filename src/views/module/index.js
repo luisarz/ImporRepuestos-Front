@@ -158,7 +158,8 @@ export default {
                         title: 'Orden',
                     },
                     edit: {
-                        render: (item) => `<i class="ki-outline ki-notepad-edit"> </i>`,
+                        render: () => `<button class="btn btn-outline btn-info">
+<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
                         createdCell(cell, cellData, rowData) {
                             cell.addEventListener('click', function () {
                                 editRow(rowData)
@@ -166,7 +167,8 @@ export default {
                         },
                     },
                     delete: {
-                        render: (item) => `<a onclick="destroy(1)"><i class="ki-outline ki-trash" ></i></a>`,
+                        render: () => `<button class="btn btn-outline btn-danger"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+
                         createdCell(cell, cellData, rowData) {
                             // Agregar evento de clic
                             cell.addEventListener('click', function () {

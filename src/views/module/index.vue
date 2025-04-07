@@ -94,138 +94,144 @@
     <template #body>
       <input type="hidden" name="idmodulo" v-model="modulo.id">
       <div class="card">
-        <div class="card-header">
-          Aperturar Nueva Sucursal
-        </div>
-        <div class="card-body"></div>
-      </div>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Módulo
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.nombre.validationSuccess }"
-                   name="nombre" v-model="modulo.nombre" placeholder="Nombre del modulo" type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.nombre.validationSuccess"> * Campo Obligatorio</span>
-          </div>
-        </div>
-      </div>
-      <br>
 
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Ruta
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.ruta.validationSuccess }"
-                   name="ruta" v-model="modulo.ruta"
-                   placeholder="Ruta del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.ruta.validationSuccess"> * Campo Obligatorio </span>
+        <div class="card-body">
+          <div class="grid grid-cols-1 gap-2">
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Módulo
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <input class="input" @change="validationForm"
+                       :class="{ 'border-danger': !form.nombre.validationSuccess }"
+                       name="nombre" v-model="modulo.nombre" placeholder="Nombre del modulo" type="text" value=""/>
+                <span class="form-hint text-danger" v-if="!form.nombre.validationSuccess"> * Campo Obligatorio</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Es menú principal
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <label class="switch">
-              <input name="is_padre" type="checkbox" v-model="modulo.is_padre" :true-value="1" :false-value="0"/>
-            </label>
 
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full" v-if="modulo.is_padre === 0">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Menú principal
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <select class="select" @change="validationForm"
-                    :class="{ 'border-danger': !form.id_padre.validationSuccess }"
-                    name="id_padre" v-model="modulo.id_padre">
-              <option v-for="module in modules" :value="module.id">{{ module.nombre }}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Orden
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.orden.validationSuccess }"
-                   name="orden" v-model="modulo.orden"
-                   placeholder="Ruta del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Icono
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <input class="input" @change="validationForm" :class="{ 'border-danger': !form.icono.validationSuccess }"
-                   name="icono" v-model="modulo.icono"
-                   placeholder="Ruta del menu " type="text" value=""/>
-            <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Menu minimizado
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <label class="switch">
-              <input name="is_minimazed" type="checkbox" v-model="modulo.is_minimazed" :true-value="1"
-                     :false-value="0"/>
-            </label>
 
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Ruta
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <input class="input" @change="validationForm" :class="{ 'border-danger': !form.ruta.validationSuccess }"
+                       name="ruta" v-model="modulo.ruta"
+                       placeholder="Ruta del menu " type="text" value=""/>
+                <span class="form-hint text-danger" v-if="!form.ruta.validationSuccess"> * Campo Obligatorio </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Ventana Nueva
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <label class="switch">
-              <input name="target" type="checkbox" v-model="modulo.target" :true-value="1" :false-value="0"/>
-            </label>
 
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="w-full">
-        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-          <label class="form-label max-w-32">
-            Activo
-          </label>
-          <div class="flex flex-col w-full gap-1">
-            <label class="switch">
-              <input name="is_active" type="checkbox" v-model="modulo.is_active" :true-value="1" :false-value="0"/>
-            </label>
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Es menú principal
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <label class="switch">
+                  <input name="is_padre" type="checkbox" v-model="modulo.is_padre" :true-value="1" :false-value="0"/>
+                </label>
 
+              </div>
+            </div>
+          </div>
+
+
+          <div class="w-full" v-if="modulo.is_padre === 0">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Menú principal
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <select class="select" @change="validationForm"
+                        :class="{ 'border-danger': !form.id_padre.validationSuccess }"
+                        name="id_padre" v-model="modulo.id_padre">
+                  <option v-for="module in modules" :value="module.id">{{ module.nombre }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Orden
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <input class="input" @change="validationForm"
+                       :class="{ 'border-danger': !form.orden.validationSuccess }"
+                       name="orden" v-model="modulo.orden"
+                       placeholder="Ruta del menu " type="text" value=""/>
+                <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Icono
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <input class="input" @change="validationForm"
+                       :class="{ 'border-danger': !form.icono.validationSuccess }"
+                       name="icono" v-model="modulo.icono"
+                       placeholder="Ruta del menu " type="text" value=""/>
+                <span class="form-hint text-danger" v-if="!form.icono.validationSuccess"> * Campo Obligatorio </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Menu minimizado
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <label class="switch">
+                  <input name="is_minimazed" type="checkbox" v-model="modulo.is_minimazed" :true-value="1"
+                         :false-value="0"/>
+                </label>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Ventana Nueva
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <label class="switch">
+                  <input name="target" type="checkbox" v-model="modulo.target" :true-value="1" :false-value="0"/>
+                </label>
+
+              </div>
+            </div>
+          </div>
+          <div class="w-full">
+            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+              <label class="form-label max-w-32">
+                Activo
+              </label>
+              <div class="flex flex-col w-full gap-1">
+                <label class="switch">
+                  <input name="is_active" type="checkbox" v-model="modulo.is_active" :true-value="1" :false-value="0"/>
+                </label>
+
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </div>
+
     </template>
     <template #footer>
       <button class="btn btn-light" data-modal-dismiss="true">

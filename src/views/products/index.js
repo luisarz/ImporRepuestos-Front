@@ -103,7 +103,7 @@ export default {
                     label: 'Marca',
                     type: 'select',
                     placeholder: 'Seleccione una marca',
-                    options: this.brands.map(b=>({id: b.id, text: b.description}))
+                    options: this.brands.map(b=>({value: b.id, text: b.description}))
                 },
                 {
                     key: 'category_id',
