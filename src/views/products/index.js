@@ -158,7 +158,7 @@ export default {
             this.loading = true;
             try {
                 if (this.isEditing) {
-                    console.log(this.entity);
+                    // console.log(this.entity);
                     await ProductsService.update(this.entity);
                 } else {
                     await ProductsService.store(this.entity);
@@ -267,19 +267,34 @@ export default {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
                 columns: {
-                    provider_type_id: {
-                        title: 'Proveedor',
-                        render: function (data, type, row) {
-                            return type?.provider_type?.description ?? 'S/N';
-                        },
+                    code: {
+                        title: 'co',
+
                     },
-                    document_type_id: {
+                    original_code: {
+                        title: 'co',
+
+                    },
+                    barcode: {
+                        title: 'co',
+
+                    },
+                    description: {
+                        title: 'co',
+
+                    },
+                    brand: {
                         title: 'Tipo Documento',
                         render: function (data, type, row) {
-                            return type?.document_type?.description ?? 'S/N';
+                            return type?.brand?.description ?? 'S/N';
                         }
                     },
-                    document_number: {title: 'N° Documento'},
+                    category: {
+                        title: 'Categoria',
+                        render: function (data, type, row) {
+                            return type?.category?.description ?? 'S/N';
+                        }
+                    },
                     comercial_name: {title: 'Nombre Comercial'},
                     edit: {
                         render: () => `<button class="btn btn-outline btn-info">

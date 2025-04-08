@@ -20,6 +20,8 @@ import Provider from "@/views/providers/provider/index.vue"
 import Products from "@/views/products/index.vue";
 import PlateType from "@/views/parque_vehicular/plate_types/index.vue";
 import VehicleModel from "@/views//parque_vehicular/vehicles_models/index.vue";
+import FuelType from "@/views/parque_vehicular/fuel_types/index.vue";
+import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 const routes = [
     {
         path: '/',
@@ -104,16 +106,31 @@ const routes = [
                 path: '/products',
                 component: Products,
                 meta: {requiresAuth: true}
-            },{
+            },
+            {
             path: 'plate-types',
                 component: PlateType,
                 meta: {requiresAuth: true}
-            },{
+            },
+            {
                 path: 'vehicle-models',
                 component: VehicleModel,
                 meta: {requiresAuth: true}
 
+            },
+            {
+                path: 'fuel-types',
+                component: FuelType,
+                meta: {requiresAuth: true}
+
+            },
+            {
+                path: 'vehicles',
+                component: Vehicles,
+                meta: {requiresAuth: true}
+
             }
+
         ]
     },
     {path: '/sign-in', name: 'sign-in', component: SignIn},

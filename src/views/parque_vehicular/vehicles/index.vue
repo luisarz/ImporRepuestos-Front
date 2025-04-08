@@ -24,43 +24,61 @@
               <tr>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Codigo</span>
+                                  <span class="sort-label"> Marca</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label">Cod. Orig</span>
+                                  <span class="sort-label">Modelo</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Cod barra</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                </th>
-                <th class="w-[260px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label"> Producto</span>
+                                  <span class="sort-label"> Año</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Categoria</span>
+                                  <span class="sort-label"> Chasis</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Medidas</span>
+                                  <span class="sort-label"> VIN</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> Motor</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> CIL</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> TM</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> COMBUS</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
 
 
-                <th class="w-[60px]">
+                <th class="w-[40px]">
                 </th>
                 <th class="w-[60px]">
                 </th>
@@ -95,7 +113,7 @@
       <div class="card">
         <!--        <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-2 gap-2">
             <!-- Campos del formulario -->
             <div class="w-full" v-for="field in formFields" :key="field.key">
               <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
@@ -110,8 +128,8 @@
                       :placeholder="field.placeholder"
                   />
                   <input
-                      v-else-if="field.type === 'file' "
-                      class="file-input"
+                      v-else-if="field.type === 'date' "
+                      class="input"
                       :class="{ 'border-danger': !form[field.key].validationSuccess }"
                       :type="field.type"
                       v-model="formattedDate"
@@ -119,7 +137,7 @@
                   />
                   <select
                       v-else-if="field.type === 'select'"
-                      class="select select2"
+                      class="select"
                       data-control="select2"
                       v-model="entity[field.key]"
                   >

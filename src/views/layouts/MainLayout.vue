@@ -4,7 +4,8 @@
       <div class="wrapper flex grow flex-col">
         <Header />
         <main class="grow content pt-5" id="content" role="content">
-          <div class="container-fixed">
+<!--          <div class="container-fixed">-->
+          <div class="container-fluid">
             <router-view></router-view>
           </div>
         </main>
