@@ -14,8 +14,7 @@ export const configApi = axios.create({
 });
 
 // Interceptor para añadir el token a cada solicitud (si existe)
-configApi.interceptors.request.use(
-  (config) => {
+configApi.interceptors.request.use((config) => {
     const token = authService.getToken(); // Obtener el token del servicio de autenticación
     if (token) {
       // Si el token existe, lo añadimos al encabezado Authorization
@@ -31,6 +30,7 @@ configApi.interceptors.request.use(
 // Interceptor para manejar respuestas y errores
 configApi.interceptors.response.use(
   (response) => {
+      console.log(response);
     return response; // Si la respuesta es exitosa, la retornamos
   },
   (error) => {

@@ -93,54 +93,83 @@
     <template #body>
       <input type="hidden" name="id" v-model="entity.id"/>
       <div class="card">
-        <!--        <div class="card-header">{{ modalHeader }}</div>-->
+<!--                <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-3 gap-2">
+
             <!-- Campos del formulario -->
-            <div class="w-full" v-for="field in formFields" :key="field.key">
-              <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
-                <label class="form-label max-w-32">{{ field.label }}</label>
-                <div class="flex flex-col w-full gap-1">
-                  <input
-                      v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date' && field.type !== 'file'"
-                      class="input"
-                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
-                      :type="field.type"
-                      v-model="entity[field.key]"
-                      :placeholder="field.placeholder"
-                  />
-                  <input
-                      v-else-if="field.type === 'file' "
-                      class="file-input"
-                      :class="{ 'border-danger': !form[field.key].validationSuccess }"
-                      :type="field.type"
-                      v-model="formattedDate"
-                      :placeholder="field.placeholder"
-                  />
-                  <select
-                      v-else-if="field.type === 'select'"
-                      class="select select2"
-                      data-control="select2"
-                      v-model="entity[field.key]"
-                  >
-                    <option v-for="option in field.options" :key="option.value" :value="option.value">
-                      {{ option.text }}
-                    </option>
-                  </select>
-                  <label v-else-if="field.type === 'checkbox'" class="switch">
-                    <input type="checkbox" v-model="entity[field.key]" :true-value="1" :false-value="0"
-                           :checked="entity[field.key] == 1"/>
-                  </label>
-                  <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
-                    * Campo Obligatorio
-                  </span>
+            <div v-for="(group, groupIndex) in formFields()" :key="groupIndex" class="mb-8 p-2 ">
+              <!-- Título del grupo -->
+              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">{{ group.group }}</h3>
+
+              <!-- Campos del grupo -->
+              <div class="space-y-1">
+                <div
+                    class="grid gap-3  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+                    :class="[ group.group === 'Configuraciones' ? 'grid-cols-4' : 'grid-cols-3',]">
+                  <div class="w-full" v-for="field in group.fields" :key="field.key">
+                    <div class="flex items-baseline flex-wrap lg:flex-nowrap">
+                      <label class="form-label max-w-32">{{ field.label }}</label>
+                      <div class="flex flex-col w-full gap-1">
+                        <!-- Input de texto/number -->
+                        <input
+                            v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date' && field.type !== 'file'"
+                            class="input"
+                            :class=" { 'border-danger': !form[field.key].validationSuccess }"
+                            @change="validationForm"
+                            :type="field.type"
+                            v-model="entity[field.key]"
+                            :placeholder="field.placeholder"
+                        />
+
+                        <!-- Input de archivo -->
+                        <input
+                            v-else-if="field.type === 'file'"
+                            class="file-input"
+                            :class="{ 'border-danger': !form[field.key].validationSuccess }"
+                            type="file"
+                            @change="validationForm"
+                        />
+
+                        <!-- Select -->
+                        <select
+                            v-else-if="field.type === 'select'"
+                            class="select select2"
+                            data-control="select2"
+                            v-model="entity[field.key]"
+                            @change="validationForm"
+                        >
+                          <option v-for="option in field.options" :key="option.value" :value="option.value">
+                            {{ option.text }}
+                          </option>
+                        </select>
+
+                        <!-- Checkbox -->
+                        <label v-else-if="field.type === 'checkbox'" class="switch">
+                          <input
+                              type="checkbox"
+                              v-model="entity[field.key]"
+                              :true-value="1"
+                              :false-value="0"
+                              :checked="entity[field.key] == 1"
+                          />
+                        </label>
+
+                        <!-- Mensaje de validación -->
+                        <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
+              * Campo Obligatorio
+            </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <br/>
-            </div><!--          /Campos-->
-          </div>
+            </div>
+
+
+
         </div>
       </div>
+
     </template>
     <template #footer>
       <button class="btn btn-light" data-modal-dismiss="true">Cancelar</button>

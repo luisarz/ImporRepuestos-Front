@@ -72,86 +72,106 @@ export default {
             }
         },
 
+
+    },
+    methods: {
         formFields() {
             return [
                 {
-                    key: 'code',
-                    label: 'Código',
-                    type: 'text',
-                    placeholder: 'Código del producto'
-                },
-                {
-                    key: 'original_code',
-                    label: 'Código Original',
-                    type: 'text',
-                    placeholder: 'Código original del producto'
-                },
-                {
-                    key: 'barcode',
-                    label: 'Código de Barras',
-                    type: 'text',
-                    placeholder: 'Código de barras del producto'
-                },
-                {
-                    key: 'description',
-                    label: 'Descripción',
-                    type: 'text',
-                    placeholder: 'Descripción del producto'
-                },
-                {
-                    key: 'brand_id',
-                    label: 'Marca',
-                    type: 'select',
-                    placeholder: 'Seleccione una marca',
-                    options: this.brands.map(b=>({value: b.id, text: b.description}))
-                },
-                {
-                    key: 'category_id',
-                    label: 'Categoría',
-                    type: 'select',
-                    placeholder: 'Seleccione una categoría',
-                    options: this.categories.map(c => ({value: c.id, text: c.description}))
-                },
-                {
-                    key: 'provider_id',
-                    label: 'Proveedor',
-                    type: 'select',
-                    placeholder: 'Seleccione un proveedor',
-                    options: this.providers.map(p => ({value: p.id, text: p.comercial_name})),
+                    group: "Información Básica",
+                    fields: [
+                        {
+                            key: 'code',
+                            label: 'Código',
+                            type: 'text',
+                            placeholder: 'Código del producto'
+                        },
+                        {
+                            key: 'original_code',
+                            label: 'Código Original',
+                            type: 'text',
+                            placeholder: 'Código original del producto'
+                        },
+                        {
+                            key: 'barcode',
+                            label: 'Código de Barras',
+                            type: 'text',
+                            placeholder: 'Código de barras del producto'
+                        },
+                        {
+                            key: 'category_id',
+                            label: 'Categoría/Grupo',
+                            type: 'select',
+                            placeholder: 'Seleccione una categoría',
+                            options: this.categories.map(c => ({value: c.id, text: c.description}))
+                        },
+                        {
+                            key: 'description',
+                            label: 'Descripción',
+                            type: 'text',
+                            placeholder: 'Descripción del producto'
+                        },
+                        {
+                            key: 'brand_id',
+                            label: 'Marca',
+                            type: 'select',
+                            placeholder: 'Seleccione una marca',
+                            options: this.brands.map(b=>({value: b.id, text: b.description}))
+                        },
 
+                        {
+                            key: 'provider_id',
+                            label: 'Proveedor',
+                            type: 'select',
+                            placeholder: 'Seleccione un proveedor',
+                            options: this.providers.map(p => ({value: p.id, text: p.comercial_name})),
+
+                        },
+                        {
+                            key: 'unit_measurement_id',
+                            label: 'Unidad de Medida',
+                            type: 'select',
+                            placeholder: 'Seleccione una unidad de medida',
+                            options: this.unitsMeasurement.map(u => ({value: u.id, text: u.description}))
+                        },
+                        {
+                            key: 'description_measurement_id',
+                            label: 'Descripción de la Medida',
+                            type: 'text',
+                            placeholder: 'Descripción de la medida'
+                        },
+                        {key: 'image', label: 'Imagen', type: 'file',  placeholder: 'Imagen del producto'},
+
+                    ],
                 },
+
                 {
-                    key: 'unit_measurement_id',
-                    label: 'Unidad de Medida',
-                    type: 'select',
-                    placeholder: 'Seleccione una unidad de medida',
-                    options: this.unitsMeasurement.map(u => ({value: u.id, text: u.description}))
+                    group: "Configuraciones",
+                    fields: [
+                        // {key: 'is_active', label: 'Activo', type: 'checkbox', placeholder: 'Producto activo'},
+                        {key: 'is_taxed', label: 'Gravado', type: 'checkbox',  placeholder: 'Producto gravado'},
+                        {
+                            key: 'is_grouped',
+                            label: 'Agrupado',
+                            type: 'checkbox',
+                            placeholder: 'Producto agrupado'
+                        },
+                        {
+                            key: 'is_service',
+                            label: 'Servicio',
+                            type: 'checkbox',
+                            placeholder: 'Producto es un servicio'
+                        },
+                    ],
                 },
-                {
-                    key: 'description_measurement_id',
-                    label: 'Descripción de la Medida',
-                    type: 'text',
-                    placeholder: 'Descripción de la medida'
-                },
-                {key: 'image', label: 'Imagen', type: 'file',  placeholder: 'Imagen del producto'},
-                {key: 'is_active', label: 'Activo', type: 'checkbox', placeholder: 'Producto activo'},
-                {key: 'is_taxed', label: 'Gravado', type: 'checkbox',  placeholder: 'Producto gravado'},
-                {
-                    key: 'is_grouped',
-                    label: 'Agrupado',
-                    type: 'checkbox',
-                    placeholder: 'Producto agrupado'
-                },
-                {
-                    key: 'is_service',
-                    label: 'Servicio',
-                    type: 'checkbox',
-                    placeholder: 'Producto es un servicio'
-                },
+
+
+
+
+
+
             ];
         },
-    },
-    methods: {
         async save() {
 
             if (!this.validationForm()) return;
