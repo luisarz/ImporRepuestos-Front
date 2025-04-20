@@ -69,7 +69,6 @@ export default {
       try {
         // Llama al servicio de login
         const response = await authService.login(this.username, this.password);
-
         // Almacena el token en el localStorage
         localStorage.setItem('auth_token', response.access_token);
 

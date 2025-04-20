@@ -4,6 +4,7 @@ import authService from './authService';
 
 // export const urlApi = 'https://impor-api.laravel.cloud/api';
 export const urlApi = 'http://127.0.0.1:8000/api';
+export const VUE_APP_STORAGE_URL = 'http://127.0.0.1:8000';
 
 export const configApi = axios.create({
   baseURL: urlApi,  // Cambia esto por la URL base de tu API
@@ -30,11 +31,14 @@ configApi.interceptors.request.use((config) => {
 // Interceptor para manejar respuestas y errores
 configApi.interceptors.response.use(
   (response) => {
-      console.log(response);
-    return response; // Si la respuesta es exitosa, la retornamos
+      // console.log(response.data.token_changed);
+      if (response.data?.token_changed) {
+          localStorage.setItem('auth_token', response.data.auth_token);
+      }
+      return response;
   },
   (error) => {
-    // Manejo de errores global
+
     if (error.response && error.response.status === 401) {
       // Si la respuesta es un error 401 (No autorizado), podemos redirigir al login
       authService.logout(); // Eliminar el token si ha expirado o es inválido

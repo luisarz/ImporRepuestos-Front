@@ -10,23 +10,27 @@ const productService = {
             throw new Error('Error al Obtener las Sucursales');
         }
     },
-    store: async (product) => {
+    store: async (formData) => {
         try {
-            const response = await configApi.post(`/v1/products`, product);
+            const response = await configApi.post(`/v1/products`, formData);
             return response.data;
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Sucursales');
         }
     },
-    update: async (product) => {
+    update: async ( formData) => {
         try {
-            // console.log(product.stablishment_type_id);
-            const response = await configApi.put(`/v1/products/${product.id}`, product);
+            const id = formData.get('id'); // ✅ así se accede
+            const response = await configApi.post(`/v1/products/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
             return response.data;
         } catch (error) {
-            console.log(error)
-            throw new Error('Error al Obtener las Sucursales');
+            console.error('Error al actualizar producto:', error.response || error);
+            throw error;
         }
     },
     getOne: async (id) => {

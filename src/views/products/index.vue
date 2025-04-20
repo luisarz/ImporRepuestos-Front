@@ -19,12 +19,12 @@
       <div class="card-body">
         <div>
           <div class="scrollable-x-auto">
-            <table id="#table_modulo" class="table table-hover table-border" data-datatable-table="true">
+            <table id="#table_modulo" class="table table-hover " data-datatable-table="true">
               <thead>
               <tr>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Codigo</span>
+                                  <span class="sort-label"> Código</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
@@ -36,25 +36,31 @@
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Cod barra</span>
+                                  <span class="sort-label"> Cod.Barra</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label">Categoría</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[260px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Producto</span>
+                                  <span class="sort-label">Descripción</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Categoria</span>
+                                  <span class="sort-label">Medida</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
                 <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
-                                  <span class="sort-label"> Medidas</span>
+                                  <span class="sort-label">Marca</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
@@ -93,80 +99,249 @@
     <template #body>
       <input type="hidden" name="id" v-model="entity.id"/>
       <div class="card">
-<!--                <div class="card-header">{{ modalHeader }}</div>-->
+        <!--                <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
+          <div class="grid grid-cols-4 gap-4">
+
 
             <!-- Campos del formulario -->
-            <div v-for="(group, groupIndex) in formFields()" :key="groupIndex" class="mb-8 p-2 ">
+            <div v-for="(group, groupIndex) in formFields()" :key="groupIndex"
+                 :class="[ group.group === 'Configuraciones' ? 'col-span-1 gap-4' : 'col-span-3 gap-4',]">
               <!-- Título del grupo -->
               <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">{{ group.group }}</h3>
 
               <!-- Campos del grupo -->
-              <div class="space-y-1">
-                <div
-                    class="grid gap-3  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
-                    :class="[ group.group === 'Configuraciones' ? 'grid-cols-4' : 'grid-cols-3',]">
-                  <div class="w-full" v-for="field in group.fields" :key="field.key">
-                    <div class="flex items-baseline flex-wrap lg:flex-nowrap">
-                      <label class="form-label max-w-32">{{ field.label }}</label>
-                      <div class="flex flex-col w-full gap-1">
-                        <!-- Input de texto/number -->
-                        <input
-                            v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date' && field.type !== 'file'"
-                            class="input"
-                            :class=" { 'border-danger': !form[field.key].validationSuccess }"
-                            @change="validationForm"
-                            :type="field.type"
-                            v-model="entity[field.key]"
-                            :placeholder="field.placeholder"
-                        />
+              <div class="grid gap-3"
+                   :class="group.group === 'Configuraciones'
+                           ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2'
+                           : 'grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2'">
+                <div class="w-full" v-for="field in group.fields" :key="field.key">
+                  <div class="flex items-baseline flex-wrap lg:flex-nowrap">
+<!--                    <label class="form-label max-w-32">{{ field.label }}</label>-->
+                    <div class="flex flex-col w-full gap-1">
+                      <!-- Input de texto/number -->
 
-                        <!-- Input de archivo -->
-                        <input
-                            v-else-if="field.type === 'file'"
-                            class="file-input"
-                            :class="{ 'border-danger': !form[field.key].validationSuccess }"
-                            type="file"
-                            @change="validationForm"
-                        />
 
-                        <!-- Select -->
-                        <select
-                            v-else-if="field.type === 'select'"
-                            class="select select2"
-                            data-control="select2"
-                            v-model="entity[field.key]"
-                            @change="validationForm"
-                        >
-                          <option v-for="option in field.options" :key="option.value" :value="option.value">
-                            {{ option.text }}
-                          </option>
-                        </select>
-
-                        <!-- Checkbox -->
-                        <label v-else-if="field.type === 'checkbox'" class="switch">
+                      <div v-if="field.type !== 'custom'" class="flex items-baseline flex-wrap lg:flex-nowrap">
+                        <label class="form-label max-w-32">{{ field.label }}</label>
+                        <div class="flex flex-col w-full gap-1">
                           <input
-                              type="checkbox"
+                              v-if="field.type !== 'select' && field.type !== 'checkbox' && field.type !== 'date' && field.type !== 'file'"
+                              class="input"
+                              :class=" { 'border-danger': !form[field.key].validationSuccess }"
+                              @change="validationForm"
+                              :type="field.type"
                               v-model="entity[field.key]"
-                              :true-value="1"
-                              :false-value="0"
-                              :checked="entity[field.key] == 1"
+                              :placeholder="field.placeholder"
                           />
-                        </label>
 
-                        <!-- Mensaje de validación -->
-                        <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">
-              * Campo Obligatorio
-            </span>
+                          <!-- Input de archivo -->
+<!--                          <input-->
+<!--                              v-else-if="field.type === 'file'"-->
+<!--                              class="file-input"-->
+<!--                              @change="handleImageChange"-->
+<!--                              :class="{ 'border-danger': !form[field.key].validationSuccess }"-->
+<!--                              type="file"-->
+<!--                          />-->
+
+                          <input
+                              v-if="field.type === 'file'"
+                              type="file"
+                              class="file-input"
+                              :id="field.key"
+                              :placeholder="field.placeholder"
+                              @change="onFileChange($event, field.key)"
+                          />
+
+
+                          <!-- Select -->
+                          <select
+                              v-else-if="field.type === 'select'"
+                              class="select select2"
+                              data-control="select2"
+                              v-model="entity[field.key]"
+                              @change="validationForm"
+                          >
+                            <option v-for="option in field.options" :key="option.value" :value="option.value">
+                              {{ option.text }}
+                            </option>
+                          </select>
+
+                          <!-- Checkbox -->
+                          <label v-else-if="field.type === 'checkbox'" class="switch">
+                            <input
+                                type="checkbox"
+                                v-model="entity[field.key]"
+                                :true-value="1"
+                                :false-value="0"
+                                :checked="entity[field.key] == 1"
+                            />
+                          </label>
+
+                          <!-- Mensaje de validación -->
+                          <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">* Campo Obligatorio</span>
+                        </div>
                       </div>
+
+                      <!-- Mostrar componente personalizado para la imagen -->
+                      <div v-else-if="field.component === 'image-preview' && (entity.image)"
+                           class="image-preview-container">
+                        <div class="rounded-sm">
+                          <img :src=" getImagePreview(entity.image)"
+                               alt="Vista previa del producto"
+                               class="h-40 w-50 object-fill">
+                          <button v-if="entity.image"
+                                  @click="cleanupImagePreview"
+                                  class="btn btn-sm btn-danger image-remove-btn">
+                            Eliminar Imagen
+                          </button>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
+          </div>
 
 
+        </div>
+      </div>
+
+      <div class="grid grid-flow-col grid-col-3 gap-4 mt-4">
+        <div class="row-span-3">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Aplicaciones</h3>
+              <label class="switch switch-sm">
+                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+                  <i class="ki-filled ki-plus-squared"></i>
+                  Agregar Aplicación
+
+                </button>
+              </label>
+            </div>
+            <div class="card-body">
+              <div class="scrollable-x-auto">
+                <table id="#table_modulo" class="table table-hover " data-datatable-table="true">
+                  <thead>
+                  <tr>
+                    <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> Aplicación</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                    </th>
+                    <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label">Marca</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                    </th>
+
+                    <th class="w-[60px]">
+                    </th>
+                    <th class="w-[60px]">
+                    </th>
+
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-span-3 ...">
+          <div class="card">
+            <div class="card-header">
+
+              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Equivalentes</h3>
+              <label class="switch switch-sm">
+                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+                  <i class="ki-filled ki-plus-squared"></i>
+                  Agregar Equivalente
+
+                </button>
+              </label>
+            </div>
+            <div class="card-body">
+              <div class="scrollable-x-auto">
+                <table id="#table_modulo" class="table table-hover " data-datatable-table="true">
+                  <thead>
+                  <tr>
+                    <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> Equivalente</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                    </th>
+                    <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label">Marca</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                    </th>
+
+                    <th class="w-[60px]">
+                    </th>
+                    <th class="w-[60px]">
+                    </th>
+
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-span-3  ...">
+          <div class="card">
+            <div class="card-header">
+
+              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Intercambios</h3>
+              <!--              <label class="switch switch-sm">-->
+              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+                <i class="ki-filled ki-plus-squared"></i>
+                Agregar Intercambio
+
+              </button>
+              <!--              </label>-->
+            </div>
+            <div class="card-body">
+              <div class="scrollable-x-auto">
+                <table id="#table_modulo" class="table table-hover " data-datatable-table="true">
+                  <thead>
+                  <tr>
+                    <th class="w-[160px] text-center" data-datatable-column="status">
+                              <span class="sort">
+                                  <span class="sort-label"> Intercambio</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                    </th>
+
+
+                    <th class="w-[60px]">
+                    </th>
+                    <th class="w-[60px]">
+                    </th>
+
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

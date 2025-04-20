@@ -4,7 +4,7 @@ const brandService = {
     get: async () => {
         try {
             const response = await configApi.get(`/v1/brands`);
-            console.log("response");
+            // console.log("response");
             return response.data.data;
         } catch (error) {
             console.log(error)

@@ -4,7 +4,7 @@ const categoryService = {
     get: async () => {
       try {
         const response = await configApi.get(`/v1/categories`);
-        console.log(response.data)
+        // console.log(response.data)
         return response.data.data;
       } catch (error) {
         console.log(error)
