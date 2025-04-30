@@ -1,4 +1,4 @@
-import {configApi,urlApi} from "./config.js";
+import {configApi, urlApi} from "./config.js";
 
 const categoryService = {
     get: async () => {

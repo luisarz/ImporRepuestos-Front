@@ -1,5 +1,4 @@
-import {ref, onMounted} from 'vue';
-import {KTDataTable, KTModal} from './../../metronic/core/index';
+import {KTDataTable, KTModal} from '../../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '@/components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
@@ -8,8 +7,11 @@ import ProductsService from "@/services/productsService.js";
 import CategoryService from "@/services/categoryService.js";
 import BrandService from "@/services/brandService.js";
 import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.js";
-import {VUE_APP_STORAGE_URL} from "@/services/config.js";
 
+import {VUE_APP_STORAGE_URL} from "@/services/config.js";
+// import Equivalents from "@/views/products/equivalents/index.js";
+import EquivalentService from "@/services/equivalentService.js";
+import equivalentService from "@/services/equivalentService.js";
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
@@ -20,21 +22,24 @@ export default {
             brands: [],
             categories: [],
             unitsMeasurement: [],
+            products: [],
+            product_id_equivalent:null,
             entity: {
-                id: 0,
+                id: null,
                 code: '',
                 original_code: '',
                 barcode: '',
                 description: '',
                 brand_id: 0,
                 category_id: 0,
-                provider_id: 0,
+                // provider_id: 0,
                 unit_measurement_id: 0,
                 description_measurement_id: 0,
                 image: null,
                 is_active: 0,
                 is_taxed: 0,
-                is_grouped: 0,
+                is_discontinued: 0,
+                is_not_purchasable: 0,
                 is_service: 0,
             },
             form: {
@@ -44,13 +49,14 @@ export default {
                 description: {isRequired: true, validationSuccess: true},
                 brand_id: {isRequired: true, validationSuccess: true},
                 category_id: {isRequired: true, validationSuccess: true},
-                provider_id: {isRequired: true, validationSuccess: true},
+                // provider_id: {isRequired: true, validationSuccess: true},
                 unit_measurement_id: {isRequired: true, validationSuccess: true},
                 description_measurement_id: {isRequired: true, validationSuccess: true},
                 image: {isRequired: false, validationSuccess: true},
                 is_active: {isRequired: false, validationSuccess: true},
                 is_taxed: {isRequired: false, validationSuccess: true},
-                is_grouped: {isRequired: false, validationSuccess: true},
+                is_discontinued: {isRequired: false, validationSuccess: true},
+                is_not_purchasable: {isRequired: false, validationSuccess: true},
                 is_service: {isRequired: false, validationSuccess: true},
                 image_preview: {isRequired: false, validationSuccess: true},
 
@@ -112,7 +118,7 @@ export default {
             this.isEditing = true;
             this.entity = {...data};
             this.entity.image = null;
-
+            await this.loadEquivalents(this.entity.id);
             if (data.image) {
                 // Quitar "public/" si está presente
                 const cleanPath = data.image.replace(/^public\//, '');
@@ -132,7 +138,7 @@ export default {
                     fields: [
                         {
                             key: 'code',
-                            label: 'Código',
+                            label: 'Código Import',
                             type: 'text',
                             placeholder: 'Código del producto'
                         },
@@ -169,14 +175,14 @@ export default {
                             options: this.brands.map(b => ({value: b.id, text: b.description}))
                         },
 
-                        {
-                            key: 'provider_id',
-                            label: 'Proveedor',
-                            type: 'select',
-                            placeholder: 'Seleccione un proveedor',
-                            options: this.providers.map(p => ({value: p.id, text: p.comercial_name})),
-
-                        },
+                        // {
+                        //     key: 'provider_id',
+                        //     label: 'Proveedor',
+                        //     type: 'select',
+                        //     placeholder: 'Seleccione un proveedor',
+                        //     options: this.providers.map(p => ({value: p.id, text: p.comercial_name})),
+                        //
+                        // },
                         {
                             key: 'unit_measurement_id',
                             label: 'Unidad de Medida',
@@ -200,17 +206,24 @@ export default {
                     fields: [
                         {key: 'is_active', label: 'Activo', type: 'checkbox', placeholder: 'Producto activo'},
                         {key: 'is_taxed', label: 'Gravado', type: 'checkbox', placeholder: 'Producto gravado'},
-                        {
-                            key: 'is_grouped',
-                            label: 'Agrupado',
-                            type: 'checkbox',
-                            placeholder: 'Producto agrupado'
-                        },
+
                         {
                             key: 'is_service',
                             label: 'Servicio',
                             type: 'checkbox',
                             placeholder: 'Producto es un servicio'
+                        },
+                        {
+                            key: 'is_discontinued',
+                            label: 'Descontinuado',
+                            type: 'checkbox',
+                            placeholder: 'Producto descontinuado'
+                        },
+                        {
+                            key: 'is_not_purchasable',
+                            label: 'No Comprable',
+                            type: 'checkbox',
+                            placeholder: 'Producto No comprable'
                         },
                         // Campo virtual para mostrar la imagen
                         {
@@ -259,7 +272,7 @@ export default {
         },
 
 
-        initDataTable() {
+        loadTableProducts() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
                 apiEndpoint: ProductsService.getUrl(),
@@ -302,7 +315,7 @@ export default {
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {
                         render: () => `<button class="btn btn-outline btn-info">
-<i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
+                            <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.editModal(rowData));
                         },
@@ -314,59 +327,113 @@ export default {
                         },
                     },
                 },
-                layout: {scroll: false},
+                layout: {scroll: true},
                 sortable: true,
+                search: {
+                    input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
+                    key: 'search', // Parámetro que se enviará al servidor
+                    delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
+                },
             };
-            new KTDataTable(tableElement, options);
+            const dataTable = new KTDataTable(tableElement, options);
+            dataTable.reload();
         },
 
         async loadOptions() {
             try {
 
-                const [categories, providers, brands, unitsMeasurement] = await Promise.all([
-                    CategoryService.get(),
-                    ProviderService.get(),
-                    BrandService.get(),
-                    UnitMeasurementService.get()
-                ]);
+                const [categories,  brands, unitsMeasurement, products] = await Promise.all(
+                    [
+                        CategoryService.get(),
+                        // ProviderService.get(),
+                        BrandService.get(),
+                        UnitMeasurementService.get(),
+                        ProductsService.get(),
+                    ]);
 
                 // Asigna los datos a las propiedades reactivas
                 this.categories = categories.data || [];
-                this.providers = providers.data || []; // Asegúrate de que sea un array
+                // this.providers = providers.data || []; // Asegúrate de que sea un array
                 this.brands = brands.data || []; // Asegúrate de que sea un array
                 this.unitsMeasurement = unitsMeasurement.data || []; // Asegúrate de que sea un array
+                this.products = products.data || []; // Asegúrate de que sea un array
             } catch (error) {
-                // console.error('Error al cargar las opciones:', error);
+                console.error('Error al cargar las opciones:', error);
                 this.categories = [];
-                this.providers = [];
+                // this.providers = [];
                 this.brands = [];
                 this.unitsMeasurement = [];
+                this.products = [];
             }
         },
 
-        async loadTableData() {
-            try {
-                this.loading = true;
-                console.log('Inicia')
-                const response = await ProductsService.get();
-                this.tableData = response.data || [];
-                // Destruye la instancia anterior si existe
-                if (this.dataTable) {
-                    this.dataTable.destroy();
-                    this.dataTable = null;
+        async addEquivalente(){
+                try {
+                    const formData = new FormData();
+                    formData.append('product_id', this.entity.id);
+                    formData.append('product_id_equivalent', this.product_id_equivalent);
+                    formData.append('is_active',1);
+                    await EquivalentService.store(formData);
+                    await this.loadEquivalents(this.entity.id);
+
+                }catch(error){
+                    console.error('Error al registrar equivalencia:', error);
                 }
-
-
-                // Vuelve a inicializar la tabla
-                this.initDataTable();
-
-
-            } catch (error) {
-                console.error('Error al cargar datos:', error);
-            } finally {
-                this.loading = false;
-            }
         },
+
+        async loadEquivalents(idProduct) {
+            const tableElement = document.querySelector("#kt_remote_table1");
+            if (!tableElement) {
+                console.error("Table element #kt_remote_table1 not found");
+                return;
+            }
+
+            // 1. Destruye la tabla anterior si existe
+            if (this._ktDataTableInstance) {
+                try {
+                    this._ktDataTableInstance.destroy(); // Método correcto para destruir KTDataTable
+                    console.log("Tabla anterior destruida");
+                } catch (e) {
+                    console.warn("Error al destruir tabla anterior:", e);
+                }
+                tableElement.innerHTML = ''; // Limpia el contenedor
+            } else {
+                console.log("No hay tabla previa para destruir");
+            }
+
+            // 2. Configuración de la tabla
+            const options = {
+                apiEndpoint: equivalentService.getUrl(), // Asegúrate de usar el ID
+                requestHeaders: {
+                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                },
+                columns: {
+                    product_id_equivalent: { title: 'Equivalente' },
+                    edit: {
+                        render: () => `<button class="btn btn-outline btn-info">
+                    <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer"></i></button>`,
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.addEventListener('click', () => this.editModal(rowData));
+                        },
+                    },
+                    delete: {
+                        render: () => `<button class="btn btn-outline btn-danger">
+                    <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.addEventListener('click', () => this.deleteRow(rowData.id));
+                        },
+                    },
+                },
+                layout: { scroll: false },
+                sortable: true,
+            };
+
+            // 3. Crea nueva instancia y guárdala
+            this._ktDataTableInstance = new KTDataTable(tableElement, options);
+            console.log("Nueva tabla inicializada");
+        },
+
+
         onFileChange(event, key) {
             const file = event.target.files[0];
             if (file && file instanceof File) {
@@ -386,6 +453,7 @@ export default {
                 this.entity.id = storeTemp.data.id;
                 this.isEditing = true;
                 await this.loadOptions();
+                // await this.loadEquivalents(this.entity.id);
                 KTModal.getInstance(document.querySelector("#modal_store")).show();
             } catch (error) {
                 console.error('Error al crear temporal:', error);
@@ -404,14 +472,14 @@ export default {
                 description: '',
                 brand_id: 0,
                 category_id: 0,
-                provider_id: 0,
                 unit_measurement_id: 0,
                 description_measurement_id: 0,
                 image: '',
                 is_active: 0,
                 is_taxed: 0,
                 is_service: 0,
-                is_grouped: 0,
+                is_discontinued: 0,
+                is_not_purchasable: 0,
 
             };
         },
@@ -430,13 +498,14 @@ export default {
                 formData.append('description', this.entity.description);
                 formData.append('brand_id', this.entity.brand_id);
                 formData.append('category_id', this.entity.category_id);
-                formData.append('provider_id', this.entity.provider_id);
+                // formData.append('provider_id', this.entity.provider_id);
                 formData.append('unit_measurement_id', this.entity.unit_measurement_id);
                 formData.append('description_measurement_id', this.entity.description_measurement_id);
                 formData.append('is_active', this.entity.is_active ? '1' : '0');
                 formData.append('is_taxed', this.entity.is_taxed ? '1' : '0');
                 formData.append('is_service', this.entity.is_service ? '1' : '0');
-                formData.append('is_grouped', this.entity.is_grouped ? '1' : '0');
+                formData.append('is_discontinued', this.entity.is_discontinued ? '1' : '0');
+                formData.append('is_not_purchasable', this.entity.is_not_purchasable ? '1' : '0');
 
 
                 if (this.entity.image instanceof File) {
@@ -449,7 +518,7 @@ export default {
                     await ProductsService.store(this.entity);
                 }
 
-                await this.loadTableData();
+                this.loadTableProducts();
                 KTModal.getInstance(document.querySelector("#modal_store")).hide();
             } catch (error) {
                 console.error('Error al guardar el producto:', error);
@@ -473,7 +542,7 @@ export default {
 
     },
     mounted() {
-        this.initDataTable();
+        this.loadTableProducts();
         window.editModal = this.editModal.bind(this);
     },
 };

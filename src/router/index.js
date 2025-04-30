@@ -17,11 +17,13 @@ import EconomicActivity from "@/views/catalogs/economicActivity/index.vue";
 import Rol from "@/views/setting/rol/index.vue";
 import Country from "@/views/catalogs/countries/index.vue";
 import Provider from "@/views/providers/provider/index.vue"
-import Products from "@/views/products/index.vue";
+import Products from "@/views/products/products/index.vue";
 import PlateType from "@/views/parque_vehicular/plate_types/index.vue";
-import VehicleModel from "@/views//parque_vehicular/vehicles_models/index.vue";
+import VehicleModel from "@/views/parque_vehicular/vehicles_models/index.vue";
 import FuelType from "@/views/parque_vehicular/fuel_types/index.vue";
 import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
+import Equivalents from "@/views/products/equivalents/index.vue";
+
 const routes = [
     {
         path: '/',
@@ -108,7 +110,7 @@ const routes = [
                 meta: {requiresAuth: true}
             },
             {
-            path: 'plate-types',
+                path: 'plate-types',
                 component: PlateType,
                 meta: {requiresAuth: true}
             },
@@ -127,6 +129,12 @@ const routes = [
             {
                 path: 'vehicles',
                 component: Vehicles,
+                meta: {requiresAuth: true}
+
+            },
+            {
+                path: 'equivalents',
+                component: Equivalents,
                 meta: {requiresAuth: true}
 
             }

@@ -31,10 +31,6 @@ configApi.interceptors.request.use((config) => {
 // Interceptor para manejar respuestas y errores
 configApi.interceptors.response.use(
   (response) => {
-      // console.log(response.data.token_changed);
-      if (response.data?.token_changed) {
-          localStorage.setItem('auth_token', response.data.auth_token);
-      }
       return response;
   },
   (error) => {

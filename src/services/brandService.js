@@ -40,9 +40,7 @@ const brandService = {
         }
     },
     getUrl: () => {
-        const resp= `${urlApi}/v1/brands`;
-        console.log(resp);
-        return resp;
+        return `${urlApi}/v1/brands`;
     },
     destroy: async (id) => {
         try {

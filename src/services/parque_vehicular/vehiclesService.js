@@ -4,10 +4,11 @@ const vehicleService = {
     get: async () => {
         try {
             const response = await configApi.get(`/v1/vehicles`);
+            console.log(response);
             return response.data.data;
         } catch (error) {
-            console.log(error)
-            throw new Error('Error al Obtener las Sucursales');
+            console.log("Error obtener el parque vehicular "+error)
+            // throw new Error('Error al Obtener las Sucursales');
         }
     },
     store: async (vehicle) => {
