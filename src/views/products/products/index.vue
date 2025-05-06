@@ -1,5 +1,5 @@
 <template>
-  <div class="grid" id="kt_remote_table" data-datatable="true">
+  <div class="grid" >
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
@@ -18,10 +18,11 @@
         </label>
       </div>
       <div class="card-body">
-        <div>
+          <div id="kt_remote_table">
+
           <div class="scrollable-x-auto">
 
-            <table class="table table-auto table-border datatable-loading:bg-gray-200 datatable-initialized:bg-gray-100" data-datatable-table="true">
+            <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
               <thead>
               <tr>
                 <th class="w-[160px] text-center" data-datatable-column="code">
@@ -275,9 +276,9 @@
                 </button>
               </label>
               <div class="scrollable-x-auto">
-                <div id="kt_remote_table1">
+                <div id="table_equivalente" data-datatable-table="true">
 
-                <table id="#table_equivalente" class="table table-hover " data-datatable-table="true">
+                <table  class="table table-hover " data-datatable-table="true">
                     <thead>
                     <tr>
                       <th class="w-[160px] text-center" data-datatable-column="status">
@@ -314,6 +315,10 @@
                 <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
                 </select>
                 por Pagina
+              </div>
+              <div class="flex items-center gap-4">
+                <span data-datatable-info="true"></span>
+                <div class="pagination" data-datatable-pagination="true"></div>
               </div>
           </div>
           </div>

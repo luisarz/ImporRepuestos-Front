@@ -2,16 +2,14 @@ import {KTDataTable, KTModal} from '../../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '@/components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
-import ProviderService from "@/services/providers/providerService.js";
 import ProductsService from "@/services/productsService.js";
 import CategoryService from "@/services/categoryService.js";
 import BrandService from "@/services/brandService.js";
 import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.js";
-
 import {VUE_APP_STORAGE_URL} from "@/services/config.js";
-// import Equivalents from "@/views/products/equivalents/index.js";
 import EquivalentService from "@/services/equivalentService.js";
 import equivalentService from "@/services/equivalentService.js";
+
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
@@ -23,7 +21,7 @@ export default {
             categories: [],
             unitsMeasurement: [],
             products: [],
-            product_id_equivalent:null,
+            product_id_equivalent: null,
             entity: {
                 id: null,
                 code: '',
@@ -98,6 +96,10 @@ export default {
             this.entity.id = id;
             KTModal.getInstance(document.querySelector("#modal-question")).show();
         },
+        deleteEquivalente(id) {
+            this.equi = id;
+            KTModal.getInstance(document.querySelector("#modal-question")).show();
+        },
 
         // Método para limpiar la previsualización
         async destroy() {
@@ -118,18 +120,33 @@ export default {
             this.isEditing = true;
             this.entity = {...data};
             this.entity.image = null;
-            await this.loadEquivalents(this.entity.id);
-            if (data.image) {
-                // Quitar "public/" si está presente
-                const cleanPath = data.image.replace(/^public\//, '');
-                // console.log( `${VUE_APP_STORAGE_URL}${cleanPath}`);
-                this.entity.image = `${VUE_APP_STORAGE_URL}${cleanPath}`;
-            } else {
-                this.entity.image_preview = null;
+            try {
+                 await this.loadEquivalents(this.entity.id);
+            } catch (error) {
+                console.error('Error al cargar equivalentes:', error);
             }
-            await this.loadOptions();
 
-            KTModal.getInstance(document.querySelector("#modal_store")).show();
+            try {
+
+
+                if (data.image) {
+                    const cleanPath = data.image.replace(/^public\//, '');
+                    this.entity.image = `${VUE_APP_STORAGE_URL}${cleanPath}`;
+                } else {
+                    this.entity.image_preview = null;
+                }
+
+                await this.loadOptions();
+
+                const modal = KTModal.getInstance(document.querySelector("#modal_store"));
+                if (modal) {
+                    modal.show();
+                } else {
+                    console.error("Could not find modal instance");
+                }
+            } catch (error) {
+                console.error("Error in editModal:", error);
+            }
         },
         formFields() {
             return [
@@ -338,11 +355,78 @@ export default {
             const dataTable = new KTDataTable(tableElement, options);
             dataTable.reload();
         },
+        async loadEquivalents(idProduct) {
+            const tableElementEquivalent = document.querySelector("#table_equivalente");
+
+            if (!tableElementEquivalent) {
+                console.error("Table element not found");
+                return;
+            }
+
+            try {
+                // Get and await the data
+                const equivalentsData = await equivalentService.getEquivalentByProduct(idProduct);
+                console.log("Resolved equivalents data:", equivalentsData);
+
+                // Ensure we have an array (even if empty)
+                const data = Array.isArray(equivalentsData.data) ? equivalentsData : [];
+
+                const options = {
+                    data: data,
+                    requestHeaders: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    columns: {
+
+                        product_id_equivalent: {
+                            title: 'product_id_equivalent',
+
+                        },
+                        product_equivalent: {
+                            title: 'producto_equivalente',
+                            render: function (data, type, row) {
+                                return type?.product_equivalent?.description ?? 'S/N';
+                            }
+                        },
+                        edit: {
+                            render: () => `<button class="btn btn-outline btn-info">
+                        <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer"></i></button>`,
+                            createdCell: (cell, cellData, rowData) => {
+                                cell.addEventListener('click', () => this.editModal(rowData));
+                            },
+                        },
+                        delete: {
+                            render: () => `<button class="btn btn-outline btn-danger">
+                        <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                            createdCell: (cell, cellData, rowData) => {
+                                cell.addEventListener('click', () => this.deleteRow(rowData.id));
+                            },
+                        },
+                    },
+                    layout: { scroll: true },
+                    sortable: true,
+                };
+
+                // Initialize or refresh the table
+                if (this.dataTableEquivalents) {
+                    this.dataTableEquivalents.reload(options);
+                    console.log('Reload equivalents data');
+                } else {
+                    this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
+                    console.log('Initialize equivalents data');
+                }
+
+            } catch (error) {
+                console.error("Error loading equivalents:", error);
+                // Show user feedback
+                alert("Error loading equivalent products: " + error.message);
+            }
+        },
 
         async loadOptions() {
             try {
 
-                const [categories,  brands, unitsMeasurement, products] = await Promise.all(
+                const [categories, brands, unitsMeasurement, products] = await Promise.all(
                     [
                         CategoryService.get(),
                         // ProviderService.get(),
@@ -367,182 +451,24 @@ export default {
             }
         },
 
-        async addEquivalente(){
-                try {
-                    const formData = new FormData();
-                    formData.append('product_id', this.entity.id);
-                    formData.append('product_id_equivalent', this.product_id_equivalent);
-                    formData.append('is_active',1);
-                    await EquivalentService.store(formData);
-                    await this.loadEquivalents(this.entity.id);
-
-                }catch(error){
-                    console.error('Error al registrar equivalencia:', error);
-                }
-        },
-
-        async loadEquivalents(idProduct) {
-            const tableElement = document.querySelector("#kt_remote_table1");
-            if (!tableElement) {
-                console.error("Table element #kt_remote_table1 not found");
-                return;
-            }
-
-            // 1. Destruye la tabla anterior si existe
-            if (this._ktDataTableInstance) {
-                try {
-                    this._ktDataTableInstance.destroy(); // Método correcto para destruir KTDataTable
-                    console.log("Tabla anterior destruida");
-                } catch (e) {
-                    console.warn("Error al destruir tabla anterior:", e);
-                }
-                tableElement.innerHTML = ''; // Limpia el contenedor
-            } else {
-                console.log("No hay tabla previa para destruir");
-            }
-
-            // 2. Configuración de la tabla
-            const options = {
-                apiEndpoint: equivalentService.getUrl(), // Asegúrate de usar el ID
-                requestHeaders: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                },
-                columns: {
-                    product_id_equivalent: { title: 'Equivalente' },
-                    edit: {
-                        render: () => `<button class="btn btn-outline btn-info">
-                    <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer"></i></button>`,
-                        createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.editModal(rowData));
-                        },
-                    },
-                    delete: {
-                        render: () => `<button class="btn btn-outline btn-danger">
-                    <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
-                        createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.deleteRow(rowData.id));
-                        },
-                    },
-                },
-                layout: { scroll: false },
-                sortable: true,
-            };
-
-            // 3. Crea nueva instancia y guárdala
-            this._ktDataTableInstance = new KTDataTable(tableElement, options);
-            console.log("Nueva tabla inicializada");
-        },
-
-
-        onFileChange(event, key) {
-            const file = event.target.files[0];
-            if (file && file instanceof File) {
-                this.entity[key] = file;
-                console.log('Asignado correctamente:', file);
-            } else {
-                this.entity[key] = null;
-                console.warn('No se seleccionó archivo válido');
-            }
-        },
-        async openStoreModal() {
-            this.resetModal();
-            this.loading = true;
-
+        async addEquivalente() {
             try {
-                const storeTemp = await ProductsService.store(this.entity);
-                this.entity.id = storeTemp.data.id;
-                this.isEditing = true;
-                await this.loadOptions();
-                // await this.loadEquivalents(this.entity.id);
-                KTModal.getInstance(document.querySelector("#modal_store")).show();
-            } catch (error) {
-                console.error('Error al crear temporal:', error);
-            } finally {
-                this.loading = false;
-            }
-        },
-
-
-        resetModal() {
-            this.entity = {
-                id: null,
-                code: '',
-                original_code: '',
-                barcode: '',
-                description: '',
-                brand_id: 0,
-                category_id: 0,
-                unit_measurement_id: 0,
-                description_measurement_id: 0,
-                image: '',
-                is_active: 0,
-                is_taxed: 0,
-                is_service: 0,
-                is_discontinued: 0,
-                is_not_purchasable: 0,
-
-            };
-        },
-        async save() {
-            if (!this.validationForm()) return;
-            this.loading = true;
-
-            try {
-                // Preparamos FormData para ambos casos (create y update)
                 const formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('id', this.entity.id);
-                formData.append('code', this.entity.code);
-                formData.append('original_code', this.entity.original_code);
-                formData.append('barcode', this.entity.barcode);
-                formData.append('description', this.entity.description);
-                formData.append('brand_id', this.entity.brand_id);
-                formData.append('category_id', this.entity.category_id);
-                // formData.append('provider_id', this.entity.provider_id);
-                formData.append('unit_measurement_id', this.entity.unit_measurement_id);
-                formData.append('description_measurement_id', this.entity.description_measurement_id);
-                formData.append('is_active', this.entity.is_active ? '1' : '0');
-                formData.append('is_taxed', this.entity.is_taxed ? '1' : '0');
-                formData.append('is_service', this.entity.is_service ? '1' : '0');
-                formData.append('is_discontinued', this.entity.is_discontinued ? '1' : '0');
-                formData.append('is_not_purchasable', this.entity.is_not_purchasable ? '1' : '0');
+                formData.append('product_id', this.entity.id);
+                formData.append('product_id_equivalent', this.product_id_equivalent);
+                formData.append('is_active', 1);
+                await EquivalentService.store(formData);
+                await this.loadEquivalents(this.entity.id);
 
-
-                if (this.entity.image instanceof File) {
-                    formData.append('image', this.entity.image);
-                }
-
-                if (this.isEditing) {
-                    await ProductsService.update(formData);
-                } else {
-                    await ProductsService.store(this.entity);
-                }
-
-                this.loadTableProducts();
-                KTModal.getInstance(document.querySelector("#modal_store")).hide();
             } catch (error) {
-                console.error('Error al guardar el producto:', error);
-            } finally {
-                this.loading = false;
+                console.error('Error al registrar equivalencia:', error);
             }
         },
-        validationForm() {
-            let isValid = true;
-            Object.keys(this.form).forEach((key) => {
-                if (this.form[key].isRequired) {
-                    this.form[key].validationSuccess = !!this.entity[key];
-                    if (!this.form[key].validationSuccess) {
-                        console.log(`El campo ${key} no es válido.`);
-                        isValid = false;
-                    }
-                }
-            });
-            return isValid;
-        },
-
     },
+
     mounted() {
         this.loadTableProducts();
+        // this.loadEquivalents(this.entity.id);
         window.editModal = this.editModal.bind(this);
     },
 };
