@@ -40,10 +40,10 @@ const equivalentService = {
     getUrl: () => {
         return `${urlApi}/v1/equivalents`;
     },
-    getEquivalentByProduct: async (id) => {  // Add async here
+    getEquivalentByProduct:  (id) => {  // Add async here
         try {
-            const response = await configApi.get(`/v1/equivalents/product/${id}`);
-            return response.data;  // Make sure to return response.data
+
+            return `${urlApi}/v1/equivalents/product/${id}`;
         } catch (error) {
             console.error('Error getting product equivalents:', error);
             throw new Error('Error al obtener los equivalentes por producto');

@@ -6,7 +6,7 @@ import ProductsService from "@/services/productsService.js";
 import CategoryService from "@/services/categoryService.js";
 import BrandService from "@/services/brandService.js";
 import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.js";
-import {VUE_APP_STORAGE_URL} from "@/services/config.js";
+import {VUE_APP_STORAGE_URL, configApi} from "@/services/config.js";
 import EquivalentService from "@/services/equivalentService.js";
 import equivalentService from "@/services/equivalentService.js";
 
@@ -23,7 +23,7 @@ export default {
             products: [],
             product_id_equivalent: null,
             entity: {
-                id: null,
+                id: 0,
                 code: '',
                 original_code: '',
                 barcode: '',
@@ -116,12 +116,36 @@ export default {
         },
 
         // Método para manejar el cambio de imagen
+        async openStoreModal() {
+            this.resetModal();
+            this.loading = true;
+            try {
+                const storeTemp = await ProductsService.store(this.entity);
+                console.log(storeTemp.data.id);
+                if (!this.entity) {
+                    this.entity = {};
+                }
+                this.entity.id = storeTemp.data.id;
+                this.isEditing = true;
+                await this.loadOptions();
+                KTModal.getInstance(document.querySelector("#modal_store")).show();
+            } catch (error) {
+                console.error('Error al crear temporal:', error);
+            } finally {
+                console.log(this.isEditing);
+                this.loading = false;
+            }
+
+        },
+        resetModal() {
+            this.entity = null;
+        },
         async editModal(data) {
             this.isEditing = true;
             this.entity = {...data};
             this.entity.image = null;
             try {
-                 await this.loadEquivalents(this.entity.id);
+                this.loadEquivalents(this.entity.id);
             } catch (error) {
                 console.error('Error al cargar equivalentes:', error);
             }
@@ -287,6 +311,62 @@ export default {
         imageUrl() {
             return this.getImagePreview(`${VUE_APP_STORAGE_URL()}/${this.entity.image}`);
         },
+        validationForm() {
+            let isValid = true;
+            Object.keys(this.form).forEach((key) => {
+                if (this.form[key].isRequired) {
+                    this.form[key].validationSuccess = !!this.entity[key];
+                    if (!this.form[key].validationSuccess) {
+                        console.log(`El campo ${key} no es válido.`);
+                        isValid = false;
+                    }
+                }
+            });
+            return isValid;
+        },
+        async save() {
+            if (!this.validationForm()) return;
+            this.loading = true;
+
+
+            try {
+                // Preparamos FormData para ambos casos (create y update)
+                const formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('id', this.entity.id);
+                formData.append('code', this.entity.code);
+                formData.append('original_code', this.entity.original_code);
+                formData.append('barcode', this.entity.barcode);
+                formData.append('description', this.entity.description);
+                formData.append('brand_id', this.entity.brand_id);
+                formData.append('category_id', this.entity.category_id);
+                formData.append('provider_id', this.entity.provider_id);
+                formData.append('unit_measurement_id', this.entity.unit_measurement_id);
+                formData.append('description_measurement_id', this.entity.description_measurement_id);
+                formData.append('is_active', this.entity.is_active ? '1' : '0');
+                formData.append('is_taxed', this.entity.is_taxed ? '1' : '0');
+                formData.append('is_service', this.entity.is_service ? '1' : '0');
+                formData.append('is_discontinued', this.entity.is_discontinued ? '1' : '0');
+                formData.append('is_not_purchasable', this.entity.is_not_purchasable ? '1' : '0');
+
+
+                if (this.entity.image instanceof File) {
+                    formData.append('image', this.entity.image);
+                }
+
+                if (this.isEditing) {
+                    await ProductsService.update(formData);
+                } else {
+                    await ProductsService.store(this.entity);
+                }
+
+                location.reload();
+            } catch (error) {
+                console.error('Error al guardar el producto:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
 
 
         loadTableProducts() {
@@ -355,7 +435,7 @@ export default {
             const dataTable = new KTDataTable(tableElement, options);
             dataTable.reload();
         },
-        async loadEquivalents(idProduct) {
+        loadEquivalents(idProduct) {
             const tableElementEquivalent = document.querySelector("#table_equivalente");
 
             if (!tableElementEquivalent) {
@@ -364,15 +444,14 @@ export default {
             }
 
             try {
-                // Get and await the data
-                const equivalentsData = await equivalentService.getEquivalentByProduct(idProduct);
-                console.log("Resolved equivalents data:", equivalentsData);
+                console.log("Loading equivalents for product ID:", idProduct);
+                const endpoint = `${equivalentService.getEquivalentByProduct(idProduct)}?timestamp=${Date.now()}`;
+                console.log("Using endpoint:", endpoint);
 
-                // Ensure we have an array (even if empty)
-                const data = Array.isArray(equivalentsData.data) ? equivalentsData : [];
 
                 const options = {
-                    data: data,
+                    type: 'remote',
+                    apiEndpoint: equivalentService.getEquivalentByProduct(idProduct),
                     requestHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
@@ -403,18 +482,18 @@ export default {
                             },
                         },
                     },
-                    layout: { scroll: true },
+                    layout: {scroll: true},
                     sortable: true,
+                    pagination: true
                 };
 
-                // Initialize or refresh the table
-                if (this.dataTableEquivalents) {
-                    this.dataTableEquivalents.reload(options);
-                    console.log('Reload equivalents data');
-                } else {
-                    this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
-                    console.log('Initialize equivalents data');
-                }
+                // if (this.dataTableEquivalents) {
+                //     this.dataTableEquivalents.reload(options);
+                //     console.log('Reload equivalents data');
+                // } else {
+                this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
+                console.log('Initialize equivalents data');
+                // }/
 
             } catch (error) {
                 console.error("Error loading equivalents:", error);
@@ -426,18 +505,18 @@ export default {
         async loadOptions() {
             try {
 
-                const [categories, brands, unitsMeasurement, products] = await Promise.all(
+                const [categories,
+                    brands,
+                    unitsMeasurement,
+                    products] = await Promise.all(
                     [
                         CategoryService.get(),
-                        // ProviderService.get(),
                         BrandService.get(),
                         UnitMeasurementService.get(),
                         ProductsService.get(),
                     ]);
 
-                // Asigna los datos a las propiedades reactivas
                 this.categories = categories.data || [];
-                // this.providers = providers.data || []; // Asegúrate de que sea un array
                 this.brands = brands.data || []; // Asegúrate de que sea un array
                 this.unitsMeasurement = unitsMeasurement.data || []; // Asegúrate de que sea un array
                 this.products = products.data || []; // Asegúrate de que sea un array
@@ -458,7 +537,7 @@ export default {
                 formData.append('product_id_equivalent', this.product_id_equivalent);
                 formData.append('is_active', 1);
                 await EquivalentService.store(formData);
-                await this.loadEquivalents(this.entity.id);
+                this.loadEquivalents(this.entity.id);
 
             } catch (error) {
                 console.error('Error al registrar equivalencia:', error);

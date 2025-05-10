@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@keenthemes/ktui": "^1.0.8",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.8.1",
     "vue": "^3.4.29",
@@ -25,7 +26,7 @@
     "postcss-preset-env": "^9.5.15",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1",
+    "vite": "^6.3.5",
     "vue-tsc": "^2.0.21"
   }
 }
