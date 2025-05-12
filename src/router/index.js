@@ -23,6 +23,7 @@ import VehicleModel from "@/views/parque_vehicular/vehicles_models/index.vue";
 import FuelType from "@/views/parque_vehicular/fuel_types/index.vue";
 import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 import Equivalents from "@/views/products/equivalents/index.vue";
+import Interchanges from "@/views/products/interchanges/index.vue";
 
 const routes = [
     {
@@ -135,6 +136,11 @@ const routes = [
             {
                 path: 'equivalents',
                 component: Equivalents,
+                meta: {requiresAuth: true}
+
+            }, {
+                path: 'interchanges',
+                component: Interchanges,
                 meta: {requiresAuth: true}
 
             }

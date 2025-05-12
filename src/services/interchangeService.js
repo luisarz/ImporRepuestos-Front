@@ -1,27 +1,27 @@
 import {configApi, urlApi} from "./config.js";
 
-const equivalentService = {
+const interchangeService = {
     get: async () => {
         try {
-            const response = await configApi.get(`/v1/equivalents`);
+            const response = await configApi.get(`/v1/interchanges`);
             return response.data.data;
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener los prodúctos');
         }
     },
-    store: async (equivalent) => {
+    store: async (interchange) => {
         try {
-            const response = await configApi.post(`/v1/equivalents`, equivalent);
+            const response = await configApi.post(`/v1/interchanges`, interchange);
             return response.data;
         } catch (error) {
             console.log(error)
             // throw new Error('Error al Obtener las Sucursales');
         }
     },
-    update: async ( equivalent) => {
+    update: async ( interchange) => {
         try {
-            const response = await configApi.put(`/v1/equivalents/${equivalent.id}`, equivalent);
+            const response = await configApi.put(`/v1/interchanges/${interchange.id}`, interchange);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar producto:', error.response || error);
@@ -30,7 +30,7 @@ const equivalentService = {
     },
     getOne: async (id) => {
         try {
-            const response = await configApi.get(`/v1/equivalents/${id}`);
+            const response = await configApi.get(`/v1/interchanges/${id}`);
             return response.data;
         } catch (error) {
             console.log(error)
@@ -38,20 +38,18 @@ const equivalentService = {
         }
     },
     getUrl: () => {
-        return `${urlApi}/v1/equivalents`;
+        return `${urlApi}/v1/interchanges`;
     },
-    getEquivalentByProduct:  (id) => {  // Add async here
+    getInterchangeByProduct:  (id) => {  // Add async here
         try {
-
-            return `${urlApi}/v1/equivalents/product/${id}`;
+            return `${urlApi}/v1/interchanges/product/${id}`;
         } catch (error) {
-            console.error('Error getting product equivalents:', error);
-            throw new Error('Error al obtener los equivalentes por producto');
+            console.error('Error getting product interchanges:', error);
         }
     },
     destroy: async (id) => {
         try {
-            const response = await configApi.delete(`/v1/equivalents/${id}`);
+            const response = await configApi.delete(`/v1/interchanges/${id}`);
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Categorias');
@@ -61,4 +59,4 @@ const equivalentService = {
 
 };
 
-export default equivalentService;
+export default interchangeService;

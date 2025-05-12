@@ -1,9 +1,10 @@
 <template>
-  <div class="grid" id="kt_remote_table" >
+  <div class="grid" id="kt_remote_table">
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
         <h1 class="card-title">
-          <input type="text" id="kt_datatable_search_query" class="input form-control-solid w-250px ps-15" placeholder="Buscar...">
+          <input type="text" id="kt_datatable_search_query" class="input form-control-solid w-250px ps-15"
+                 placeholder="Buscar...">
           Administración <span class="badge badge-info">
 
         {{ moduleName }}
@@ -18,72 +19,72 @@
         </label>
       </div>
       <div class="card-body">
-          <div id="">
 
-          <div class="scrollable-x-auto">
+        <div class="scrollable-x-auto">
 
-            <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
-              <thead>
-              <tr>
-                <th class="w-[160px] text-center" data-datatable-column="code">
+          <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                 data-datatable-table="true">
+            <thead>
+            <tr>
+              <th class="w-[160px] text-center" data-datatable-column="code">
                               <span class="sort">
                                   <span class="sort-label"> Código</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[160px] text-center" data-datatable-column="original_code">
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="original_code">
                               <span class="sort">
                                   <span class="sort-label">Cod. Orig</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[160px] text-center" data-datatable-column="barcode">
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="barcode">
                               <span class="sort">
                                   <span class="sort-label"> Cod.Barra</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[160px] text-center" data-datatable-column="category">
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">Categoría</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[260px] text-center" data-datatable-column="description">
+              </th>
+              <th class="w-[260px] text-center" data-datatable-column="description">
                               <span class="sort">
                                   <span class="sort-label">Descripción</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[160px] text-center" data-datatable-column="description_measurement_id">
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="description_measurement_id">
                               <span class="sort">
                                   <span class="sort-label">Medida</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-                <th class="w-[160px] text-center" data-datatable-column="brand">
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Marca</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
+              </th>
 
 
-                <th class="w-[60px]">
-                </th>
-                <th class="w-[60px]">
-                </th>
+              <th class="w-[60px]">
+              </th>
+              <th class="w-[60px]">
+              </th>
 
 
-              </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+      <div
+          class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
         <div class="flex items-center gap-2">
           Mostrar
           <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
@@ -120,7 +121,7 @@
                            : 'grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2'">
                 <div class="w-full" v-for="field in group.fields" :key="field.key">
                   <div class="flex items-baseline flex-wrap lg:flex-nowrap">
-<!--                    <label class="form-label max-w-32">{{ field.label }}</label>-->
+                    <!--                    <label class="form-label max-w-32">{{ field.label }}</label>-->
                     <div class="flex flex-col w-full gap-1">
                       <!-- Input de texto/number -->
 
@@ -250,17 +251,15 @@
             </div>
           </div>
         </div>
+
+
         <div class="row-span-3 ...">
           <div class="card">
             <div class="card-header">
-
               <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
-
             </div>
             <div class="card-body">
               <label class="switch switch-sm">
-
-
                 <select v-model="product_id_equivalent" name="products" class="select">
                   <option v-for="product in products" :key="product.id" :value="product.id">
                     {{ product.code }} {{ product.description }} {{ product.brand?.description }}
@@ -274,10 +273,10 @@
 
                 </button>
               </label>
-              <div class="scrollable-x-auto">
-                <div id="table_equivalente" >
-
-                <table  class="table table-hover " data-datatable-table="true">
+              <div id="table_equivalente">
+                <div class="scrollable-x-auto">
+                  <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                         data-datatable-table="true">
                     <thead>
                     <tr>
                       <th class="w-[160px] text-center" data-datatable-column="status">
@@ -305,56 +304,10 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-
-
-                </div>
-
               </div>
             </div>
-
-          </div>
-        </div>
-        <div class="row-span-3  ...">
-          <div class="card">
-            <div class="card-header">
-
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Intercambios</h3>
-              <!--              <label class="switch switch-sm">-->
-              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-                <i class="ki-filled ki-plus-squared"></i>
-                Agregar Intercambio
-
-              </button>
-              <!--              </label>-->
-            </div>
-            <div class="card-body">
-              <div class="scrollable-x-auto">
-                <table id="#table_intercambio" class="table table-hover " data-datatable-table="true">
-                  <thead>
-                  <tr>
-                    <th class="w-[160px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label"> Intercambio</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                    </th>
-
-
-                    <th class="w-[60px]">
-                    </th>
-                    <th class="w-[60px]">
-                    </th>
-
-
-                  </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+            <div
+                class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
               <div class="flex items-center gap-2">
                 Mostrar
                 <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
@@ -368,6 +321,74 @@
             </div>
           </div>
         </div>
+
+
+        <div class="row-span-3  ...">
+          <div id="table_intercambio">
+
+          <div class="card">
+            <div class="card-header">
+
+              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Intercambios</h3>
+              <!--              <label class="switch switch-sm">-->
+              <button class="btn btn-success" @click="showIntercambioModal()" :disabled="loading">
+                <i class="ki-filled ki-plus-squared"></i>
+                Agregar Intercambio
+
+              </button>
+              <!--              </label>-->
+            </div>
+            <div class="card-body">
+                <div class="scrollable-x-auto">
+                  <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                         data-datatable-table="true">
+                    <thead>
+                    <tr>
+                      <th class="w-[160px] text-center" data-datatable-column="code">
+                              <span class="sort">
+                                  <span class="sort-label"> Intercambio</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                      </th>
+                      <th class="w-[160px] text-center" data-datatable-column="reference">
+                              <span class="sort">
+                                  <span class="sort-label">Referencia</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                      </th>
+
+                      <th class="w-[60px]">
+                      </th>
+                      <th class="w-[60px]">
+                      </th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            <div
+                class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+              <div class="flex items-center gap-2">
+                Mostrar
+                <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                </select>
+                por Pagina
+              </div>
+              <div class="flex items-center gap-4">
+                <span data-datatable-info="true"></span>
+                <div class="pagination" data-datatable-pagination="true"></div>
+              </div>
+            </div>
+
+          </div>
+          </div>
+
+        </div>
       </div>
 
     </template>
@@ -378,13 +399,6 @@
       </button>
     </template>
   </LongModal>
-  <QuestionModal title="title" id="modal-question">
-    <template #footer>
 
-      <button class="btn btn-danger" @click="destroy()">
-        Eliminar
-      </button>
-    </template>
-  </QuestionModal>
 </template>
 <script src="./index.js"></script>

@@ -6,10 +6,12 @@ import ProductsService from "@/services/productsService.js";
 import CategoryService from "@/services/categoryService.js";
 import BrandService from "@/services/brandService.js";
 import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.js";
-import {VUE_APP_STORAGE_URL, configApi} from "@/services/config.js";
+import {urlApi, VUE_APP_STORAGE_URL} from "@/services/config.js";
 import EquivalentService from "@/services/equivalentService.js";
-import equivalentService from "@/services/equivalentService.js";
-
+import Swal from 'sweetalert2';
+import InterchangesService from "@/services/interchangeService.js";
+// @ts-ignore
+// @ts-ignore
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
@@ -22,6 +24,13 @@ export default {
             unitsMeasurement: [],
             products: [],
             product_id_equivalent: null,
+            intercambios: [],
+            intercambio: {
+                id: 0,
+                product_id: '',
+                code: '',
+                reference: '',
+            },
             entity: {
                 id: 0,
                 code: '',
@@ -30,7 +39,6 @@ export default {
                 description: '',
                 brand_id: 0,
                 category_id: 0,
-                // provider_id: 0,
                 unit_measurement_id: 0,
                 description_measurement_id: 0,
                 image: null,
@@ -47,7 +55,6 @@ export default {
                 description: {isRequired: true, validationSuccess: true},
                 brand_id: {isRequired: true, validationSuccess: true},
                 category_id: {isRequired: true, validationSuccess: true},
-                // provider_id: {isRequired: true, validationSuccess: true},
                 unit_measurement_id: {isRequired: true, validationSuccess: true},
                 description_measurement_id: {isRequired: true, validationSuccess: true},
                 image: {isRequired: false, validationSuccess: true},
@@ -92,28 +99,85 @@ export default {
         },
 
         // Método para obtener la URL de previsualización de la imagen
-        deleteRow(id) {
-            this.entity.id = id;
-            KTModal.getInstance(document.querySelector("#modal-question")).show();
+        deleteProductModal(id) {
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¡No podrás recuperar este producto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: ' btn btn-info'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await ProductsService.destroy(id);
+                        await Swal.fire({
+                            title: '¡Eliminado!',
+                            text: 'El producto ha sido eliminado.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            }
+                        });
+                        window.location.reload();
+                    } catch (error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el producto',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'btn btn-danger'
+                            }
+                        });
+                    }
+                }
+            });
         },
         deleteEquivalente(id) {
-            this.equi = id;
-            KTModal.getInstance(document.querySelector("#modal-question")).show();
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¡Vas a quitar esta equivalencia del producto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, quitar',
+                cancelButtonText: 'Cancelar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: ' btn btn-info'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await EquivalentService.destroy(id);
+                        this.loadEquivalents(this.entity.id);
+                        await Swal.fire({
+                            title: '¡Eliminado!',
+                            text: 'Equivalencia ha sido eliminada.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    } catch (error) {
+                        await Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudo eliminar el producto',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido',
+                        });
+                    }
+                }
+            });
         },
 
-        // Método para limpiar la previsualización
-        async destroy() {
-            if (this.loading) return;
-            this.loading = true;
-            try {
-                await ProductsService.destroy(this.entity.id);
-                window.location.reload();
-            } catch (error) {
-                console.error('Error al eliminar el almacén:', error);
-            } finally {
-                this.loading = false;
-            }
-        },
 
         // Método para manejar el cambio de imagen
         async openStoreModal() {
@@ -168,6 +232,15 @@ export default {
                 } else {
                     console.error("Could not find modal instance");
                 }
+
+
+                try {
+                    this.loadInterChanges(this.entity.id);
+                } catch (error) {
+                    console.error('Error al cargar intercambios:', error);
+                }
+
+
             } catch (error) {
                 console.error("Error in editModal:", error);
             }
@@ -379,6 +452,7 @@ export default {
                 columns: {
                     code: {
                         title: 'code',
+                        search: true
 
                     },
                     original_code: {
@@ -420,7 +494,7 @@ export default {
                     delete: {
                         render: () => `<button class="btn btn-outline btn-danger"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.deleteRow(rowData.id));
+                            cell.addEventListener('click', () => this.deleteProductModal(rowData.id));
                         },
                     },
                 },
@@ -438,20 +512,16 @@ export default {
         loadEquivalents(idProduct) {
             const tableElementEquivalent = document.querySelector("#table_equivalente");
 
-            if (!tableElementEquivalent) {
-                console.error("Table element not found");
-                return;
-            }
 
             try {
-                console.log("Loading equivalents for product ID:", idProduct);
-                const endpoint = `${equivalentService.getEquivalentByProduct(idProduct)}?timestamp=${Date.now()}`;
-                console.log("Using endpoint:", endpoint);
+                // console.log("Loading equivalents for product ID:", idProduct);
+                // const endpoint = `${equivalentService.getEquivalentByProduct(idProduct)}`;
+                // console.log("Using endpoint:", endpoint);
 
 
                 const options = {
                     type: 'remote',
-                    apiEndpoint: equivalentService.getEquivalentByProduct(idProduct),
+                    apiEndpoint: EquivalentService.getEquivalentByProduct(idProduct),
                     requestHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
@@ -459,6 +529,9 @@ export default {
 
                         product_id_equivalent: {
                             title: 'product_id_equivalent',
+                            render: function (data, type, row) {
+                                return type?.product_equivalent?.code ?? 'S/N';
+                            }
 
                         },
                         product_equivalent: {
@@ -467,33 +540,31 @@ export default {
                                 return type?.product_equivalent?.description ?? 'S/N';
                             }
                         },
-                        edit: {
-                            render: () => `<button class="btn btn-outline btn-info">
-                        <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer"></i></button>`,
-                            createdCell: (cell, cellData, rowData) => {
-                                cell.addEventListener('click', () => this.editModal(rowData));
-                            },
-                        },
+
                         delete: {
-                            render: () => `<button class="btn btn-outline btn-danger">
+                            render: () => `<button class="btn btn-sm btn-outline btn-danger">
                         <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
                             createdCell: (cell, cellData, rowData) => {
-                                cell.addEventListener('click', () => this.deleteRow(rowData.id));
+                                cell.addEventListener('click', () => this.deleteEquivalente(rowData.id));
                             },
                         },
                     },
                     layout: {scroll: true},
                     sortable: true,
-                    pagination: true
+                    search: {
+                        input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
+                        key: 'search', // Parámetro que se enviará al servidor
+                        delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
+                    },
                 };
 
-                // if (this.dataTableEquivalents) {
-                //     this.dataTableEquivalents.reload(options);
-                //     console.log('Reload equivalents data');
-                // } else {
-                this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
-                console.log('Initialize equivalents data');
-                // }/
+                if (this.dataTableEquivalents) {
+                    this.dataTableEquivalents.reload(options);
+                    console.log('Reload equivalents data');
+                } else {
+                    this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
+                    console.log('Initialize equivalents data');
+                }
 
             } catch (error) {
                 console.error("Error loading equivalents:", error);
@@ -501,6 +572,129 @@ export default {
                 alert("Error loading equivalent products: " + error.message);
             }
         },
+
+        loadInterChanges(idProduct) {
+            const tableElementInterchange = document.querySelector("#table_intercambio");
+            try {
+
+
+                const options = {
+                    type: 'remote',
+                    apiEndpoint: `${urlApi}/v1/interchanges/product/${idProduct}`,//InterchangesService.getInterchangeByProduct(idProduct),
+                    requestHeaders: {
+                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    },
+                    columns: {
+
+                        code: {title: 'code'},
+                        reference: {title: 'reference'},
+                        delete: {
+                            render: () => `<button class="btn btn-sm btn-outline btn-danger">
+                        <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                            createdCell: (cell, cellData, rowData) => {
+                                cell.addEventListener('click', () => this.deleteEquivalente(rowData.id));
+                            },
+                        },
+                    },
+                    layout: {scroll: true},
+                    sortable: true,
+                    search: {
+                        input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
+                        key: 'search', // Parámetro que se enviará al servidor
+                        delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
+                    },
+                };
+
+                if (this.dataTableInterChanges) {
+                    this.dataTableInterChanges.reload(options);
+                    console.log('Reload equivalents data');
+                } else {
+                    this.dataTableInterChanges = new KTDataTable(tableElementInterchange, options);
+                    console.log('Initialize intercambios data');
+                }
+
+            } catch (error) {
+                console.error("Error loading intercambios:", error);
+            }
+        },
+        async showIntercambioModal(editData = null) {
+            const isEditMode = editData !== null;
+
+            const {value: formValues} = await Swal.fire({
+                title: isEditMode ? 'Editar Intercambio' : 'Agregar Intercambio',
+                html: `
+      <div class="mb-3">
+        <label for="swalIntercambioCode" class="form-label">Código intercambio:</label>
+        <input type="text" id="swalIntercambioCode" class="input" 
+               placeholder="Ingrese el código" value="${isEditMode ? editData.code : ''}" required>
+      </div>
+      <div class="mb-3">
+        <label for="swalReference" class="form-label">Referencia:</label>
+        <input type="text" id="swalReference" class="input" 
+               placeholder="Ingrese el nombre" value="${isEditMode ? editData.name : ''}">
+      </div>
+    `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: isEditMode ? 'Guardar cambios' : 'Agregar',
+                cancelButtonText: 'Cancelar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-success me-2',
+                    cancelButton: 'btn btn-info'
+                },
+                didOpen: () => {
+                    setTimeout(() => {
+                        document.getElementById('swalIntercambioCode').focus();
+                    }, 100);
+                },
+                preConfirm: () => {
+                    const code = document.getElementById('swalIntercambioCode').value.trim();
+                    const reference = document.getElementById('swalReference').value.trim();
+                    const product_id = this.entity.id;
+                    const is_active = true;
+
+                    if (!code) {
+                        Swal.showValidationMessage('El código es requerido');
+                        return false;
+                    }
+
+                    return {code, reference, product_id, is_active};
+                }
+            });
+
+            if (formValues) {
+                if (isEditMode) {
+                    // Lógica para editar
+                    const interchange = InterchangesService.update(editData.id, formValues);
+                    await Swal.fire('¡Actualizado!', 'El intercambio ha sido modificado.', 'success');
+                } else {
+                    // Lógica para registrar nuevo
+                    const interchange = await InterchangesService.store(formValues)
+                    if (interchange.status === 'success') {
+                        await Swal.fire({
+                            title: '¡Agregado!',
+                            text: 'El intercambio ha sido agregado.',
+                            icon: 'success',
+                            timer: 1500,
+                            timerProgressBar: true,
+                            confirmButtonText: 'Aceptar',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'btn btn-success'
+                            }
+                        });
+                        this.loadInterChanges(this.entity.id);
+
+                    }
+                }
+
+            }
+        },
+
+// Ejemplo de uso:
+// Para agregar nuevo: showIntercambioModal()
+// Para editar: showIntercambioModal({ id: 1, code: 'ABC123', name: 'Producto Ejemplo' })
 
         async loadOptions() {
             try {
@@ -530,24 +724,20 @@ export default {
             }
         },
 
-        async addEquivalente() {
-            try {
-                const formData = new FormData();
-                formData.append('product_id', this.entity.id);
-                formData.append('product_id_equivalent', this.product_id_equivalent);
-                formData.append('is_active', 1);
-                await EquivalentService.store(formData);
-                this.loadEquivalents(this.entity.id);
 
+
+        async addInterchange(formValues) {
+            try {
+                return await interchangesService.store(formValues);
             } catch (error) {
-                console.error('Error al registrar equivalencia:', error);
+                console.error('Error al agregar equivalencia:', error);
             }
-        },
+        }
     },
 
     mounted() {
         this.loadTableProducts();
         // this.loadEquivalents(this.entity.id);
-        window.editModal = this.editModal.bind(this);
+        // window.editModal = this.editModal.bind(this);
     },
 };
