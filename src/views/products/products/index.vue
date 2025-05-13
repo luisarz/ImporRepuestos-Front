@@ -22,7 +22,7 @@
 
         <div class="scrollable-x-auto">
 
-          <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+          <table class="table table-sm table-border align-middle text-sm"
                  data-datatable-table="true">
             <thead>
             <tr>
@@ -105,14 +105,14 @@
       <div class="card">
         <!--                <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-4 gap-4">
+          <div class="grid grid-cols-4 gap-3">
 
 
             <!-- Campos del formulario -->
             <div v-for="(group, groupIndex) in formFields()" :key="groupIndex"
                  :class="[ group.group === 'Configuraciones' ? 'col-span-1 gap-4' : 'col-span-3 gap-4',]">
               <!-- Título del grupo -->
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">{{ group.group }}</h3>
+              <h3 class="text-lg font-semibold mb-3 border-b pb-2 modal-title ">{{ group.group }}</h3>
 
               <!-- Campos del grupo -->
               <div class="grid gap-3"
@@ -153,7 +153,7 @@
                           <!-- Select -->
                           <select
                               v-else-if="field.type === 'select'"
-                              class="select select2"
+                              class="select"
                               data-control="select2"
                               v-model="entity[field.key]"
                               @change="validationForm"
@@ -205,9 +205,9 @@
         </div>
       </div>
 
-      <div class="grid grid-flow-col grid-col-3 gap-4 mt-4">
+      <div class="grid grid-flow-col grid-col-3 gap-4 mt-2">
         <div class="row-span-3">
-          <div class="card">
+          <div class="card h-[500px] flex flex-col overflow-hidden">
             <div class="card-header">
               <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Aplicaciones</h3>
               <label class="switch switch-sm">
@@ -218,7 +218,7 @@
                 </button>
               </label>
             </div>
-            <div class="card-body">
+            <div class="card-body flex-1 overflow-y-auto">
               <div class="scrollable-x-auto">
                 <table id="#table_aplicacion" class="table table-hover table-auto " data-datatable-table="true">
                   <thead>
@@ -254,11 +254,12 @@
 
 
         <div class="row-span-3 ...">
-          <div class="card">
+          <div id="table_equivalente">
+          <div class="card h-[500px] flex flex-col overflow-hidden">
             <div class="card-header">
               <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
             </div>
-            <div class="card-body">
+            <div class="card-body flex-1 overflow-y-auto">
               <label class="switch switch-sm">
                 <select v-model="product_id_equivalent" name="products" class="select">
                   <option v-for="product in products" :key="product.id" :value="product.id">
@@ -267,13 +268,14 @@
                 </select>
 
 
+
                 <button class="btn btn-success" @click="addEquivalente()" :disabled="loading">
                   <i class="ki-filled ki-plus-squared"></i>
                   Agregar Equivalente
 
                 </button>
               </label>
-              <div id="table_equivalente">
+              <div id="">
                 <div class="scrollable-x-auto">
                   <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
                          data-datatable-table="true">
@@ -294,8 +296,7 @@
 
                       <th class="w-[60px]">
                       </th>
-                      <th class="w-[60px]">
-                      </th>
+
 
 
                     </tr>
@@ -306,8 +307,7 @@
                 </div>
               </div>
             </div>
-            <div
-                class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+            <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
               <div class="flex items-center gap-2">
                 Mostrar
                 <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
@@ -320,75 +320,63 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
 
 
         <div class="row-span-3  ...">
           <div id="table_intercambio">
 
-          <div class="card">
-            <div class="card-header">
+            <div class="card h-[500px] flex flex-col overflow-hidden">
+              <div class="card-header">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title">Intercambios</h3>
+                <button class="btn btn-success" @click="showIntercambioModal()" :disabled="loading">
+                  <i class="ki-filled ki-plus-squared"></i> Agregar Intercambio
+                </button>
+              </div>
 
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Intercambios</h3>
-              <!--              <label class="switch switch-sm">-->
-              <button class="btn btn-success" @click="showIntercambioModal()" :disabled="loading">
-                <i class="ki-filled ki-plus-squared"></i>
-                Agregar Intercambio
-
-              </button>
-              <!--              </label>-->
-            </div>
-            <div class="card-body">
+              <div class="card-body flex-1 overflow-y-auto">
                 <div class="scrollable-x-auto">
-                  <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                  <table class="table table-sm table-border align-middle text-gray-700 font-medium text-sm"
                          data-datatable-table="true">
                     <thead>
                     <tr>
                       <th class="w-[160px] text-center" data-datatable-column="code">
-                              <span class="sort">
-                                  <span class="sort-label"> Intercambio</span>
-                                  <span class="sort-icon"></span>
-                              </span>
+              <span class="sort">
+                <span class="sort-label"> Intercambio</span>
+                <span class="sort-icon"></span>
+              </span>
                       </th>
                       <th class="w-[160px] text-center" data-datatable-column="reference">
-                              <span class="sort">
-                                  <span class="sort-label">Referencia</span>
-                                  <span class="sort-icon"></span>
-                              </span>
+              <span class="sort">
+                <span class="sort-label">Referencia</span>
+                <span class="sort-icon"></span>
+              </span>
                       </th>
-
-                      <th class="w-[60px]">
-                      </th>
-                      <th class="w-[60px]">
-                      </th>
-
-
+                      <th class="w-[60px]"></th>
                     </tr>
                     </thead>
                     <tbody>
                     </tbody>
                   </table>
                 </div>
+              </div>
 
-              </div>
-            <div
-                class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-              <div class="flex items-center gap-2">
-                Mostrar
-                <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
-                </select>
-                por Pagina
-              </div>
-              <div class="flex items-center gap-4">
-                <span data-datatable-info="true"></span>
-                <div class="pagination" data-datatable-pagination="true"></div>
+              <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                <div class="flex items-center gap-2">
+                  Mostrar
+                  <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select>
+                  por Página
+                </div>
+                <div class="flex items-center gap-4">
+                  <span data-datatable-info="true"></span>
+                  <div class="pagination" data-datatable-pagination="true"></div>
+                </div>
               </div>
             </div>
-
-          </div>
           </div>
 
-        </div>
+          </div>
       </div>
 
     </template>

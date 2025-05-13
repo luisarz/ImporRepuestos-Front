@@ -2,7 +2,7 @@
 <!--    <div class="modal" data-modal="true" :id="id" data-backdrop="static" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">-->
       <div class="modal fade" data-modal="true" :id="id" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
 
-      <div class="modal-content lg:max-w-[1600px] top-[10%]">
+      <div class="modal-content lg:max-w-[1600px]">
 
         <div class="modal-header">
                 <h3 class="modal-title">

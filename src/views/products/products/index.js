@@ -122,6 +122,8 @@ export default {
                             text: 'El producto ha sido eliminado.',
                             icon: 'success',
                             confirmButtonText: 'Aceptar',
+                            timer:1500,
+                            timerProgressBar: true,
                             buttonsStyling: false,
                             customClass: {
                                 confirmButton: 'btn btn-success'
@@ -129,7 +131,7 @@ export default {
                         });
                         window.location.reload();
                     } catch (error) {
-                        Swal.fire({
+                        await Swal.fire({
                             title: 'Error',
                             text: 'No se pudo eliminar el producto',
                             icon: 'error',
@@ -488,14 +490,14 @@ export default {
 
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {
-                        render: () => `<button class="btn btn-outline btn-info">
+                        render: () => `<button class="btn btn-outline btn-info btn-sm">
                             <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.editModal(rowData));
                         },
                     },
                     delete: {
-                        render: () => `<button class="btn btn-outline btn-danger"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                        render: () => `<button class="btn btn-outline btn-danger btn-sm"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.deleteProductModal(rowData.id));
                         },
