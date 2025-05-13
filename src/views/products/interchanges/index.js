@@ -3,7 +3,7 @@ import {KTDataTable, KTModal} from './../../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '../../../components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
-import Equivalents from '@/services/equivalentService.js';
+import IntercambioService from '@/services/interchangeService.js';
 import ProductsService from "@/services/productsService.js";
 
 export default {
@@ -61,9 +61,9 @@ export default {
             this.loading = true;
             try {
                 if (this.isEditing) {
-                    await Equivalents.update(this.entity);
+                    await IntercambioService.update(this.entity);
                 } else {
-                    await Equivalents.store(this.entity);
+                    await IntercambioService.store(this.entity);
                 }
                 window.location.reload();
             } catch (error) {
@@ -101,7 +101,7 @@ export default {
             if (this.loading) return;
             this.loading = true;
             try {
-                await Equivalents.destroy(this.entity.id);
+                await IntercambioService.destroy(this.entity.id);
                 window.location.reload();
             } catch (error) {
                 console.error('Error al eliminar el almacén:', error);
@@ -137,36 +137,38 @@ export default {
         initDataTable() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
-                apiEndpoint: Equivalents.getUrl(),
+                apiEndpoint: IntercambioService.getUrl(),
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
                 columns: {
                     id: {
-                        title: 'Producto',
+                        title: 'codigo',
                         render: (data, type, row) => {
-                            return type?.product_original?.code ?? 'S/N';
+                            return type?.product?.code ?? 'S/N';
                         }
                     },
                     product_id: {
                         title: 'Producto',
                         render: (data, type, row) => {
-                            return type?.product_original?.description ?? 'S/N';
+                            return type?.product?.description ?? 'S/N';
                         }
                     },
                     product_id_equivalent: {
-                        title: 'Equivalente',
+                        title: 'Intercambio',
                         render: (data, type, row) => {
-                            return (type?.product_equivalent?.description + ' (' + type?.product_equivalent?.code + ')') ?? 'S/N';
-
+                            return type?.code ?? 'S/N';
                         }
+
                     },
-                    // category: {
-                    //     title: 'Categoría',
-                    //     render: function (data, type, row) {
-                    //         return type?.category?.description ?? 'S/N';
-                    //     }
-                    // },
+                    reference: {
+                        title: 'Referencia',
+                        render: (data, type, row) => {
+                            return type?.reference ?? 'S/N';
+                        }
+
+                    },
+
                     edit: {
                         render: () => `<button class="btn btn-outline btn-info">
                             <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,

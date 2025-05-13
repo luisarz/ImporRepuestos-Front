@@ -12,7 +12,7 @@
 		--tw-sidebar-width: theme('custom.layouts.demo1.sidebar.width.mobile');
 		--tw-header-height: theme('custom.layouts.demo1.header.height.mobile');
 	}
-};   
+}
 
 /* Base */
 .demo1 .header {

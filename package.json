@@ -9,14 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@keenthemes/ktui": "^1.0.8",
+    "@keenthemes/ktui": "^1.0.11",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.8.1",
+    "bootstrap": "^5.3.6",
+    "jquery": "^3.7.1",
+    "moment": "^2.30.1",
     "sweetalert2": "^11.21.0",
     "vue": "^3.4.29",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.32",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.19",
     "mini-svg-data-uri": "^1.4.4",

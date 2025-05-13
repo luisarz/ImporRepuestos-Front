@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col items-center justify-center h-[95%]" style="display: flex;flex-direction: column;margin: auto;">
       <div class="mb-10">
-       <img alt="image" class="dark:hidden max-h-[160px]" src="/media/illustrations/19.svg"/>
-       <img alt="image" class="light:hidden max-h-[160px]" src="/media/illustrations/19-dark.svg"/>
+<!--       <img alt="image" class="dark:hidden max-h-[160px]" src="/media/illustrations/19.svg"/>-->
+<!--       <img alt="image" class="light:hidden max-h-[160px]" src="/metronic8/media/illustrations/19-dark.svg"/>-->
       </div>
       <span class="badge badge-primary badge-outline mb-3">
        404 Error

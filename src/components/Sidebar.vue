@@ -6,7 +6,7 @@
       <div class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
          id="sidebar_header">
          <a class="dark:hidden" href="/">
-            <img class="default-logo max-h-[100px] max-w-none" src="/media/app/importlogo.png" />
+            <img class="default-logo max-h-[100px] max-w-none" src="/media/app/default-logo-dark.svg" />
             <img class="small-logo min-h-[22px] max-w-none" src="/media/app/importlogo.png" />
          </a>
          <a class="hidden dark:block" href="/">
@@ -34,7 +34,7 @@
                      <div
                         class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[3px]"
                         tabindex="0">
-                        <span class="menu-icon items-start text-gray-500 dark:text-white w-[20px]">
+                        <span class="menu-icon items-start text-gray-500 dark:text-white w-[30px]">
                         <i :class="`ki-outline ki-${modulo.icono} text-lg`">
                           </i>
 
@@ -43,7 +43,7 @@
                            class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
                            {{ modulo.nombre }}
                         </span>
-                        <span class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
+                        <span class="menu-arrow text-gray-400 w-[25px] shrink-0 justify-end ml-1 mr-[-10px]">
                            <i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
                            </i>
                            <i class="ki-filled ki-minus text-2xs hidden menu-item-show:inline-flex">

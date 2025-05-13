@@ -9,7 +9,7 @@ import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.j
 import {urlApi, VUE_APP_STORAGE_URL} from "@/services/config.js";
 import EquivalentService from "@/services/equivalentService.js";
 import Swal from 'sweetalert2';
-import InterchangesService from "@/services/interchangeService.js";
+import Inventory from "@/services/inventoryService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
@@ -71,10 +71,10 @@ export default {
     },
     computed: {
         modalTitle() {
-            return this.isEditing ? `Modificar -${this.moduleName}` : `Crear - ${this.moduleName}`;
+            return this.isEditing ? `Modificar -${this.moduleName}` : `Levantar - ${this.moduleName}`;
         },
         moduleName() {
-            return ' Prodúctos';
+            return ' Inventarios';
         },
         formattedDate: {
             get() {
@@ -452,23 +452,40 @@ export default {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
                 // apiEndpoint: ProductsService.getUrl(),
-                apiEndpoint:`${urlApi}/v1/products?search=${searchQuery}`,
+                apiEndpoint:`${urlApi}/v1/inventories?search=${searchQuery}`,
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
                 columns: {
+                    warehouse_id: {
+                        title: 'warehouse',
+                        search: true,
+                        render:function (data,type,row){
+                            return type?.warehouse?.name??'SN'
+                        }
+
+                    },
                     code: {
                         title: 'code',
-                        search: true
+                        search: true,
+                        render:function (data,type,row){
+                            return type?.product?.code??'SN'
+                        }
 
                     },
                     original_code: {
                         title: 'original_code',
+                        search: true,
+                        render:function (data,type,row){
+                            return type?.product?.original_code??'SN'
+                        }
 
                     },
-                    barcode: {
+                    producto: {
                         title: 'bar_code',
-
+                        render:function (data,type,row){
+                            return type?.product?.description??'SN'
+                        }
                     },
                     category: {
                         title: 'Categoría',
@@ -480,15 +497,31 @@ export default {
                         title: 'Descripción',
 
                     },
-                    description_measurement_id: {
-                        title: 'Unidad de Medida',
-                    },
-                    brand: {
-                        title: 'Marca',
-                        render: function (data, type, row) {
-                            return type?.brand?.description ?? 'S/N';
+                    inventory_batches_sum_quantity: {
+                        title: 'Inventario en lotes',
+                        render:function (data, type, row) {
+                            return type?.inventory_batches_sum_quantity??0;
                         }
                     },
+                    price: {
+                        title: 'Marca',
+                        render: function (data, type, row) {
+                            // return type?.price['0']?.price ?? 'S/N';
+                        }
+                    },
+                    last_purchase: {
+                        title: 'Last purchase',
+                        render: function (data, type, row) {
+                            if (!type?.last_purchase) return 'S/N';
+                            const date = new Date(type.last_purchase);
+                            return new Intl.DateTimeFormat('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            }).format(date);
+                        }
+                    },
+
 
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {

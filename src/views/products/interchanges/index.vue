@@ -40,13 +40,21 @@
                 <th class="min-w-[350px]" data-datatable-column="ipAddress">
                                         <span class="sort">
                                             <span class="sort-label">
-                                                Equivalente
+                                                Intercambio
                                             </span>
                                             <span class="sort-icon">
                                             </span>
                                         </span>
                 </th>
-
+                <th class="min-w-[350px]" data-datatable-column="ipAddress">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Referencia
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                </th>
 
                 <th class="w-[60px]">
                 </th>

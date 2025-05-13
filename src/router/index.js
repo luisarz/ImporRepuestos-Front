@@ -24,6 +24,7 @@ import FuelType from "@/views/parque_vehicular/fuel_types/index.vue";
 import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 import Equivalents from "@/views/products/equivalents/index.vue";
 import Interchanges from "@/views/products/interchanges/index.vue";
+import Inventory from "@/views/products/inventory/index.vue";
 
 const routes = [
     {
@@ -141,6 +142,12 @@ const routes = [
             }, {
                 path: 'interchanges',
                 component: Interchanges,
+                meta: {requiresAuth: true}
+
+            },
+            {
+                path: 'inventory',
+                component: Inventory,
                 meta: {requiresAuth: true}
 
             }

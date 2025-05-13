@@ -41,31 +41,31 @@
             <tr>
               <th class="w-[160px] text-center" data-datatable-column="code">
                               <span class="sort">
-                                  <span class="sort-label"> Código</span>
+                                  <span class="sort-label"> Sucursal</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
               <th class="w-[160px] text-center" data-datatable-column="original_code">
                               <span class="sort">
-                                  <span class="sort-label">Cod. Orig</span>
+                                  <span class="sort-label">Cod impor</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
               <th class="w-[160px] text-center" data-datatable-column="barcode">
                               <span class="sort">
-                                  <span class="sort-label"> Cod.Barra</span>
+                                  <span class="sort-label"> Cod Original</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
               <th class="w-[160px] text-center" data-datatable-column="category">
                               <span class="sort">
-                                  <span class="sort-label">Categoría</span>
+                                  <span class="sort-label">Producto</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
               <th class="w-[260px] text-center" data-datatable-column="description">
                               <span class="sort">
-                                  <span class="sort-label">Descripción</span>
+                                  <span class="sort-label">Categoria</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
@@ -77,7 +77,19 @@
               </th>
               <th class="w-[160px] text-center" data-datatable-column="brand">
                               <span class="sort">
-                                  <span class="sort-label">Marca</span>
+                                  <span class="sort-label">Stock lotes</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="brand">
+                              <span class="sort">
+                                  <span class="sort-label">Precio Venta</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+              </th>
+              <th class="w-[160px] text-center" data-datatable-column="brand">
+                              <span class="sort">
+                                  <span class="sort-label">Ultima Compra</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>

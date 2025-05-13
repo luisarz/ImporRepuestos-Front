@@ -20,9 +20,12 @@
   import { nextTick, onMounted } from 'vue';
   import KTComponent from './../../metronic/core/index';
   import KTLayout from './../../metronic/app/layouts/demo1.js';
-  
+
   onMounted(() => {
+
       nextTick(() => {
+          KTLayout.init();
+          KTComponent.init();
       });
   });
 
