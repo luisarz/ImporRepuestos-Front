@@ -16,6 +16,7 @@ export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
         return {
+            searchQuery: '',
             loading: false,
             isEditing: false,
             providers: [],
@@ -401,6 +402,7 @@ export default {
             if (!this.validationForm()) return;
             this.loading = true;
 
+                this.loadEquivalents(this.entity.id);
 
             try {
                 // Preparamos FormData para ambos casos (create y update)
@@ -422,6 +424,7 @@ export default {
                 formData.append('is_discontinued', this.entity.is_discontinued ? '1' : '0');
                 formData.append('is_not_purchasable', this.entity.is_not_purchasable ? '1' : '0');
 
+                await EquivalentService.store(formData);
 
                 if (this.entity.image instanceof File) {
                     formData.append('image', this.entity.image);
@@ -512,7 +515,6 @@ export default {
         loadEquivalents(idProduct) {
             const tableElementEquivalent = document.querySelector("#table_equivalente");
 
-
             try {
                 // console.log("Loading equivalents for product ID:", idProduct);
                 // const endpoint = `${equivalentService.getEquivalentByProduct(idProduct)}`;
@@ -577,6 +579,7 @@ export default {
             const tableElementInterchange = document.querySelector("#table_intercambio");
             try {
 
+                const formData = new FormData();
 
                 const options = {
                     type: 'remote',
@@ -724,15 +727,56 @@ export default {
             }
         },
 
+        async addEquivalente() {
 
+            try {
+                const formData = new FormData();
+                formData.append('product_id', this.entity.id);
+                formData.append('product_id_equivalent', this.product_id_equivalent);
+                formData.append('is_active', 1);
+                const response = await EquivalentService.store(formData);
+                if(response.status==='error') {
+                    await Swal.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'Entendido',
+                        buttonsStyling: false,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        customClass: {
+                            confirmButton: 'btn btn-danger'
+                        }
+                    });
+                    return false;
+
+                }
+                await Swal.fire({
+                    title: '¡Agregado!',
+                    text: 'La equivalencia ha sido agregada.',
+                    icon: 'success',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    confirmButtonText: 'Aceptar',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-success'
+                    }
+                })
+                this.loadEquivalents(this.entity.id);
+            }
+            catch (error){
+                console.error('Error al cargar las opciones:', error);
+            }
+        },
 
         async addInterchange(formValues) {
             try {
-                return await interchangesService.store(formValues);
+                return await InterchangesService.store(formValues);
             } catch (error) {
                 console.error('Error al agregar equivalencia:', error);
             }
-        }
+        },
     },
 
     mounted() {
