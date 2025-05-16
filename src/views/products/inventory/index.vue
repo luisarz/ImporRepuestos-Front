@@ -1,126 +1,121 @@
 <template>
-  <div class="grid" id="kt_remote_table">
+  <div class="grid">
+
     <div class="card card-grid min-w-full">
-      <div class="card-header py-5 flex-wrap">
-        <h1 class="card-title">
-          Administración <span class="badge badge-info">
+      <div class="card-header flex-wrap py-2">
+        <div class="relative">
+          <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+          </i>
+          <input class="input input-md pl-8" data-datatable-search="#kt_remote_table" placeholder="Buscar inventarios"
+                 type="text">
+        </div>
 
-        {{ moduleName }}
-        </span>
-
-          <div class="d-flex align-items-center position-relative my-1">
-
-            <input
-                type="text"
-                v-model="searchQuery"
-                @keyup="handleSearch"
-                class="input  w-250px ps-15"
-                placeholder="Buscar..."
-            />
-
-          </div>
+        <div class="flex gap-6">
 
 
+          <label class="switch switch-sm">
+            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+              <i class="ki-filled ki-plus-squared"></i>
+              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
 
-        </h1>
-        <label class="switch switch-sm">
-          <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-            <i class="ki-filled ki-plus-squared"></i>
-            {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
-
-          </button>
-        </label>
+            </button>
+          </label>
+        </div>
       </div>
+
       <div class="card-body">
 
-        <div class="scrollable-x-auto">
+        <div data-datatable="true" data-datatable-page-size="10" id="kt_remote_table" class="datatable-initialized">
+          <div class="scrollable-x-auto">
 
-          <table class="table table-sm table-border align-middle text-sm"
-                 data-datatable-table="true">
-            <thead>
-            <tr>
-              <th class="w-[160px] text-center" data-datatable-column="code">
+            <table class="table table-responsive table-border table-sm" data-datatable-table="true">
+              <thead>
+              <tr>
+                <th class="w-[100px] text-center" data-datatable-column="code">
                               <span class="sort">
                                   <span class="sort-label"> Sucursal</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="original_code">
+                </th>
+                <th class="w-[120px] text-center" data-datatable-column="original_code">
                               <span class="sort">
                                   <span class="sort-label">Cod impor</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="barcode">
+                </th>
+                <th class="w-[130px] text-center" data-datatable-column="barcode">
                               <span class="sort">
-                                  <span class="sort-label"> Cod Original</span>
+                                  <span class="sort-label">Cod Original</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="category">
+                </th>
+                <th class="w-[180px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">Producto</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[260px] text-center" data-datatable-column="description">
+                </th>
+                <th class="w-[100px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">Categoria</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="description_measurement_id">
+                </th>
+                <th class="w-[100px] text-center" data-datatable-column="description_measurement_id">
                               <span class="sort">
                                   <span class="sort-label">Medida</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="brand">
+                </th>
+                <th class="w-[100px] text-center" data-datatable-column="brand">
                               <span class="sort">
-                                  <span class="sort-label">Stock lotes</span>
+                                  <span class="sort-label">Stock</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="brand">
+                </th>
+                <th class="w-[120px] text-center" data-datatable-column="brand">
                               <span class="sort">
-                                  <span class="sort-label">Precio Venta</span>
+                                  <span class="sort-label">PV</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
-              <th class="w-[160px] text-center" data-datatable-column="brand">
+                </th>
+                <th class="w-[120px] text-center" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Ultima Compra</span>
                                   <span class="sort-icon"></span>
                               </span>
-              </th>
+                </th>
 
 
-              <th class="w-[60px]">
-              </th>
-              <th class="w-[60px]">
-              </th>
+                <th class="w-[60px]">
+                </th>
+                <th class="w-[60px]">
+                </th>
 
 
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div
+              class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+            <div class="flex items-center gap-2">
+              Mostrar
+              <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+              </select>
+              por Pagina
+            </div>
+            <div class="flex items-center gap-4">
+              <span data-datatable-info="true"></span>
+              <div class="pagination" data-datatable-pagination="true"></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div
-          class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-        <div class="flex items-center gap-2">
-          Mostrar
-          <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
-          </select>
-          por Pagina
-        </div>
-        <div class="flex items-center gap-4">
-          <span data-datatable-info="true"></span>
-          <div class="pagination" data-datatable-pagination="true"></div>
-        </div>
-      </div>
+
+
     </div>
   </div>
 
@@ -130,12 +125,12 @@
       <div class="card">
         <!--                <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
-          <div class="grid grid-cols-4 gap-3">
+          <div class="grid grid-cols-3 gap-3">
 
 
             <!-- Campos del formulario -->
             <div v-for="(group, groupIndex) in formFields()" :key="groupIndex"
-                 :class="[ group.group === 'Configuraciones' ? 'col-span-1 gap-4' : 'col-span-3 gap-4',]">
+                 :class="[ group.group === 'Configuraciones' ? 'col-span-3 gap-4' : 'col-span-3 gap-4',]">
               <!-- Título del grupo -->
               <h3 class="text-lg font-semibold mb-3 border-b pb-2 modal-title ">{{ group.group }}</h3>
 
@@ -232,7 +227,9 @@
 
       <div class="grid grid-flow-col grid-col-3 gap-4 mt-2">
         <div class="row-span-3">
+          <!--          <div class="card h-[500px] flex flex-col overflow-hidden">-->
           <div class="card h-[500px] flex flex-col overflow-hidden">
+
             <div class="card-header">
               <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Aplicaciones</h3>
               <label class="switch switch-sm">
@@ -278,130 +275,6 @@
         </div>
 
 
-        <div class="row-span-3 ...">
-          <div id="table_equivalente">
-          <div class="card h-[500px] flex flex-col overflow-hidden">
-            <div class="card-header">
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
-            </div>
-            <div class="card-body flex-1 overflow-y-auto">
-              <label class="switch switch-sm">
-                <select v-model="product_id_equivalent" name="products" class="select">
-                  <option v-for="product in products" :key="product.id" :value="product.id">
-                    {{ product.code }} {{ product.description }} {{ product.brand?.description }}
-                  </option>
-                </select>
-
-
-
-                <button class="btn btn-success" @click="addEquivalente()" :disabled="loading">
-                  <i class="ki-filled ki-plus-squared"></i>
-                  Agregar Equivalente
-
-                </button>
-              </label>
-              <div id="">
-                <div class="scrollable-x-auto">
-                  <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
-                         data-datatable-table="true">
-                    <thead>
-                    <tr>
-                      <th class="w-[160px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label"> Equivalente</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                      </th>
-                      <th class="w-[160px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label">Marca</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                      </th>
-
-                      <th class="w-[60px]">
-                      </th>
-
-
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-              <div class="flex items-center gap-2">
-                Mostrar
-                <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
-                </select>
-                por Pagina
-              </div>
-              <div class="flex items-center gap-4">
-                <span data-datatable-info="true"></span>
-                <div class="pagination" data-datatable-pagination="true"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-
-
-        <div class="row-span-3  ...">
-          <div id="table_intercambio">
-
-            <div class="card h-[500px] flex flex-col overflow-hidden">
-              <div class="card-header">
-                <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title">Intercambios</h3>
-                <button class="btn btn-success" @click="showIntercambioModal()" :disabled="loading">
-                  <i class="ki-filled ki-plus-squared"></i> Agregar Intercambio
-                </button>
-              </div>
-
-              <div class="card-body flex-1 overflow-y-auto">
-                <div class="scrollable-x-auto">
-                  <table class="table table-sm table-border align-middle text-gray-700 font-medium text-sm"
-                         data-datatable-table="true">
-                    <thead>
-                    <tr>
-                      <th class="w-[160px] text-center" data-datatable-column="code">
-              <span class="sort">
-                <span class="sort-label"> Intercambio</span>
-                <span class="sort-icon"></span>
-              </span>
-                      </th>
-                      <th class="w-[160px] text-center" data-datatable-column="reference">
-              <span class="sort">
-                <span class="sort-label">Referencia</span>
-                <span class="sort-icon"></span>
-              </span>
-                      </th>
-                      <th class="w-[60px]"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-                <div class="flex items-center gap-2">
-                  Mostrar
-                  <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select>
-                  por Página
-                </div>
-                <div class="flex items-center gap-4">
-                  <span data-datatable-info="true"></span>
-                  <div class="pagination" data-datatable-pagination="true"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          </div>
       </div>
 
     </template>

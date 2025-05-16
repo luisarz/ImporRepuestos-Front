@@ -2,41 +2,49 @@
   <div class="grid" id="kt_remote_table">
     <div class="card card-grid min-w-full">
       <div class="card-header py-5 flex-wrap">
-        <h1 class="card-title">
-          Administración <span class="badge badge-info">
-
-        {{ moduleName }}
-        </span>
-
-          <div class="d-flex align-items-center position-relative my-1">
-
-            <input
-                type="text"
-                v-model="searchQuery"
-                @keyup="handleSearch"
-                class="input  w-250px ps-15"
-                placeholder="Buscar..."
-            />
-
+        <div class="grid grid-flow-col min-w-full">
+          <div class="grid-1">
+            <h1 class="card-title">
+              Administración <span class="badge badge-info">{{ moduleName }}</span>
+            </h1>
           </div>
 
 
 
-        </h1>
-        <label class="switch switch-sm">
-          <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-            <i class="ki-filled ki-plus-squared"></i>
-            {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
 
-          </button>
-        </label>
+
+
+          <div class="grid-cols-2">
+            <input
+                type="text"
+                v-model="searchQuery"
+                class="input  w-250px ps-15"
+
+                placeholder="Buscar..."
+            />
+          </div>
+          <div class="grid-1"></div>
+          <div class="grid-1">
+            <label class="switch switch-sm">
+              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+                <i class="ki-filled ki-plus-squared"></i>
+                {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
+
+              </button>
+            </label>
+          </div>
+        </div>
+
+
+
+
       </div>
       <div class="card-body">
 
         <div class="scrollable-x-auto">
 
           <table class="table table-sm table-border align-middle text-sm"
-                 data-datatable-table="true">
+                 data-datatable-table="true"  data-datatable-search="true">
             <thead>
             <tr>
               <th class="w-[160px] text-center" data-datatable-column="code">
@@ -268,72 +276,71 @@
 
         <div class="row-span-3 ...">
           <div id="table_equivalente">
-          <div class="card h-[500px] flex flex-col overflow-hidden">
-            <div class="card-header">
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
-            </div>
-            <div class="card-body flex-1 overflow-y-auto">
-              <label class="switch switch-sm">
-                <select v-model="product_id_equivalent" name="products" class="select">
-                  <option v-for="product in products" :key="product.id" :value="product.id">
-                    {{ product.code }} {{ product.description }} {{ product.brand?.description }}
-                  </option>
-                </select>
+            <div class="card h-[500px] flex flex-col overflow-hidden">
+              <div class="card-header">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
+              </div>
+              <div class="card-body flex-1 overflow-y-auto">
+                <label class="switch switch-sm">
+                  <select v-model="product_id_equivalent" name="products" class="select">
+                    <option v-for="product in products" :key="product.id" :value="product.id">
+                      {{ product.code }} {{ product.description }} {{ product.brand?.description }}
+                    </option>
+                  </select>
 
 
+                  <button class="btn btn-success" @click="addEquivalente()" :disabled="loading">
+                    <i class="ki-filled ki-plus-squared"></i>
+                    Agregar Equivalente
 
-                <button class="btn btn-success" @click="addEquivalente()" :disabled="loading">
-                  <i class="ki-filled ki-plus-squared"></i>
-                  Agregar Equivalente
-
-                </button>
-              </label>
-              <div id="">
-                <div class="scrollable-x-auto">
-                  <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
-                         data-datatable-table="true">
-                    <thead>
-                    <tr>
-                      <th class="w-[160px] text-center" data-datatable-column="status">
+                  </button>
+                </label>
+                <div id="">
+                  <div class="scrollable-x-auto">
+                    <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                           data-datatable-table="true">
+                      <thead>
+                      <tr>
+                        <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
                                   <span class="sort-label"> Equivalente</span>
                                   <span class="sort-icon"></span>
                               </span>
-                      </th>
-                      <th class="w-[160px] text-center" data-datatable-column="status">
+                        </th>
+                        <th class="w-[160px] text-center" data-datatable-column="status">
                               <span class="sort">
                                   <span class="sort-label">Marca</span>
                                   <span class="sort-icon"></span>
                               </span>
-                      </th>
+                        </th>
 
-                      <th class="w-[60px]">
-                      </th>
+                        <th class="w-[60px]">
+                        </th>
 
 
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div
+                  class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                <div class="flex items-center gap-2">
+                  Mostrar
+                  <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                  </select>
+                  por Pagina
+                </div>
+                <div class="flex items-center gap-4">
+                  <span data-datatable-info="true"></span>
+                  <div class="pagination" data-datatable-pagination="true"></div>
                 </div>
               </div>
             </div>
-            <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
-              <div class="flex items-center gap-2">
-                Mostrar
-                <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
-                </select>
-                por Pagina
-              </div>
-              <div class="flex items-center gap-4">
-                <span data-datatable-info="true"></span>
-                <div class="pagination" data-datatable-pagination="true"></div>
-              </div>
-            </div>
           </div>
-        </div>
         </div>
 
 
@@ -375,7 +382,8 @@
                 </div>
               </div>
 
-              <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+              <div
+                  class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
                 <div class="flex items-center gap-2">
                   Mostrar
                   <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select>
@@ -389,7 +397,7 @@
             </div>
           </div>
 
-          </div>
+        </div>
       </div>
 
     </template>

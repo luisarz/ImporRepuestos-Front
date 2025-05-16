@@ -13,7 +13,7 @@ import InterchangesService from "@/services/interchangeService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
-    components: {LongModal, GeneralModal, QuestionModal},
+    components: { LongModal, GeneralModal, QuestionModal},
     data() {
         return {
             searchQuery: '',
@@ -447,7 +447,7 @@ export default {
         },
 
 
-       async loadTableProducts() {
+       loadTableProducts() {
             const searchQuery=this.searchQuery;
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
@@ -781,9 +781,13 @@ export default {
                 console.error('Error al agregar equivalencia:', error);
             }
         },
-       async handleSearch() {
-
+        async handleSearch() {
+            try {
                 await this.loadTableProducts();
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                // Optionally show user feedback here
+            }
         }
     },
     // watch: {

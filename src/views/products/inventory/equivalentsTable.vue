@@ -1,3 +1,4 @@
+<template>
 <div class="card">
     <div class="card-header">
         <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Prod. Equivalentes</h3>
@@ -63,3 +64,7 @@
 
         </div>
     </div>
+</div>
+</template>
+<script setup lang="ts">
+</script>

@@ -9,6 +9,7 @@ import UnitMeasurementService from "@/services/hacienda/unitMeasurementService.j
 import {urlApi, VUE_APP_STORAGE_URL} from "@/services/config.js";
 import EquivalentService from "@/services/equivalentService.js";
 import Swal from 'sweetalert2';
+import WarehouseService from "@/services/warehouseService.js";
 import Inventory from "@/services/inventoryService.js";
 // @ts-ignore
 // @ts-ignore
@@ -24,48 +25,34 @@ export default {
             categories: [],
             unitsMeasurement: [],
             products: [],
-            product_id_equivalent: null,
-            intercambios: [],
-            intercambio: {
-                id: 0,
-                product_id: '',
-                code: '',
-                reference: '',
-            },
+            warehouses: [],
+
             entity: {
-                id: 0,
-                code: '',
-                original_code: '',
-                barcode: '',
-                description: '',
-                brand_id: 0,
-                category_id: 0,
-                unit_measurement_id: 0,
-                description_measurement_id: 0,
-                image: null,
-                is_active: 0,
-                is_taxed: 0,
-                is_discontinued: 0,
-                is_not_purchasable: 0,
-                is_service: 0,
+                id:0,
+                warehouse_id:0,
+                product_id:0,
+                provider_id:0,
+                last_cost_without_tax:0,
+                last_cost_with_tax:0,
+                stock_actual_quantity:0,
+                stock_min:0,
+                alert_stock_min:0,
+                stock_max:0,
+                alert_stock_max:0,
+                last_purchase:null
+
             },
             form: {
-                code: {isRequired: true, validationSuccess: true},
-                original_code: {isRequired: false, validationSuccess: true},
-                barcode: {isRequired: true, validationSuccess: true},
-                description: {isRequired: true, validationSuccess: true},
-                brand_id: {isRequired: true, validationSuccess: true},
-                category_id: {isRequired: true, validationSuccess: true},
-                unit_measurement_id: {isRequired: true, validationSuccess: true},
-                description_measurement_id: {isRequired: true, validationSuccess: true},
-                image: {isRequired: false, validationSuccess: true},
-                is_active: {isRequired: false, validationSuccess: true},
-                is_taxed: {isRequired: false, validationSuccess: true},
-                is_discontinued: {isRequired: false, validationSuccess: true},
-                is_not_purchasable: {isRequired: false, validationSuccess: true},
-                is_service: {isRequired: false, validationSuccess: true},
-                image_preview: {isRequired: false, validationSuccess: true},
-
+                warehouse_id: {isRequired: true, validationSuccess: true},
+                product_id: {isRequired: true, validationSuccess: true},
+                provider_id: {isRequired: true, validationSuccess: true},
+                last_cost_without_tax: {isRequired: true, validationSuccess: true},
+                last_cost_with_tax: {isRequired: true, validationSuccess: true},
+                stock_actual_quantity: {isRequired: true, validationSuccess: true},
+                stock_min: {isRequired: true, validationSuccess: true},
+                stock_max: {isRequired: true, validationSuccess: true},
+                alert_stock_min: {isRequired: false, validationSuccess: true},
+                alert_stock_max: {isRequired: false, validationSuccess: true},
             },
         };
     },
@@ -100,86 +87,7 @@ export default {
         },
 
         // Método para obtener la URL de previsualización de la imagen
-        deleteProductModal(id) {
-            Swal.fire({
-                title: '¿Está seguro?',
-                text: "¡No podrás recuperar este producto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'btn btn-danger me-2',
-                    cancelButton: ' btn btn-info'
-                }
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        await ProductsService.destroy(id);
-                        await Swal.fire({
-                            title: '¡Eliminado!',
-                            text: 'El producto ha sido eliminado.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar',
-                            timer:1500,
-                            timerProgressBar: true,
-                            buttonsStyling: false,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            }
-                        });
-                        window.location.reload();
-                    } catch (error) {
-                        await Swal.fire({
-                            title: 'Error',
-                            text: 'No se pudo eliminar el producto',
-                            icon: 'error',
-                            confirmButtonText: 'Entendido',
-                            buttonsStyling: false,
-                            customClass: {
-                                confirmButton: 'btn btn-danger'
-                            }
-                        });
-                    }
-                }
-            });
-        },
-        deleteEquivalente(id) {
-            Swal.fire({
-                title: '¿Está seguro?',
-                text: "¡Vas a quitar esta equivalencia del producto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, quitar',
-                cancelButtonText: 'Cancelar',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'btn btn-danger me-2',
-                    cancelButton: ' btn btn-info'
-                }
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        await EquivalentService.destroy(id);
-                        this.loadEquivalents(this.entity.id);
-                        await Swal.fire({
-                            title: '¡Eliminado!',
-                            text: 'Equivalencia ha sido eliminada.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar',
-                        });
-                    } catch (error) {
-                        await Swal.fire({
-                            title: 'Error',
-                            text: 'No se pudo eliminar el producto',
-                            icon: 'error',
-                            confirmButtonText: 'Entendido',
-                        });
-                    }
-                }
-            });
-        },
+
 
 
         // Método para manejar el cambio de imagen
@@ -251,69 +159,44 @@ export default {
         formFields() {
             return [
                 {
-                    group: "Información Básica",
+                    group: "Información Inventario",
                     fields: [
                         {
-                            key: 'code',
-                            label: 'Código Impor',
-                            type: 'text',
-                            placeholder: 'Código del producto'
-                        },
-                        {
-                            key: 'original_code',
-                            label: 'Código Original',
-                            type: 'text',
-                            placeholder: 'Código original del producto'
-                        },
-                        {
-                            key: 'barcode',
-                            label: 'Código de Barras',
-                            type: 'text',
-                            placeholder: 'Código de barras del producto'
-                        },
-                        {
-                            key: 'category_id',
-                            label: 'Categoría/Grupo',
+                            key: 'warehouse_id',
+                            label: 'Sucursal',
                             type: 'select',
-                            placeholder: 'Seleccione una categoría',
-                            options: this.categories.map(c => ({value: c.id, text: c.description}))
+                            placeholder: 'Sucursal',
+                            options:this.warehouses.map(w => ({value: w.id, text: w.name}))
+
                         },
                         {
-                            key: 'description',
-                            label: 'Descripción',
-                            type: 'text',
-                            placeholder: 'Descripción del producto'
-                        },
-                        {
-                            key: 'brand_id',
-                            label: 'Marca',
+                            key: 'product_id',
+                            label: 'Producto',
                             type: 'select',
-                            placeholder: 'Seleccione una marca',
-                            options: this.brands.map(b => ({value: b.id, text: b.description}))
+                            placeholder: 'Producto a levantar',
+                            options:this.products.map(p => ({value: p.id, text: p.code +' '+ p.description}))
                         },
 
-                        // {
-                        //     key: 'provider_id',
-                        //     label: 'Proveedor',
-                        //     type: 'select',
-                        //     placeholder: 'Seleccione un proveedor',
-                        //     options: this.providers.map(p => ({value: p.id, text: p.comercial_name})),
-                        //
-                        // },
                         {
-                            key: 'unit_measurement_id',
-                            label: 'Unidad de Medida',
-                            type: 'select',
-                            placeholder: 'Seleccione una unidad de medida',
-                            options: this.unitsMeasurement.map(u => ({value: u.id, text: u.description}))
+                            key: 'stock_actual_quantity',
+                            label: 'Inventario actual',
+                            type: 'number',
+                            placeholder: 'Inventario actual en suscursal'
                         },
                         {
-                            key: 'description_measurement_id',
-                            label: 'Descripción de la Medida',
-                            type: 'text',
-                            placeholder: 'Descripción de la medida'
+                            key: 'stock_min',
+                            label: 'Stock',
+                            type: 'number',
+                            placeholder: 'Stock minimo',
                         },
-                        {key: 'image', label: 'Imagen', type: 'file', placeholder: 'Imagen del producto'},
+                        {
+                            key: 'stock_max',
+                            label: 'Stock Maximo',
+                            type: 'number',
+                            placeholder: 'Stock Maximo',
+                        },
+
+
 
                     ],
                 },
@@ -321,35 +204,32 @@ export default {
                 {
                     group: "Configuraciones",
                     fields: [
-                        {key: 'is_active', label: 'Activo', type: 'checkbox', placeholder: 'Producto activo'},
-                        {key: 'is_taxed', label: 'Gravado', type: 'checkbox', placeholder: 'Producto gravado'},
+                        {
+                            key: 'last_cost_without_tax',
+                            label: 'Costo sin IVA',
+                            type: 'number',
+                            placeholder: 'Costo sin IVA'
+                        },
+                        {
+                            key: 'last_cost_with_tax',
+                            label: 'Costo con IVA',
+                            type: 'number',
+                            placeholder: 'Costo con IVA',
+                        },
 
                         {
-                            key: 'is_service',
-                            label: 'Servicio',
+                            key: 'alert_stock_min',
+                            label: 'Stock mínimo',
                             type: 'checkbox',
                             placeholder: 'Producto es un servicio'
                         },
                         {
-                            key: 'is_discontinued',
-                            label: 'Descontinuado',
+                            key: 'alert_stock_max',
+                            label: 'Sobre maximo',
                             type: 'checkbox',
-                            placeholder: 'Producto descontinuado'
+                            placeholder: 'Producto es un servicio'
                         },
-                        {
-                            key: 'is_not_purchasable',
-                            label: 'No Comprable',
-                            type: 'checkbox',
-                            placeholder: 'Producto No comprable'
-                        },
-                        // Campo virtual para mostrar la imagen
-                        {
-                            key: 'image_preview',
-                            label: 'Imagen prodúcto',
-                            type: 'custom',
-                            component: 'image-preview',
-                            condition: () => this.entity.image
-                        }
+
                     ],
                 },
 
@@ -525,14 +405,14 @@ export default {
 
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {
-                        render: () => `<button class="btn btn-outline btn-info btn-sm">
-                            <i class="ki-outline ki-notepad-edit text-lg text-primary cursor: pointer" ></i></button>`,
+                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light">
+                            <i class="ki-filled ki-notepad-edit" ></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.editModal(rowData));
                         },
                     },
                     delete: {
-                        render: () => `<button class="btn btn-outline btn-danger btn-sm"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
                             cell.addEventListener('click', () => this.deleteProductModal(rowData.id));
                         },
@@ -742,18 +622,20 @@ export default {
                 const [categories,
                     brands,
                     unitsMeasurement,
-                    products] = await Promise.all(
+                    products,warehouses] = await Promise.all(
                     [
                         CategoryService.get(),
                         BrandService.get(),
                         UnitMeasurementService.get(),
                         ProductsService.get(),
+                        WarehouseService.get()
                     ]);
 
                 this.categories = categories.data || [];
                 this.brands = brands.data || []; // Asegúrate de que sea un array
                 this.unitsMeasurement = unitsMeasurement.data || []; // Asegúrate de que sea un array
                 this.products = products.data || []; // Asegúrate de que sea un array
+                this.warehouses=warehouses.data || []; // Asegúrate de que sea un array
             } catch (error) {
                 console.error('Error al cargar las opciones:', error);
                 this.categories = [];
@@ -761,6 +643,7 @@ export default {
                 this.brands = [];
                 this.unitsMeasurement = [];
                 this.products = [];
+                this.warehouses = [];
             }
         },
 
