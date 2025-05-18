@@ -3,10 +3,10 @@
 
     <div class="card card-grid min-w-full">
       <div class="card-header flex-wrap py-2">
-        <div class="relative">
+        <div class="relative  min-w-[450px]">
           <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
           </i>
-          <input class="input input-md pl-8" data-datatable-search="#kt_remote_table" placeholder="Buscar inventarios"
+          <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table" placeholder="Buscar inventarios"
                  type="text">
         </div>
 
@@ -26,35 +26,33 @@
       <div class="card-body">
 
         <div data-datatable="true" data-datatable-page-size="10" id="kt_remote_table" class="datatable-initialized">
-          <div class="scrollable-x-auto">
+          <div class="scrollable-y-auto">
 
-            <table class="table table-responsive table-border table-sm" data-datatable-table="true">
+            <table class="table table-border text-gray-700 font-medium text-sm" data-datatable-table="true">
               <thead>
               <tr>
-                <th class="w-[100px] text-center" data-datatable-column="code">
+                <th class="w-14">
+                  <input class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox"/>
+                </th>
+                <th class="min-w-[180px] text-center" data-datatable-column="inventory">
                               <span class="sort">
-                                  <span class="sort-label"> Sucursal</span>
+                                  <span class="sort-label">Inventario</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[120px] text-center" data-datatable-column="original_code">
+                <th class="min-w-[110px] text-center" data-datatable-column="barcode">
                               <span class="sort">
-                                  <span class="sort-label">Cod impor</span>
+                                  <span class="sort-label">Cod Barras</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[130px] text-center" data-datatable-column="barcode">
+                <th class="w-min-[150px] text-center" data-datatable-column="origigal_code">
                               <span class="sort">
                                   <span class="sort-label">Cod Original</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[180px] text-center" data-datatable-column="category">
-                              <span class="sort">
-                                  <span class="sort-label">Producto</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                </th>
+
                 <th class="w-[100px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">Categoria</span>
@@ -123,7 +121,6 @@
     <template #body>
       <input type="hidden" name="id" v-model="entity.id"/>
       <div class="card">
-        <!--                <div class="card-header">{{ modalHeader }}</div>-->
         <div class="card-body">
           <div class="grid grid-cols-3 gap-3">
 
@@ -178,6 +175,7 @@
                               v-model="entity[field.key]"
                               @change="validationForm"
                           >
+
                             <option v-for="option in field.options" :key="option.value" :value="option.value">
                               {{ option.text }}
                             </option>
@@ -195,7 +193,7 @@
                           </label>
 
                           <!-- Mensaje de validación -->
-                          <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">* Campo Obligatorio</span>
+                          <span class="form-hint text-danger" v-if="!form[field.key].validationSuccess">*El  Campo <b> {{field.label}}</b> es obligatorio</span>
                         </div>
                       </div>
 
@@ -226,53 +224,53 @@
       </div>
 
       <div class="grid grid-flow-col grid-col-3 gap-4 mt-2">
-        <div class="row-span-3">
-          <!--          <div class="card h-[500px] flex flex-col overflow-hidden">-->
-          <div class="card h-[500px] flex flex-col overflow-hidden">
+<!--        <div class="row-span-3">-->
+<!--          &lt;!&ndash;          <div class="card h-[500px] flex flex-col overflow-hidden">&ndash;&gt;-->
+<!--          <div class="card h-[500px] flex flex-col overflow-hidden">-->
 
-            <div class="card-header">
-              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Aplicaciones</h3>
-              <label class="switch switch-sm">
-                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-                  <i class="ki-filled ki-plus-squared"></i>
-                  Agregar Aplicación
+<!--            <div class="card-header">-->
+<!--              <h3 class="text-lg font-semibold mb-4 border-b pb-2 modal-title ">Aplicaciones</h3>-->
+<!--              <label class="switch switch-sm">-->
+<!--                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">-->
+<!--                  <i class="ki-filled ki-plus-squared"></i>-->
+<!--                  Agregar Aplicación-->
 
-                </button>
-              </label>
-            </div>
-            <div class="card-body flex-1 overflow-y-auto">
-              <div class="scrollable-x-auto">
-                <table id="#table_aplicacion" class="table table-hover table-auto " data-datatable-table="true">
-                  <thead>
-                  <tr>
-                    <th class="w-[160px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label"> Aplicación</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                    </th>
-                    <th class="w-[160px] text-center" data-datatable-column="status">
-                              <span class="sort">
-                                  <span class="sort-label">Marca</span>
-                                  <span class="sort-icon"></span>
-                              </span>
-                    </th>
+<!--                </button>-->
+<!--              </label>-->
+<!--            </div>-->
+<!--            <div class="card-body flex-1 overflow-y-auto">-->
+<!--              <div class="scrollable-x-auto">-->
+<!--                <table id="#table_aplicacion" class="table table-hover table-auto " data-datatable-table="true">-->
+<!--                  <thead>-->
+<!--                  <tr>-->
+<!--                    <th class="w-[160px] text-center" data-datatable-column="status">-->
+<!--                              <span class="sort">-->
+<!--                                  <span class="sort-label"> Aplicación</span>-->
+<!--                                  <span class="sort-icon"></span>-->
+<!--                              </span>-->
+<!--                    </th>-->
+<!--                    <th class="w-[160px] text-center" data-datatable-column="status">-->
+<!--                              <span class="sort">-->
+<!--                                  <span class="sort-label">Marca</span>-->
+<!--                                  <span class="sort-icon"></span>-->
+<!--                              </span>-->
+<!--                    </th>-->
 
-                    <th class="w-[60px]">
-                    </th>
-                    <th class="w-[60px]">
-                    </th>
+<!--                    <th class="w-[60px]">-->
+<!--                    </th>-->
+<!--                    <th class="w-[60px]">-->
+<!--                    </th>-->
 
 
-                  </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+<!--                  </tr>-->
+<!--                  </thead>-->
+<!--                  <tbody>-->
+<!--                  </tbody>-->
+<!--                </table>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
 
       </div>

@@ -11,35 +11,33 @@ import EquivalentService from "@/services/equivalentService.js";
 import Swal from 'sweetalert2';
 import WarehouseService from "@/services/warehouseService.js";
 import Inventory from "@/services/inventoryService.js";
+import ProviderService from "@/services/providers/providerService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
     components: {LongModal, GeneralModal, QuestionModal},
     data() {
         return {
-            searchQuery: '',
             loading: false,
             isEditing: false,
             providers: [],
-            brands: [],
-            categories: [],
-            unitsMeasurement: [],
             products: [],
             warehouses: [],
 
             entity: {
-                id:0,
-                warehouse_id:0,
-                product_id:0,
-                provider_id:0,
-                last_cost_without_tax:0,
-                last_cost_with_tax:0,
-                stock_actual_quantity:0,
-                stock_min:0,
-                alert_stock_min:0,
-                stock_max:0,
-                alert_stock_max:0,
-                last_purchase:null
+                id: 0,
+                warehouse_id: 0,
+                product_id: 0,
+                provider_id: 0,
+                last_cost_without_tax: 0,
+                last_cost_with_tax: 0,
+                stock_actual_quantity: 0,
+                stock_min: 0,
+                alert_stock_min: 0,
+                stock_max: 0,
+                alert_stock_max: 0,
+                last_purchase: null,
+                is_active: false,
 
             },
             form: {
@@ -53,6 +51,7 @@ export default {
                 stock_max: {isRequired: true, validationSuccess: true},
                 alert_stock_min: {isRequired: false, validationSuccess: true},
                 alert_stock_max: {isRequired: false, validationSuccess: true},
+                is_active: {isRequired: false, validationSuccess: true},
             },
         };
     },
@@ -89,14 +88,13 @@ export default {
         // Método para obtener la URL de previsualización de la imagen
 
 
-
         // Método para manejar el cambio de imagen
         async openStoreModal() {
             this.resetModal();
             this.loading = true;
+            this.isEditing = false;
             try {
-                const storeTemp = await ProductsService.store(this.entity);
-                console.log(storeTemp.data.id);
+                const storeTemp = await Inventory.store(this.entity);
                 if (!this.entity) {
                     this.entity = {};
                 }
@@ -107,7 +105,6 @@ export default {
             } catch (error) {
                 console.error('Error al crear temporal:', error);
             } finally {
-                console.log(this.isEditing);
                 this.loading = false;
             }
 
@@ -119,21 +116,17 @@ export default {
             this.isEditing = true;
             this.entity = {...data};
             this.entity.image = null;
-            try {
-                this.loadEquivalents(this.entity.id);
-            } catch (error) {
-                console.error('Error al cargar equivalentes:', error);
-            }
+
 
             try {
 
 
-                if (data.image) {
-                    const cleanPath = data.image.replace(/^public\//, '');
-                    this.entity.image = `${VUE_APP_STORAGE_URL}${cleanPath}`;
-                } else {
-                    this.entity.image_preview = null;
-                }
+                // if (data.image) {
+                //     const cleanPath = data.image.replace(/^public\//, '');
+                //     this.entity.image = `${VUE_APP_STORAGE_URL}${cleanPath}`;
+                // } else {
+                //     this.entity.image_preview = null;
+                // }
 
                 await this.loadOptions();
 
@@ -144,12 +137,6 @@ export default {
                     console.error("Could not find modal instance");
                 }
 
-
-                try {
-                    this.loadInterChanges(this.entity.id);
-                } catch (error) {
-                    console.error('Error al cargar intercambios:', error);
-                }
 
 
             } catch (error) {
@@ -166,7 +153,7 @@ export default {
                             label: 'Sucursal',
                             type: 'select',
                             placeholder: 'Sucursal',
-                            options:this.warehouses.map(w => ({value: w.id, text: w.name}))
+                            options: this.warehouses.map(w => ({value: w.id, text: w.name}))
 
                         },
                         {
@@ -174,26 +161,37 @@ export default {
                             label: 'Producto',
                             type: 'select',
                             placeholder: 'Producto a levantar',
-                            options:this.products.map(p => ({value: p.id, text: p.code +' '+ p.description}))
+                            options: [
+                                ...this.products.map(p => ({value: p.id, text: p.code + ' ' + p.description}))
+                            ],
+                        },
+                        {
+                            key: 'provider_id',
+                            label: 'Proveedor',
+                            type: 'select',
+                            placeholder: 'Proveedor',
+                            options: [
+                                ...this.providers.map(p => ({value: p.id, text: p.legal_name }))
+                            ],
                         },
 
                         {
                             key: 'stock_actual_quantity',
                             label: 'Inventario actual',
                             type: 'number',
-                            placeholder: 'Inventario actual en suscursal'
+                            placeholder: 'Inventario actual en sucursal'
                         },
                         {
                             key: 'stock_min',
                             label: 'Stock',
                             type: 'number',
-                            placeholder: 'Stock minimo',
+                            placeholder: 'Stock mínimo',
                         },
                         {
                             key: 'stock_max',
                             label: 'Stock Maximo',
                             type: 'number',
-                            placeholder: 'Stock Maximo',
+                            placeholder: 'Stock Máximo',
                         },
 
 
@@ -219,15 +217,21 @@ export default {
 
                         {
                             key: 'alert_stock_min',
-                            label: 'Stock mínimo',
+                            label: 'Alerta stock mínimo',
                             type: 'checkbox',
                             placeholder: 'Producto es un servicio'
                         },
                         {
                             key: 'alert_stock_max',
-                            label: 'Sobre maximo',
+                            label: 'Alerta stock maximo',
                             type: 'checkbox',
                             placeholder: 'Producto es un servicio'
+                        },
+                        {
+                            key: 'is_active',
+                            label: 'Inventario activo',
+                            type: 'checkbox',
+                            placeholder: 'Inventario activo',
                         },
 
                     ],
@@ -284,110 +288,172 @@ export default {
             if (!this.validationForm()) return;
             this.loading = true;
 
-                this.loadEquivalents(this.entity.id);
-
             try {
                 // Preparamos FormData para ambos casos (create y update)
                 const formData = new FormData();
                 formData.append('_method', 'PUT');
                 formData.append('id', this.entity.id);
-                formData.append('code', this.entity.code);
-                formData.append('original_code', this.entity.original_code);
-                formData.append('barcode', this.entity.barcode);
-                formData.append('description', this.entity.description);
-                formData.append('brand_id', this.entity.brand_id);
-                formData.append('category_id', this.entity.category_id);
-                formData.append('provider_id', this.entity.provider_id);
-                formData.append('unit_measurement_id', this.entity.unit_measurement_id);
-                formData.append('description_measurement_id', this.entity.description_measurement_id);
+                formData.append('warehouse_id', this.entity.warehouse_id);
+                formData.append('product_id', this.entity.product_id);
+                formData.append('last_cost_without_tax', this.entity.last_cost_without_tax);
+                formData.append('last_cost_with_tax', this.entity.last_cost_with_tax);
+                formData.append('stock_actual_quantity', this.entity.stock_actual_quantity);
+                formData.append('stock_min', this.entity.stock_min);
+                formData.append('alert_stock_min', this.entity.alert_stock_min? '1' : '0');
+                formData.append('stock_max', this.entity.stock_max);
+                formData.append('alert_stock_max', this.entity.alert_stock_max? '1' : '0');
+                formData.append('last_purchase', this.entity.last_purchase);
+                formData.append('provider_id', this.entity.provider_id );
+                formData.append('is_temp',  '0');
                 formData.append('is_active', this.entity.is_active ? '1' : '0');
-                formData.append('is_taxed', this.entity.is_taxed ? '1' : '0');
-                formData.append('is_service', this.entity.is_service ? '1' : '0');
-                formData.append('is_discontinued', this.entity.is_discontinued ? '1' : '0');
-                formData.append('is_not_purchasable', this.entity.is_not_purchasable ? '1' : '0');
+               const inventory= await Inventory.update(formData);
+                console.log(inventory);
+                if(inventory.status==='success'){
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        timer: 1500,
+                        showConfirmButton: true,
+                        timerProgressBar:true,
+                        text: inventory.message,
+                        confirmButtonText: 'Aceptar'
+                    });
+                    location.reload();
 
-                await EquivalentService.store(formData);
-
-                if (this.entity.image instanceof File) {
-                    formData.append('image', this.entity.image);
+                    // this.loadInventoryTable();
+                }else{
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: inventory.message,
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
-
-                if (this.isEditing) {
-                    await ProductsService.update(formData);
-                } else {
-                    await ProductsService.store(this.entity);
-                }
-
-                location.reload();
             } catch (error) {
+                this.isEditing = true;
+                this.loading = false;
                 console.error('Error al guardar el producto:', error);
             } finally {
+                this.isEditing = true;
                 this.loading = false;
             }
         },
 
 
-       async loadTableProducts() {
-            const searchQuery=this.searchQuery;
+         loadInventoryTable() {
             const tableElement = document.querySelector("#kt_remote_table");
             const options = {
-                // apiEndpoint: ProductsService.getUrl(),
-                apiEndpoint:`${urlApi}/v1/inventories?search=${searchQuery}`,
+                apiEndpoint: `${urlApi}/v1/inventories`,
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
                 columns: {
-                    warehouse_id: {
-                        title: 'warehouse',
+                    select: {
+                        render: (item, data, context) => {
+                            const checkbox = document.createElement('input');
+                            checkbox.className = 'checkbox checkbox-sm';
+                            checkbox.type = 'checkbox';
+                            checkbox.value = data.id.toString();
+                            checkbox.setAttribute('data-datatable-row-check', 'true');
+                            return checkbox.outerHTML.trim();
+                        },
+                    },
+                    other: {
+                        render: function (data, type, row) {
+                            const description = type?.product?.description ?? 'S/N';
+                            const code = type?.product?.code ?? 'S/N';
+                            const original_code = type?.product?.original_code ?? 'S/N';
+                            const image = type?.product?.image ?? 'S/N';
+                            const imageUrl = image ? `${VUE_APP_STORAGE_URL}${image}` : `${VUE_APP_STORAGE_URL}/images/default.png`;
+                            const imagePreview = `<img src="${imageUrl}" alt="image" class="w-10 h-10 rounded-full">`;
+                            const wareHouse = type?.warehouse?.name ?? 'SN';
+                            const product = `<div class="flex items-center gap-4">
+                <div class="leading-none w-10 shrink-0 cursor-pointer">
+                <img src="${image}" alt="image" class="w-15 h-15 rounded-full">
+                </div>
+                <div class="flex flex-col gap-0.5">
+                 <span class="leading-none font-medium text-sm text-gray-900">
+                      ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
+                 </span>
+               
+                 <span class="text-2sm text-gray-700 font-normal">
+                        ${code.charAt(0).toUpperCase() + code.slice(1).toLowerCase()} - CI
+                 </span>
+                   </span>
+                      ${wareHouse}
+                 </span>
+                </div>
+                
+               </div>`
+                            return product;
+                        }
+                    },
+
+                    barcode: {
+                        title: 'barcode',
                         search: true,
-                        render:function (data,type,row){
-                            return type?.warehouse?.name??'SN'
+                        render: function (data, type, row) {
+                            return type?.product?.barcode ?? 'SN'
+                        },
+                        createdCell(cell)
+                        {
+                            cell.classList.add('text-small');
                         }
 
-                    },
-                    code: {
-                        title: 'code',
-                        search: true,
-                        render:function (data,type,row){
-                            return type?.product?.code??'SN'
-                        }
 
                     },
+
                     original_code: {
                         title: 'original_code',
-                        search: true,
-                        render:function (data,type,row){
-                            return type?.product?.original_code??'SN'
-                        }
-
-                    },
-                    producto: {
-                        title: 'bar_code',
-                        render:function (data,type,row){
-                            return type?.product?.description??'SN'
+                        render: function (data, type, row) {
+                            return type?.product?.original_code ?? 'SN'
                         }
                     },
                     category: {
                         title: 'Categoría',
                         render: function (data, type, row) {
-                            return type?.category?.description ?? 'S/N';
+                            const category = type?.product?.category?.description ?? 'S/N';
+                            return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
                         }
-                    },
-                    description: {
-                        title: 'Descripción',
 
                     },
-                    inventory_batches_sum_quantity: {
-                        title: 'Inventario en lotes',
-                        render:function (data, type, row) {
-                            return type?.inventory_batches_sum_quantity??0;
-                        }
-                    },
-                    price: {
-                        title: 'Marca',
+                    medida: {
+                        title: 'Medida',
                         render: function (data, type, row) {
-                            // return type?.price['0']?.price ?? 'S/N';
-                        }
+                            const medida = type?.product?.unit_measurement?.description ?? 'S/N';
+                            const description = type?.product?.description_measurement_id ?? 'S/N';
+                            const returnMedida= `<div class="flex items-center gap-4">
+             
+                <div class="flex flex-col gap-0.5">
+                 <span class="leading-none font-medium text-sm text-gray-900">
+                      ${medida.charAt(0).toUpperCase() + medida.slice(1).toLowerCase()}
+                 </span>
+               
+                 <span class="text-2sm text-gray-700 font-normal">
+                        ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
+                 </span>
+              
+                </div>
+                
+               </div>`
+                            return returnMedida;
+                        },
+
+                    },
+                    actual_stock: {
+                        title: 'Inventario en lotes',
+                        render: (actual_stock) => `<badge class="badge badge-light-primary text-center">${actual_stock}</badge>`,
+                        createdCell(cell) {
+                            cell.classList.add('text-center');
+                        },
+                    },
+                    default_price: {
+                        title: 'default_price',
+                        render: (price) => `<badge class="badge badge-info text-center w-75">$ ${price}</badge>`,
+                        createdCell(cell) {
+                            cell.classList.add('text-center');
+                        },
+
                     },
                     last_purchase: {
                         title: 'Last purchase',
@@ -420,6 +486,8 @@ export default {
                 },
                 layout: {scroll: true},
                 sortable: true,
+                stateSave: true,
+
                 search: {
                     input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
                     key: 'search', // Parámetro que se enviará al servidor
@@ -428,289 +496,48 @@ export default {
             };
             const dataTable = new KTDataTable(tableElement, options);
             dataTable.reload();
-        },
-        loadEquivalents(idProduct) {
-            const tableElementEquivalent = document.querySelector("#table_equivalente");
+            dataTable.showSpinner();
 
-            try {
-                // console.log("Loading equivalents for product ID:", idProduct);
-                // const endpoint = `${equivalentService.getEquivalentByProduct(idProduct)}`;
-                // console.log("Using endpoint:", endpoint);
-
-
-                const options = {
-                    type: 'remote',
-                    apiEndpoint: EquivalentService.getEquivalentByProduct(idProduct),
-                    requestHeaders: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                    columns: {
-
-                        product_id_equivalent: {
-                            title: 'product_id_equivalent',
-                            render: function (data, type, row) {
-                                return type?.product_equivalent?.code ?? 'S/N';
-                            }
-
-                        },
-                        product_equivalent: {
-                            title: 'producto_equivalente',
-                            render: function (data, type, row) {
-                                return type?.product_equivalent?.description ?? 'S/N';
-                            }
-                        },
-
-                        delete: {
-                            render: () => `<button class="btn btn-sm btn-outline btn-danger">
-                        <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
-                            createdCell: (cell, cellData, rowData) => {
-                                cell.addEventListener('click', () => this.deleteEquivalente(rowData.id));
-                            },
-                        },
-                    },
-                    layout: {scroll: true},
-                    sortable: true,
-                    search: {
-                        input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
-                        key: 'search', // Parámetro que se enviará al servidor
-                        delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
-                    },
-                };
-
-                if (this.dataTableEquivalents) {
-                    this.dataTableEquivalents.reload(options);
-                    console.log('Reload equivalents data');
-                } else {
-                    this.dataTableEquivalents = new KTDataTable(tableElementEquivalent, options);
-                    console.log('Initialize equivalents data');
-                }
-
-            } catch (error) {
-                console.error("Error loading equivalents:", error);
-                // Show user feedback
-                alert("Error loading equivalent products: " + error.message);
-            }
         },
 
-        loadInterChanges(idProduct) {
-            const tableElementInterchange = document.querySelector("#table_intercambio");
-            try {
 
-                const formData = new FormData();
-
-                const options = {
-                    type: 'remote',
-                    apiEndpoint: `${urlApi}/v1/interchanges/product/${idProduct}`,//InterchangesService.getInterchangeByProduct(idProduct),
-                    requestHeaders: {
-                        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-                    },
-                    columns: {
-
-                        code: {title: 'code'},
-                        reference: {title: 'reference'},
-                        delete: {
-                            render: () => `<button class="btn btn-sm btn-outline btn-danger">
-                        <i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
-                            createdCell: (cell, cellData, rowData) => {
-                                cell.addEventListener('click', () => this.deleteEquivalente(rowData.id));
-                            },
-                        },
-                    },
-                    layout: {scroll: true},
-                    sortable: true,
-                    search: {
-                        input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
-                        key: 'search', // Parámetro que se enviará al servidor
-                        delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
-                    },
-                };
-
-                if (this.dataTableInterChanges) {
-                    this.dataTableInterChanges.reload(options);
-                    console.log('Reload equivalents data');
-                } else {
-                    this.dataTableInterChanges = new KTDataTable(tableElementInterchange, options);
-                    console.log('Initialize intercambios data');
-                }
-
-            } catch (error) {
-                console.error("Error loading intercambios:", error);
-            }
-        },
-        async showIntercambioModal(editData = null) {
-            const isEditMode = editData !== null;
-
-            const {value: formValues} = await Swal.fire({
-                title: isEditMode ? 'Editar Intercambio' : 'Agregar Intercambio',
-                html: `
-      <div class="mb-3">
-        <label for="swalIntercambioCode" class="form-label">Código intercambio:</label>
-        <input type="text" id="swalIntercambioCode" class="input" 
-               placeholder="Ingrese el código" value="${isEditMode ? editData.code : ''}" required>
-      </div>
-      <div class="mb-3">
-        <label for="swalReference" class="form-label">Referencia:</label>
-        <input type="text" id="swalReference" class="input" 
-               placeholder="Ingrese el nombre" value="${isEditMode ? editData.name : ''}">
-      </div>
-    `,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonText: isEditMode ? 'Guardar cambios' : 'Agregar',
-                cancelButtonText: 'Cancelar',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'btn btn-success me-2',
-                    cancelButton: 'btn btn-info'
-                },
-                didOpen: () => {
-                    setTimeout(() => {
-                        document.getElementById('swalIntercambioCode').focus();
-                    }, 100);
-                },
-                preConfirm: () => {
-                    const code = document.getElementById('swalIntercambioCode').value.trim();
-                    const reference = document.getElementById('swalReference').value.trim();
-                    const product_id = this.entity.id;
-                    const is_active = true;
-
-                    if (!code) {
-                        Swal.showValidationMessage('El código es requerido');
-                        return false;
-                    }
-
-                    return {code, reference, product_id, is_active};
-                }
-            });
-
-            if (formValues) {
-                if (isEditMode) {
-                    // Lógica para editar
-                    const interchange = InterchangesService.update(editData.id, formValues);
-                    await Swal.fire('¡Actualizado!', 'El intercambio ha sido modificado.', 'success');
-                } else {
-                    // Lógica para registrar nuevo
-                    const interchange = await InterchangesService.store(formValues)
-                    if (interchange.status === 'success') {
-                        await Swal.fire({
-                            title: '¡Agregado!',
-                            text: 'El intercambio ha sido agregado.',
-                            icon: 'success',
-                            timer: 1500,
-                            timerProgressBar: true,
-                            confirmButtonText: 'Aceptar',
-                            buttonsStyling: false,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            }
-                        });
-                        this.loadInterChanges(this.entity.id);
-
-                    }
-                }
-
-            }
-        },
-
-// Ejemplo de uso:
-// Para agregar nuevo: showIntercambioModal()
-// Para editar: showIntercambioModal({ id: 1, code: 'ABC123', name: 'Producto Ejemplo' })
 
         async loadOptions() {
             try {
 
-                const [categories,
-                    brands,
-                    unitsMeasurement,
-                    products,warehouses] = await Promise.all(
+                const [categories, brands, unitsMeasurement, products, warehouses,providers] = await
+                    Promise.all(
                     [
                         CategoryService.get(),
                         BrandService.get(),
                         UnitMeasurementService.get(),
                         ProductsService.get(),
-                        WarehouseService.get()
+                        WarehouseService.get(),
+                        ProviderService.get()
                     ]);
 
                 this.categories = categories.data || [];
                 this.brands = brands.data || []; // Asegúrate de que sea un array
                 this.unitsMeasurement = unitsMeasurement.data || []; // Asegúrate de que sea un array
                 this.products = products.data || []; // Asegúrate de que sea un array
-                this.warehouses=warehouses.data || []; // Asegúrate de que sea un array
+                this.warehouses = warehouses.data || []; // Asegúrate de que sea un array
+                this.providers = providers.data || []; // Asegúrate de que sea un array
             } catch (error) {
-                console.error('Error al cargar las opciones:', error);
                 this.categories = [];
-                // this.providers = [];
+                this.providers = [];
                 this.brands = [];
-                this.unitsMeasurement = [];
                 this.products = [];
                 this.warehouses = [];
-            }
-        },
-
-        async addEquivalente() {
-
-            try {
-                const formData = new FormData();
-                formData.append('product_id', this.entity.id);
-                formData.append('product_id_equivalent', this.product_id_equivalent);
-                formData.append('is_active', 1);
-                const response = await EquivalentService.store(formData);
-                if(response.status==='error') {
-                    await Swal.fire({
-                        title: 'Error',
-                        text: response.message,
-                        icon: 'error',
-                        confirmButtonText: 'Entendido',
-                        buttonsStyling: false,
-                        timer: 1500,
-                        timerProgressBar: true,
-                        customClass: {
-                            confirmButton: 'btn btn-danger'
-                        }
-                    });
-                    return false;
-
-                }
-                await Swal.fire({
-                    title: '¡Agregado!',
-                    text: 'La equivalencia ha sido agregada.',
-                    icon: 'success',
-                    timer: 1500,
-                    timerProgressBar: true,
-                    confirmButtonText: 'Aceptar',
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: 'btn btn-success'
-                    }
-                })
-                this.loadEquivalents(this.entity.id);
-            }
-            catch (error){
                 console.error('Error al cargar las opciones:', error);
             }
         },
 
-        async addInterchange(formValues) {
-            try {
-                return await InterchangesService.store(formValues);
-            } catch (error) {
-                console.error('Error al agregar equivalencia:', error);
-            }
-        },
-       async handleSearch() {
 
-                await this.loadTableProducts();
-        }
+
     },
-    // watch: {
-    //     searchQuery(newVal) {
-    //         console.log(newVal);
-    //         this.loadTableProducts();
-    //     },
-    // },
+
     mounted() {
-        this.loadTableProducts();
-        // this.loadEquivalents(this.entity.id);
+        this.loadInventoryTable();
         // window.editModal = this.editModal.bind(this);
     },
 };
