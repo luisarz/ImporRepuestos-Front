@@ -464,10 +464,12 @@ export default {
                     },
                     original_code: {
                         title: 'original_code',
+                        search: true
 
                     },
                     barcode: {
                         title: 'bar_code',
+                        search: true
 
                     },
                     category: {
@@ -505,6 +507,10 @@ export default {
                         },
                     },
                 },
+                query: () => ({
+                    description: document.querySelector('#search_description')?.value || '',
+                    code: document.querySelector('#search_code')?.value || '',
+                }),
                 layout: {scroll: true},
                 sortable: true,
                 search: {
@@ -555,6 +561,7 @@ export default {
                             },
                         },
                     },
+
                     layout: {scroll: true},
                     sortable: true,
                     search: {
@@ -790,12 +797,7 @@ export default {
             }
         }
     },
-    // watch: {
-    //     searchQuery(newVal) {
-    //         console.log(newVal);
-    //         this.loadTableProducts();
-    //     },
-    // },
+
     mounted() {
         this.loadTableProducts();
         // this.loadEquivalents(this.entity.id);

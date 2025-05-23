@@ -25,6 +25,7 @@ import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 import Equivalents from "@/views/products/equivalents/index.vue";
 import Interchanges from "@/views/products/interchanges/index.vue";
 import Inventory from "@/views/products/inventory/index.vue";
+import Sale from "@/views/sales/index.vue";
 
 const routes = [
     {
@@ -148,6 +149,24 @@ const routes = [
             {
                 path: 'inventory',
                 component: Inventory,
+                meta: {requiresAuth: true}
+
+            },
+            // {
+            //     path: 'prices',
+            //     component: Price,
+            //     meta: {requiresAuth: true}
+            //
+            // },
+            {
+                path: 'sales',
+                component: Sale,
+                meta: {requiresAuth: true}
+
+            },
+            {
+                path: 'sales/add',
+                component: Sale,
                 meta: {requiresAuth: true}
 
             }

@@ -38,7 +38,7 @@ class KTLayout {
 		}
 
 		scrollableEl.scroll({
-			top: KTDom.getRelativeTopPosition(menuActiveItemEl, scrollableEl) - 100,
+			top: KTDom.getRelativeTopPosition(menuActiveItemEl, scrollableEl) - 500,
 			behavior: 'instant'
 		});
 	}

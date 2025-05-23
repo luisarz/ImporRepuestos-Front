@@ -584,7 +584,7 @@ export default {
 					sidebar: {
 						width: {
 							desktop: '280px',
-							desktopCollapse: '80px',
+							desktopCollapse: '70px',
 							mobile: '280px'
 						}
 					},

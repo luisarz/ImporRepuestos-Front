@@ -1,4 +1,4 @@
-import {KTDataTable, KTModal} from '../../../metronic/core/index';
+import {KTDataTable, KTModal} from '../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '@/components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
@@ -14,6 +14,7 @@ import Inventory from "@/services/inventoryService.js";
 import ProviderService from "@/services/providers/providerService.js";
 import MediumModal from "@/components/MediumModal.vue";
 import PricesService from "@/services/pricesService.js";
+import Sale from "@/services/saleService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
@@ -243,7 +244,7 @@ export default {
 
                 await this.loadOptions();
                 try {
-                    console.log("Antes de cargar price " + this.entity.id);
+                    console.log("Antes de cargar price "+this.entity.id);
                     // await this.$nextTick();
                     this.loadPriceTable(this.entity.id);
                 } catch (error) {
@@ -302,7 +303,7 @@ export default {
                         },
                         {
                             key: 'stock_min',
-                            label: 'Stock minimo',
+                            label: 'Stock',
                             type: 'number',
                             placeholder: 'Stock mínimo',
                         },
@@ -461,7 +462,7 @@ export default {
         loadInventoryTable() {
             const tablePriceElement = document.querySelector("#kt_remote_table");
             const options = {
-                apiEndpoint: `${urlApi}/v1/inventories`,
+                apiEndpoint: `${urlApi}/v1/sales`,
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
@@ -476,96 +477,35 @@ export default {
                             return checkbox.outerHTML.trim();
                         },
                     },
-                    other: {
-                        render: function (data, type, row) {
-                            const description = type?.product?.description ?? 'S/N';
-                            const code = type?.product?.code ?? 'S/N';
-                            const original_code = type?.product?.original_code ?? 'S/N';
-                            const image = type?.product?.image ?? 'S/N';
-                            const imageUrl = image ? `${VUE_APP_STORAGE_URL}${image}` : `${VUE_APP_STORAGE_URL}/images/default.png`;
-                            const imagePreview = `<img src="${imageUrl}" alt="image" class="w-10 h-10 rounded-full">`;
-                            const wareHouse = type?.warehouse?.name ?? 'SN';
-                            const product = `<div class="flex items-center gap-4">
-                <div class="leading-none w-10 shrink-0 cursor-pointer">
-                <img src="${image}" alt="image" class="w-15 h-15 rounded-full">
-                </div>
-                <div class="flex flex-col gap-0.5">
-                 <span class="leading-none font-medium text-sm text-gray-900">
-                      ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
-                 </span>
-               
-                 <span class="text-2sm text-gray-700 font-normal">
-                        ${code.charAt(0).toUpperCase() + code.slice(1).toLowerCase()} - CI
-                 </span>
-                   </span>
-                      ${wareHouse}
-                 </span>
-                </div>
-                
-               </div>`
-                            return product;
-                        }
-                    },
 
-                    barcode: {
-                        title: 'barcode',
+                    sale_date: {
+                        title: 'sale_date',
                         search: true,
-                        render: function (data, type, row) {
-                            return type?.product?.barcode ?? 'SN'
-                        },
-                        createdCell(cell) {
-                            cell.classList.add('text-small');
-                        }
+                    },
+
+                    document_type_id: {
+                        title: 'document_type_id',
+                        // render: function (data, type, row) {
+                        //     return type?.product?.original_code ?? 'SN'
+                        // }
+                    },
+                    document_internal_number: {
+                        title: 'document_internal_number',
 
 
                     },
-
-                    original_code: {
-                        title: 'original_code',
-                        render: function (data, type, row) {
-                            return type?.product?.original_code ?? 'SN'
-                        }
+                    is_dte:{
+                        title: 'is_dte',
                     },
-                    category: {
-                        title: 'Categoría',
-                        render: function (data, type, row) {
-                            const category = type?.product?.category?.description ?? 'S/N';
-                            return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-                        }
-
-                    },
-                    medida: {
-                        title: 'Medida',
-                        render: function (data, type, row) {
-                            const medida = type?.product?.unit_measurement?.description ?? 'S/N';
-                            const description = type?.product?.description_measurement_id ?? 'S/N';
-                            const returnMedida = `<div class="flex items-center gap-4">
-             
-                <div class="flex flex-col gap-0.5">
-                 <span class="leading-none font-medium text-sm text-gray-900">
-                      ${medida.charAt(0).toUpperCase() + medida.slice(1).toLowerCase()}
-                 </span>
-               
-                 <span class="text-2sm text-gray-700 font-normal">
-                        ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
-                 </span>
-              
-                </div>
-                
-               </div>`
-                            return returnMedida;
-                        },
-
-                    },
-                    actual_stock: {
+                    seller: {
                         title: 'Inventario en lotes',
-                        render: (actual_stock) => `<badge class="badge badge-light-primary text-center">${actual_stock}</badge>`,
+                        render: (actual_stock) => `<badge class="badge badge-light-primary text-center">Previa</badge>`,
                         createdCell(cell) {
                             cell.classList.add('text-center');
                         },
                     },
-                    default_price: {
-                        title: 'default_price',
+                    seller: {
+                        title: 'seller',
                         render: (price) => `<badge class="badge badge-info text-center w-75">$ ${price}</badge>`,
                         createdCell(cell) {
                             cell.classList.add('text-center');
@@ -587,31 +527,24 @@ export default {
 
 
                     // comercial_name: {title: 'Nombre Comercial'},
-                    actions: {
-                        title: 'Acciones',
-                        render: () => `
-        <div class="d-flex align-items-center" style="gap: 0.5rem;">
-            <button type="button" class="btn btn-sm btn-icon btn-light btn-edit" title="Editar" style="flex: none;">
-                <i class="ki-filled ki-notepad-edit"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-icon btn-light btn-delete" title="Eliminar" style="flex: none;">
-                <i class="ki-outline ki-trash text-danger"></i>
-            </button>
-        </div>
-    `,
+                    edit: {
+                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light">
+                            <i class="ki-filled ki-notepad-edit" ></i></button>`,
                         createdCell: (cell, cellData, rowData) => {
-                            cell.querySelector('.btn-edit')?.addEventListener('click', () => this.editModal(rowData));
-                            cell.querySelector('.btn-delete')?.addEventListener('click', () => this.deleteProductModal(rowData.id));
-                        }
-                    }
-
-
-
+                            cell.addEventListener('click', () => this.editModal(rowData));
+                        },
+                    },
+                    delete: {
+                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.addEventListener('click', () => this.deleteProductModal(rowData.id));
+                        },
+                    },
                 },
                 layout: {scroll: true},
                 sortable: true,
                 stateSave: true,
-                infoEmpty:'No hay datos disponibles',
+
                 search: {
                     input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
                     key: 'search', // Parámetro que se enviará al servidor
@@ -633,26 +566,26 @@ export default {
 
                 const optionsTablePrice = {
                     type: 'remote',
-                    apiEndpoint: `${urlApi}/v1/prices/inventory/${id}?_=${Date.now()}`,
+                    apiEndpoint:  `${urlApi}/v1/prices/inventory/${id}?_=${Date.now()}`,
                     requestHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
                     columns: {
 
-                        price_description: {
+                        price_description:{
                             title: 'Descripción',
                         },
-                        price: {
+                        price:{
                             title: 'Precio',
                         },
-                        utility: {
+                        utility:{
                             title: 'Utilidad',
                         },
-                        is_default: {
+                        is_default:{
                             title: 'Predeterminado',
                         },
                     },
-                    layout: {scroll: true},
+                    layout: { scroll: true },
                     sortable: true,
                     stateSave: true,
                 };
@@ -665,7 +598,7 @@ export default {
 
                 this.dataTablePrices = new KTDataTable(tablePrices, optionsTablePrice);
                 console.log('Nueva tabla de precios inicializada');
-            } catch (error) {
+            }catch (error){
                 console.error('Error al cargar la tabla de precios:', error);
             }
         },

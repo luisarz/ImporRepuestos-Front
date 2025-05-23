@@ -1,43 +1,36 @@
 <template>
   <div class="grid" id="kt_remote_table">
     <div class="card card-grid min-w-full">
-      <div class="card-header py-5 flex-wrap">
-        <div class="grid grid-flow-col min-w-full">
-          <div class="grid-1">
-            <h1 class="card-title">
-              Administración <span class="badge badge-info">{{ moduleName }}</span>
-            </h1>
-          </div>
-
-
-
-
-
-
-          <div class="grid-cols-2">
-            <input
-                type="text"
-                v-model="searchQuery"
-                class="input  w-250px ps-15"
-
-                placeholder="Buscar..."
-            />
-          </div>
-          <div class="grid-1"></div>
-          <div class="grid-1">
-            <label class="switch switch-sm">
-              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-                <i class="ki-filled ki-plus-squared"></i>
-                {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
-
-              </button>
-            </label>
-          </div>
+      <div class="card-header flex-wrap py-2">
+        <div class="relative  min-w-[450px]">
+          <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+          </i>
+          <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
+                 placeholder="Buscar inventarios"
+                 id="search_description"
+                 type="text">
+        </div>
+        <div class="relative  min-w-[450px]">
+          <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+          </i>
+          <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
+                 placeholder="Buscar inventarios"
+                 id="search_code"
+                 type="text">
         </div>
 
 
+        <div class="flex gap-6">
 
 
+          <label class="switch switch-sm">
+            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+              <i class="ki-filled ki-plus-squared"></i>
+              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
+
+            </button>
+          </label>
+        </div>
       </div>
       <div class="card-body">
 
@@ -47,31 +40,31 @@
                  data-datatable-table="true"  data-datatable-search="true">
             <thead>
             <tr>
-              <th class="w-[160px] text-center" data-datatable-column="code">
+              <th class="min-w-[60px] text-center" data-datatable-column="code">
                               <span class="sort">
                                   <span class="sort-label"> Código</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
-              <th class="w-[160px] text-center" data-datatable-column="original_code">
+              <th class="min-w-[60px] text-center" data-datatable-column="original_code">
                               <span class="sort">
                                   <span class="sort-label">Cod. Orig</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
-              <th class="w-[160px] text-center" data-datatable-column="barcode">
+              <th class="min-w-[160px] text-center" data-datatable-column="barcode">
                               <span class="sort">
                                   <span class="sort-label"> Cod.Barra</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
-              <th class="w-[160px] text-center" data-datatable-column="category">
+              <th class="min-w-[160px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">Categoría</span>
                                   <span class="sort-icon"></span>
                               </span>
               </th>
-              <th class="w-[260px] text-center" data-datatable-column="description">
+              <th class="min-w-[260px] text-center" data-datatable-column="description">
                               <span class="sort">
                                   <span class="sort-label">Descripción</span>
                                   <span class="sort-icon"></span>
