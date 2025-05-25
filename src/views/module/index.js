@@ -45,6 +45,11 @@ export default {
         };
 
     },
+    computed:{
+        moduleName() {
+            return ' Modulos de Sistema';
+        },
+    },
     methods: {
        async loadModules() {
            try {
@@ -142,7 +147,7 @@ export default {
                     id_padre: {
                         title: 'Padre',
                         render: (data, type, row) => {
-                                return type?.padre?.nombre ?? '-';
+                                return type?.padre?.nombre ?? '';
                         }
                     },
                     ruta: {
@@ -151,7 +156,7 @@ export default {
                     icono: {
                         title: 'Icono',
                         render: (data, type, row) => {
-                            return `<i class="ki-outline ki-${data} text-lg"></i>`; // Suponiendo que `data` es la clase del icono
+                            return `<i class="ki-outline ki-${data} text-gray-900 text-lg"></i>`; // Suponiendo que `data` es la clase del icono
                         }
                     },
                     orden: {

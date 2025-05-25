@@ -22,7 +22,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="nombre">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Nombre
@@ -31,7 +31,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="nit">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 NIT
@@ -40,7 +40,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="telefono">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Telefono
@@ -49,7 +49,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="email">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 email
@@ -58,7 +58,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="whatsapp">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 whatsapp

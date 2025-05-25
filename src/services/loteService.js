@@ -1,29 +1,29 @@
 import {configApi, urlApi} from "./config.js";
 import Swal from "sweetalert2";
 
-const inventoryService = {
+const loteService = {
     get: async () => {
         try {
-            const response = await configApi.get(`/v1/inventories`);
+            const response = await configApi.get(`/v1/batches`);
             return response.data.data;
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Sucursales');
         }
     },
-    store: async (formData) => {
+    store: async (lote) => {
         try {
-            const response = await configApi.post(`/v1/inventories`, formData);
+            const response = await configApi.post(`/v1/batches`, lote);
             return response.data;
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Sucursales');
         }
     },
-    update: async ( formData) => {
+    update: async ( lote) => {
         try {
-            const id = formData.get('id'); // ✅ así se accede
-            const response = await configApi.post(`/v1/inventories/${id}`, formData, {
+            const id = lote.get('id'); // ✅ así se accede
+            const response = await configApi.post(`/v1/batches/${id}`, lote, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
@@ -43,7 +43,7 @@ const inventoryService = {
     },
     getOne: async (id) => {
         try {
-            const response = await configApi.get(`/v1/inventories/${id}`);
+            const response = await configApi.get(`/v1/batches/${id}`);
             return response.data;
         } catch (error) {
             console.log(error)
@@ -51,11 +51,11 @@ const inventoryService = {
         }
     },
     getUrl: () => {
-        return `${urlApi}/v1/inventories`;
+        return `${urlApi}/v1/batches`;
     },
     destroy: async (id) => {
         try {
-            const response = await configApi.delete(`/v1/inventories/${id}`);
+            const response = await configApi.delete(`/v1/batches/${id}`);
         } catch (error) {
             console.log(error)
             throw new Error('Error al Obtener las Categorias');
@@ -65,4 +65,4 @@ const inventoryService = {
 
 };
 
-export default inventoryService;
+export default loteService;

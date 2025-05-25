@@ -10,10 +10,9 @@ import {urlApi, VUE_APP_STORAGE_URL} from "@/services/config.js";
 import EquivalentService from "@/services/equivalentService.js";
 import Swal from 'sweetalert2';
 import WarehouseService from "@/services/warehouseService.js";
-import Inventory from "@/services/inventoryService.js";
+import Lote from "@/services/loteService.js";
 import ProviderService from "@/services/providers/providerService.js";
 import MediumModal from "@/components/MediumModal.vue";
-import PricesService from "@/services/pricesService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
@@ -81,130 +80,7 @@ export default {
             return VUE_APP_STORAGE_URL
         },
 
-        async openPriceStore(editData = null) {
-            const isEditMode = editData !== null;
-            const {value: formValues} = await Swal.fire({
-                title: isEditMode ? 'Modificar Precio' : 'Agregar Precio',
-                html: `
-      <div class="mb-3">
-        <label for="price_description" class="form-label mb-1">Descripcion precio:</label>
-        <input type="text" id="price_description" class="input" 
-               placeholder="Ingrese la descripcion" value="${isEditMode ? editData.price_description : ''}" required>
-      </div>
-      <div class="mb-2">
-        <label for="price" class="form-label mb-1">Precio:</label>
-        <input type="number" id="price" class="input" 
-               placeholder="Ingrese el precio" value="${isEditMode ? editData.price : ''}">
-      </div>
-       <div class="mb-2">
-        <label for="utility" class="form-label mb-1">Utilidad:</label>
-        <input type="number" id="utility" class="input" 
-               placeholder="Utilidad" value="${isEditMode ? editData.utility : 0}">
-      </div>
-        <div class="mb-2">
-      <label for="utilidadPrecioTxt" class="form-label mb-1">Predeterminado:</label>
-        <label  class="switch">
-                           <input
-                                type="checkbox"
-                                id="is_default"
-                                :true-value="1"
-                                :false-value="0"
-                              />
-                          </label>
-      </div>
-    `,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonText: isEditMode ? 'Guardar cambios' : 'Agregar',
-                cancelButtonText: 'Cancelar',
-                buttonsStyling: false,
-                allowOutsideClick: false, // 👈 evita cierre por clic fuera
-                allowEscapeKey: false,
-                customClass: {
-                    confirmButton: 'btn btn-success me-2',
-                    cancelButton: 'btn btn-info'
-                },
-                didOpen: () => {
-                    setTimeout(() => {
-                        document.getElementById('price_description').focus();
-                    }, 100);
-                },
 
-                preConfirm: () => {
-                    const inventory_id = this.entity.id;
-                    const price_description = document.getElementById('price_description').value.trim();
-                    const price = document.getElementById('price').value.trim();
-                    const utility = document.getElementById('utility').value.trim();
-                    const is_default = document.getElementById('is_default').checked ? 1 : 0; // checkbox
-                    const max_discount = 0;
-                    const is_active = true;
-
-                    if (!price_description) {
-                        Swal.showValidationMessage('La descripción del precio es requerida');
-                        return false;
-                    }
-
-                    if (!price || isNaN(price)) {
-                        Swal.showValidationMessage('El precio debe ser un número válido');
-                        return false;
-                    }
-
-                    if (!utility || isNaN(utility)) {
-                        Swal.showValidationMessage('La utilidad debe ser un número válido');
-                        return false;
-                    }
-
-                    return {
-                        inventory_id,
-                        price_description,
-                        price: parseFloat(price),
-                        utility: parseFloat(utility),
-                        is_default,
-                        max_discount,
-                        is_active
-                    };
-                }
-
-            });
-
-            if (formValues) {
-
-                if (isEditMode) {
-                    // Lógica para editar
-
-                    const interchange = PricesService.update(editData.id, formValues);
-                    await Swal.fire('¡Actualizado!', 'El intercambio ha sido modificado.', 'success');
-                    this.loadPriceTable(editData.inventory_id);
-                } else {
-                    // Lógica para registrar nuevo
-                    const price = await PricesService.store(formValues)
-
-                    if (price.status === 'success') {
-                        await Swal.fire({
-                            title: '¡Agregado!',
-                            text: 'El Precio ha sido agregado.',
-                            icon: 'success',
-                            timer: 1500,
-                            timerProgressBar: true,
-                            confirmButtonText: 'Aceptar',
-                            buttonsStyling: false,
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            }
-                        });
-                        this.loadPriceTable(price.data.inventory_id);
-                    }
-                }
-
-            }
-        },
-
-        cleanupImagePreview() {
-            if (this.entity.image && this.entity.image instanceof File) {
-                const imageUrl = URL.createObjectURL(this.entity.image);
-                URL.revokeObjectURL(imageUrl);
-            }
-        },
 
         // Método para obtener la URL de previsualización de la imagen
 
@@ -215,7 +91,7 @@ export default {
             this.loading = true;
             this.isEditing = false;
             try {
-                const storeTemp = await Inventory.store(this.entity);
+                const storeTemp = await Lote.store(this.entity);
                 if (!this.entity) {
                     this.entity = {};
                 }
@@ -262,176 +138,13 @@ export default {
                 console.error("Error in editModal:", error);
             }
         },
-        formFields() {
-            return [
-                {
-                    group: "Información Inventario",
-                    fields: [
-                        {
-                            key: 'warehouse_id',
-                            label: 'Sucursal',
-                            type: 'select',
-                            value: 0,
-                            readonly: false,
-                            placeholder: 'Sucursal',
-                            options: this.warehouses.map(w => ({value: w.id, text: w.name}))
-
-                        },
-                        {
-                            key: 'product_id',
-                            label: 'Producto',
-                            type: 'select',
-                            value: 0,
-                            readonly: false,
-                            placeholder: 'Producto a levantar',
-                            options: [
-                                ...this.products.map(p => ({value: p.id, text: p.code + ' ' + p.description}))
-                            ],
-                        },
-                        {
-                            key: 'provider_id',
-                            label: 'Proveedor',
-                            type: 'select',
-                            value: 0,
-                            readonly:false,
-
-                            placeholder: 'Proveedor',
-                            options: [
-                                ...this.providers.map(p => ({value: p.id, text: p.legal_name}))
-                            ],
-                        },
-
-                        {
-                            key: 'stock_actual_quantity',
-                            label: 'Inventario actual',
-                            type: 'number',
-                            value: 0,
-                            readonly: false,
-                            placeholder: 'Inventario actual en sucursal'
-                        },
-                        {
-                            key: 'stock_min',
-                            label: 'Stock minimo',
-                            type: 'number',
-                            value: 0,
-                            readonly: false,
 
 
-                            placeholder: 'Stock mínimo',
-                        },
-                        {
-                            key: 'stock_max',
-                            label: 'Stock Maximo',
-                            type: 'number',
-                            value: 0,
-                            readonly: false,
 
-                            placeholder: 'Stock Máximo',
-                        },
-
-
-                    ],
-                },
-
-                {
-                    group: "Configuraciones",
-                    fields: [
-                        {
-                            key: 'last_cost_without_tax',
-                            label: 'Costo sin IVA',
-                            type: 'number',
-                            value: 0,
-                            readonly: true,
-
-                            placeholder: 'Costo sin IVA'
-                        },
-                        {
-                            key: 'last_cost_with_tax',
-                            label: 'Costo con IVA',
-                            type: 'number',
-                            value: 0,
-                            readonly: true,
-
-                            placeholder: 'Costo con IVA',
-                        },
-
-                        {
-                            key: 'alert_stock_min',
-                            label: 'Alerta stock mínimo',
-                            type: 'checkbox',
-                            value: 0,
-                            readonly: false,
-
-                            placeholder: 'Producto es un servicio'
-                        },
-                        {
-                            key: 'alert_stock_max',
-                            label: 'Alerta stock maximo',
-                            type: 'checkbox',
-                            value: 0,
-                            readonly: false,
-
-                            placeholder: 'Producto es un servicio'
-                        },
-                        {
-                            key: 'is_active',
-                            label: 'Inventario activo',
-                            type: 'checkbox',
-                            value: 0,
-                            readonly: false,
-                            placeholder: 'Inventario activo',
-                        },
-
-                    ],
-                },
-
-
-            ];
-        },
-
-        getImagePreview(file) {
-            if (!file) return '';
-
-            if (typeof file === 'string') {
-                return file;
-            }
-
-            // Si es un objeto File (nueva imagen seleccionada)
-            if (file instanceof File) {
-                return URL.createObjectURL(file);
-            }
-
-            return '';
-        },
-        handleImageChange(event) {
-            const file = event.target.files[0];
-
-            // Limpiar previsualización anterior
-            this.cleanupImagePreview();
-
-            if (file) {
-                this.entity.image = file;
-                // Puedes agregar validación de imagen aquí si lo deseas
-            } else {
-                this.entity.image = null;
-            }
-        },
         imageUrl() {
             return this.getImagePreview(`${VUE_APP_STORAGE_URL()}/${this.entity.image}`);
         },
-        validationForm() {
-            let isValid = true;
-            Object.keys(this.form).forEach((key) => {
-                if (this.form[key].isRequired) {
-                    this.form[key].validationSuccess = !!this.entity[key];
-                    if (!this.form[key].validationSuccess) {
-                        console.log(`El campo ${key} no es válido.`);
-                        isValid = false;
-                    }
-                }
-            });
-            return isValid;
-        },
+      
         async save() {
             if (!this.validationForm()) return;
             this.loading = true;
@@ -454,26 +167,26 @@ export default {
                 formData.append('provider_id', this.entity.provider_id);
                 formData.append('is_temp', '0');
                 formData.append('is_active', this.entity.is_active ? '1' : '0');
-                const inventory = await Inventory.update(formData);
-                console.log(inventory);
-                if (inventory?.status === 'success') {
+                const Lote = await Lote.update(formData);
+                console.log(Lote);
+                if (Lote?.status === 'success') {
                     await Swal.fire({
                         icon: 'success',
                         title: 'Éxito',
                         timer: 1500,
                         showConfirmButton: true,
                         timerProgressBar: true,
-                        text: inventory.message,
+                        text: Lote.message,
                         confirmButtonText: 'Aceptar'
                     });
                     location.reload();
 
-                    // this.loadInventoryTable();
+                    // this.loadLoteTable();
                 } else {
                     await Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: inventory.message,
+                        text: Lote.message,
                         confirmButtonText: 'Aceptar'
                     });
                 }
@@ -488,10 +201,10 @@ export default {
         },
 
 
-        loadInventoryTable() {
+        loadLoteTable() {
             const tablePriceElement = document.querySelector("#kt_remote_table");
             const options = {
-                apiEndpoint: `${urlApi}/v1/inventories`,
+                apiEndpoint: `${urlApi}/v1/batches`,
                 requestHeaders: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                 },
@@ -508,17 +221,14 @@ export default {
                     },
                     other: {
                         render: function (data, type, row) {
-                            const description = type?.product?.description ?? 'S/N';
-                            const code = type?.product?.code ?? 'S/N';
-                            const original_code = type?.product?.original_code ?? 'S/N';
+                            const description = type?.inventory?.product?.description ?? 'S/N';
+                            const code = type?.inventory?.product?.code ?? 'S/N';
+                            const original_code = type?.inventory?.product?.original_code ?? 'S/N';
                             const image = type?.product?.image ?? 'S/N';
                             const imageUrl = image ? `${VUE_APP_STORAGE_URL}${image}` : `${VUE_APP_STORAGE_URL}/images/default.png`;
-                            const imagePreview = `<img src="${imageUrl}" alt="image" class="w-10 h-10 rounded-full">`;
-                            const wareHouse = type?.warehouse?.name ?? 'SN';
+                            const wareHouse =type?.inventory?.warehouse?.name ?? 'SN';
                             const product = `<div class="flex items-center gap-4">
-                <div class="leading-none w-10 shrink-0 cursor-pointer">
-                <img src="${image}" alt="image" class="w-15 h-15 rounded-full">
-                </div>
+               
                 <div class="flex flex-col gap-0.5">
                  <span class="leading-none font-medium text-sm text-gray-900">
                       ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
@@ -537,11 +247,11 @@ export default {
                         }
                     },
 
-                    barcode: {
-                        title: 'barcode',
+                    code: {
+                        title: 'code',
                         search: true,
                         render: function (data, type, row) {
-                            return type?.product?.barcode ?? 'SN'
+                            return type?.code ?? 'SN'
                         },
                         createdCell(cell) {
                             cell.classList.add('text-small');
@@ -550,63 +260,48 @@ export default {
 
                     },
 
-                    original_code: {
-                        title: 'original_code',
+                    origen_code: {
+                        title: 'origen_code',
                         render: function (data, type, row) {
-                            return type?.product?.original_code ?? 'SN'
+                            return type?.origen_code?.code ?? 'SN'
                         }
                     },
-                    category: {
-                        title: 'Categoría',
+                    initial_quantity: {
+                        title: 'initial_quantity',
+
+
+                    },
+                    available_quantity:{
+                        title: 'available_quantity',
                         render: function (data, type, row) {
-                            const category = type?.product?.category?.description ?? 'S/N';
-                            return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+                            return type?.available_quantity ?? 'SN'
                         }
-
                     },
-                    medida: {
-                        title: 'Medida',
+
+                    observations:{
+                        title: 'observations',
                         render: function (data, type, row) {
-                            const medida = type?.product?.unit_measurement?.description ?? 'S/N';
-                            const description = type?.product?.description_measurement_id ?? 'S/N';
-                            const returnMedida = `<div class="flex items-center gap-4">
-             
-                <div class="flex flex-col gap-0.5">
-                 <span class="leading-none font-medium text-sm text-gray-900">
-                      ${medida.charAt(0).toUpperCase() + medida.slice(1).toLowerCase()}
-                 </span>
-               
-                 <span class="text-2sm text-gray-700 font-normal">
-                        ${description.charAt(0).toUpperCase() + description.slice(1).toLowerCase()}
-                 </span>
-              
-                </div>
-                
-               </div>`
-                            return returnMedida;
-                        },
+                            return type?.observations ?? 'SN'
+                        }
+                    },
 
-                    },
-                    actual_stock: {
-                        title: 'Inventario en lotes',
-                        render: (actual_stock) => `<badge class="badge badge-light-primary text-center">${actual_stock}</badge>`,
-                        createdCell(cell) {
-                            cell.classList.add('text-center');
-                        },
-                    },
-                    default_price: {
-                        title: 'default_price',
-                        render: (price) => `<badge class="badge badge-info text-center w-75">$ ${price}</badge>`,
-                        createdCell(cell) {
-                            cell.classList.add('text-center');
-                        },
-
-                    },
-                    last_purchase: {
+                    incoming_date: {
                         title: 'Last purchase',
                         render: function (data, type, row) {
-                            if (!type?.last_purchase) return 'S/N';
-                            const date = new Date(type.last_purchase);
+                            if (!type?.incoming_date) return 'S/N';
+                            const date = new Date(type.incoming_date);
+                            return new Intl.DateTimeFormat('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            }).format(date);
+                        }
+                    },
+                    expiration_date: {
+                        title: 'Last purchase',
+                        render: function (data, type, row) {
+                            if (!type?.expiration_date) return 'S/N';
+                            const date = new Date(type.expiration_date);
                             return new Intl.DateTimeFormat('en-US', {
                                 year: 'numeric',
                                 month: '2-digit',
@@ -662,7 +357,7 @@ export default {
 
                 const optionsTablePrice = {
                     type: 'remote',
-                    apiEndpoint: `${urlApi}/v1/prices/inventory/${id}?_=${Date.now()}`,
+                    apiEndpoint: `${urlApi}/v1/prices/Lote/${id}?_=${Date.now()}`,
                     requestHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
@@ -735,7 +430,7 @@ export default {
     },
 
     mounted() {
-        this.loadInventoryTable();
+        this.loadLoteTable();
         // window.editModal = this.editModal.bind(this);
     },
 };

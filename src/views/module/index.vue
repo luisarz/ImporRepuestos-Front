@@ -1,16 +1,28 @@
 <template>
   <div class="grid" id="kt_remote_table" data-datatable="true">
     <div class="card card-grid min-w-full">
-      <div class="card-header py-5 flex-wrap">
-        <h1 class="card-title">
-          Módulos
-        </h1>
-        <label class="switch switch-sm">
-          <button class="btn btn-primary" @click="openStoreModal">
-            <i class="ki-filled ki-plus-squared"></i>
-            Agregar Módulo
-          </button>
-        </label>
+      <div class="card-header flex-wrap py-2">
+        <div class="relative  min-w-[450px]">
+          <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+          </i>
+          <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
+                 placeholder="Buscar en módulos"
+                 id="search_description"
+                 type="text">
+        </div>
+
+
+        <div class="flex gap-6">
+
+
+          <label class="switch switch-sm">
+            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+              <i class="ki-filled ki-plus-squared"></i>
+              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
+
+            </button>
+          </label>
+        </div>
       </div>
       <div class="card-body">
         <div>
@@ -18,7 +30,7 @@
             <table id="#table_modulo" class="table table-auto table-border" data-datatable-table="true">
               <thead>
               <tr>
-                <th class="w-[100px] text-center" data-datatable-column="status">
+                <th class="min-w-[150px] text-center" data-datatable-column="nombre">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Módulo
@@ -27,7 +39,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[100px]" data-datatable-column="id_padre">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Padre
@@ -36,7 +48,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="ruta">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Ruta
@@ -45,7 +57,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" >
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Icono
@@ -54,7 +66,7 @@
                                             </span>
                                         </span>
                 </th>
-                <th class="min-w-[60px]" data-datatable-column="ipAddress">
+                <th class="min-w-[60px]" data-datatable-column="orden">
                                         <span class="sort">
                                             <span class="sort-label">
                                                 Orden

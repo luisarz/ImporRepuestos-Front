@@ -26,7 +26,7 @@ import Equivalents from "@/views/products/equivalents/index.vue";
 import Interchanges from "@/views/products/interchanges/index.vue";
 import Inventory from "@/views/products/inventory/index.vue";
 import Sale from "@/views/sales/index.vue";
-
+import Lotes from "@/views/products/lotes/index.vue";
 const routes = [
     {
         path: '/',
@@ -152,12 +152,7 @@ const routes = [
                 meta: {requiresAuth: true}
 
             },
-            // {
-            //     path: 'prices',
-            //     component: Price,
-            //     meta: {requiresAuth: true}
-            //
-            // },
+
             {
                 path: 'sales',
                 component: Sale,
@@ -170,6 +165,14 @@ const routes = [
                 meta: {requiresAuth: true}
 
             }
+            ,
+            {
+                path: '/lotes',
+                component: Lotes,
+                meta: {requiresAuth: true}
+
+            }
+
 
         ]
     },
