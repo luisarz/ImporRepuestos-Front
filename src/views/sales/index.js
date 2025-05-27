@@ -14,7 +14,7 @@ import Inventory from "@/services/inventoryService.js";
 import ProviderService from "@/services/providers/providerService.js";
 import MediumModal from "@/components/MediumModal.vue";
 import PricesService from "@/services/pricesService.js";
-import Sale from "@/services/saleService.js";
+import SaleHeader from "@/services/saleService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
@@ -403,6 +403,15 @@ export default {
             });
             return isValid;
         },
+        async loadWarehouse() {
+            try {
+                const response = await WarehouseService.get();
+                this.warehouses = response.data || [];
+            } catch (error) {
+                console.error('Error al cargar las sucursales:', error);
+                this.warehouses = [];
+            }
+        },
         async save() {
             if (!this.validationForm()) return;
             // this.loading = true;
@@ -459,7 +468,7 @@ export default {
         },
 
 
-        loadInventoryTable() {
+        loadSales() {
             const tablePriceElement = document.querySelector("#kt_remote_table");
             const options = {
                 apiEndpoint: `${urlApi}/v1/sales`,
@@ -478,8 +487,8 @@ export default {
                         },
                     },
 
-                    sale_date: {
-                        title: 'sale_date',
+                    formatted_date: {
+                        title: 'formatted_date',
                         search: true,
                     },
 
@@ -639,7 +648,8 @@ export default {
     },
 
     mounted() {
-        this.loadInventoryTable();
+        this.loadWarehouse();
+        this.loadSales();
         // window.editModal = this.editModal.bind(this);
     },
 };

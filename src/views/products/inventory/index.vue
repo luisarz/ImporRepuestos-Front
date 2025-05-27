@@ -3,26 +3,40 @@
 
     <div class="card card-grid min-w-full">
       <div class="card-header flex-wrap py-2">
-        <div class="relative  min-w-[450px]">
-          <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
-          </i>
-          <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
-                 placeholder="Buscar inventarios"
-                 id="search_description"
-                 type="text">
-        </div>
+        <div class="flex flex-row flex-wrap w-full">
+          <div class="w-full md:w-4/12 p-2">
+            <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+            </i>
+            <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
+                   placeholder="Buscar producto, descripción o código..."
+                   id="search_description"
+                   type="text">
+          </div>
+          <div class="w-full md:w-3/12 p-2">
+            <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
+            </i>
+            <input class="input input-md pl-8 w-100 " data-datatable-filter-column="product.code"
+                   placeholder="Buscar por código Impor"
+                   id="code"
+                   type="text">
+          </div>
+          <div class="w-full md:w-2/12 p-2">
+            <select class="select min-w-32" data-datatable-filter-column="warehouse_id">
+            <option value="">Seleccionar sucursal</option>
+            <option v-for="warehouse in warehouses" :key="warehouse.id" :value="warehouse.id">
+              {{ warehouse.name }}
+            </option>
+          </select></div>
+          <div class="w-full md:w-1/12 p-2 ">
 
+            <label class="switch switch-sm">
+              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+                <i class="ki-filled ki-plus-squared"></i>
+                {{ loading ? 'Preparando datos...' : 'Levantar ' }} {{ moduleName }}
 
-        <div class="flex gap-6">
-
-
-          <label class="switch switch-sm">
-            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-              <i class="ki-filled ki-plus-squared"></i>
-              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
-
-            </button>
-          </label>
+              </button>
+            </label>
+          </div>
         </div>
       </div>
 

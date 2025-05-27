@@ -25,8 +25,9 @@ import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 import Equivalents from "@/views/products/equivalents/index.vue";
 import Interchanges from "@/views/products/interchanges/index.vue";
 import Inventory from "@/views/products/inventory/index.vue";
-import Sale from "@/views/sales/index.vue";
+import SaleHeader from "@/views/sales/index.vue";
 import Lotes from "@/views/products/lotes/index.vue";
+import SaleNew from "@/views/sales/new/newsale.vue";
 const routes = [
     {
         path: '/',
@@ -155,13 +156,13 @@ const routes = [
 
             {
                 path: 'sales',
-                component: Sale,
+                component: SaleHeader,
                 meta: {requiresAuth: true}
 
             },
             {
                 path: 'sales/add',
-                component: Sale,
+                component: SaleNew,
                 meta: {requiresAuth: true}
 
             }

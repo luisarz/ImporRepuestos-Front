@@ -80,6 +80,15 @@ export default {
         VUE_APP_STORAGE_URL() {
             return VUE_APP_STORAGE_URL
         },
+        async loadWarehouse() {
+            try {
+                const response = await WarehouseService.get();
+                this.warehouses = response.data || [];
+            } catch (error) {
+                console.error('Error al cargar las sucursales:', error);
+                this.warehouses = [];
+            }
+        },
 
         async openPriceStore(editData = null) {
             const isEditMode = editData !== null;
@@ -637,20 +646,79 @@ export default {
 
 
                 },
+                // mapRequest: (queryParams) => {
+                //     // For CodeIgniter integration - customize as needed
+                //     console.log('Search term:', queryParams.get('search'));
+                //     return queryParams;
+                // },
                 layout: {scroll: true},
                 sortable: true,
                 stateSave: true,
                 infoEmpty: 'No hay datos disponibles',
                 search: {
-                    input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
-                    key: 'search', // Parámetro que se enviará al servidor
-                    delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
+                    input: document.getElementById('search_description'),
+                    key: 'search', // este será el parámetro principal
+                    delay: 400,
+                    advanced: [
+                        {
+                            input: document.getElementById('kt_datatable_search_query'),
+                            key: 'category'
+                        },
+
+                    ]
                 },
+
             };
             const dataTable = new KTDataTable(tablePriceElement, options);
-            dataTable.showSpinner();
+
+            document.querySelectorAll('[data-datatable-search]').forEach((searchElement) => {
+                const tableId = searchElement.getAttribute('#kt_remote_table');
+                const datatable = document.querySelector(tableId);
+
+                if (datatable && datatable.instance) {
+                    searchElement.addEventListener('keyup', () => {
+                        // Recolectar todos los valores de inputs con el mismo atributo
+                        const allInputs = document.querySelectorAll(`[data-datatable-search="${tableId}"]`);
+                        let combinedSearch = '';
+
+                        allInputs.forEach((input) => {
+                            if (input.value.trim() !== '') {
+                                combinedSearch += input.value.trim() + ' ';
+                            }
+                        });
+
+                        datatable.instance.search(combinedSearch.trim());
+                    });
+                }
+            });
+
+
+
+            document.querySelectorAll('[data-datatable-filter-column]').forEach((filterElement) => {
+                const column = filterElement.getAttribute('data-datatable-filter-column');
+
+                const applyFilter = () => {
+                    dataTable.setFilter({
+                        column: column,
+                        type: 'text',
+                        value: filterElement.value
+                    }).redraw();
+                };
+
+                filterElement.addEventListener('change', applyFilter);
+                filterElement.addEventListener('keyup', (event) => {
+                    if (event.key === 'Enter') {
+                        applyFilter();
+                    }
+                });
+
+            });
+
+
+
 
         },
+
         loadPriceTable(id) {
             try {
                 const tablePrices = document.querySelector("#table_prices");
@@ -735,6 +803,7 @@ export default {
     },
 
     mounted() {
+        this.loadWarehouse();
         this.loadInventoryTable();
         // window.editModal = this.editModal.bind(this);
     },

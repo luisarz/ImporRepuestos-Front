@@ -324,10 +324,36 @@ export default {
             </button>
         </div>
     `,
+                        // createdCell: (cell, cellData, rowData) => {
+                        //     cell.querySelector('.btn-edit')?.addEventListener('click', () => this.editModal(rowData));
+                        //     cell.querySelector('.btn-delete')?.addEventListener('click', () => this.deleteProductModal(rowData.id));
+                        // }
                         createdCell: (cell, cellData, rowData) => {
-                            cell.querySelector('.btn-edit')?.addEventListener('click', () => this.editModal(rowData));
-                            cell.querySelector('.btn-delete')?.addEventListener('click', () => this.deleteProductModal(rowData.id));
+                            const btnEdit = cell.querySelector('.btn-edit');
+                            const btnDelete = cell.querySelector('.btn-delete');
+
+                            btnEdit?.addEventListener('click', async () => {
+                                btnEdit.disabled = true;
+                                btnEdit.innerHTML = `<i class="spinner"></i>
+`;
+
+                                await this.editModal(rowData); // Asegúrate de que sea async si tiene procesos
+
+                                btnEdit.disabled = false;
+                                btnEdit.innerHTML = `<i class="ki-filled ki-notepad-edit"></i>`;
+                            });
+
+                            btnDelete?.addEventListener('click', async () => {
+                                btnDelete.disabled = true;
+                                btnDelete.innerHTML = `<span class="spinner-border spinner-border-sm text-danger" role="status" aria-hidden="true"></span>`;
+
+                                await this.deleteProductModal(rowData.id);
+
+                                btnDelete.disabled = false;
+                                btnDelete.innerHTML = `<i class="ki-outline ki-trash text-danger"></i>`;
+                            });
                         }
+
                     }
 
 

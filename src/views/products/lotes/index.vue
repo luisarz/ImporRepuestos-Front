@@ -7,7 +7,7 @@
           <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
           </i>
           <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
-                 placeholder="Buscar inventarios"
+                 placeholder="Buscar lotes..."
                  id="search_description"
                  type="text">
         </div>
@@ -16,13 +16,13 @@
         <div class="flex gap-6">
 
 
-          <label class="switch switch-sm">
-            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
-              <i class="ki-filled ki-plus-squared"></i>
-              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}
+<!--          <label class="switch switch-sm">-->
+<!--            <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">-->
+<!--              <i class="ki-filled ki-plus-squared"></i>-->
+<!--              {{ loading ? 'Preparando datos...' : 'Crear ' }} {{ moduleName }}-->
 
-            </button>
-          </label>
+<!--            </button>-->
+<!--          </label>-->
         </div>
       </div>
 
