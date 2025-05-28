@@ -4,6 +4,7 @@
 @import "./metronic/vendors/keenicons/outline/style.css";
 
 @import "./metronic/css/styles.css";
+@import "./metronic/custom.css";
 
 @import 'vue-select/dist/vue-select.css';
 
@@ -15,3 +16,5 @@
 #app {
 	display: contents;
 }
+
+

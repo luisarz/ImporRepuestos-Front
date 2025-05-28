@@ -1,0 +1,45 @@
+.status-processing {
+    /*background-color: #fff7e6;       !* Amarillo claro *!*/
+    color: #8a6d3b;                 /* Marrón oscuro */
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0.95;
+    transition: background-color 0.3s ease;
+}
+
+.status-completed {
+    /*background-color: #e6ffed;      !* Verde claro *!*/
+    color: #2e7d32;                 /* Verde intenso */
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0.95;
+    transition: background-color 0.3s ease;
+}
+
+.status-cancelled {
+    /*background-color: #ffe6e6;      !* Rojo claro *!*/
+    color: #c62828;                 /* Rojo intenso */
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0.95;
+    transition: background-color 0.3s ease;
+}
+
+.status-unknown {
+    /*background-color: #f0f0f0;      !* Gris claro *!*/
+    color: #6c757d;                 /* Gris oscuro */
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0.95;
+    transition: background-color 0.3s ease;
+}
+
+/* Efecto hover común a todas las filas de estado */
+tr.status-processing:hover,
+tr.status-completed:hover,
+tr.status-cancelled:hover,
+tr.status-unknown:hover {
+    background-color: #d3d3d3 !important;
+    cursor: pointer;
+    opacity: 1;
+}

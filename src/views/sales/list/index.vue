@@ -20,16 +20,16 @@
                    id="code"
                    type="text">
           </div>
-          <div class="w-full md:w-3/12 p-2">
-            <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                :format="'dd/MM/yyyy'"
-                :clearable="true"
-                placeholder="Seleccione un rango de fechas"
-            />
-          </div>
+<!--          <div class="w-full md:w-3/12 p-2">-->
+<!--            <VueDatePicker-->
+<!--                v-model="date"-->
+<!--                range-->
+<!--                :enable-time-picker="false"-->
+<!--                :format="'dd/MM/yyyy'"-->
+<!--                :clearable="true"-->
+<!--                placeholder="Seleccione un rango de fechas"-->
+<!--            />-->
+<!--          </div>-->
 
           <div class="w-full md:w-2/12 p-2">
             <select class="select min-w-32" data-datatable-filter-column="warehouse_id">
@@ -56,28 +56,34 @@
         <div data-datatable="true" data-datatable-page-size="10" id="kt_remote_table" class="datatable-initialized">
           <div class="scrollable-y-auto">
 
-            <table class="table table-border text-gray-700 font-medium text-sm" data-datatable-table="true">
+            <table class="table table-border text-gray-700  text-sm" data-datatable-table="true">
               <thead>
               <tr>
                 <th class="w-14">
                   <input class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox"/>
                 </th>
-                <th class="min-w-[230px]">Acciones
+                <th class="min-w-[225px]">Acciones
                 </th>
 
-                <th class="min-w-[50px] text-center" data-datatable-column="sale_date">
+                <th class="min-w-[40px] text-center" data-datatable-column="sale_date">
+                              <span class="sort">
+                                  <span class="sort-label">Sucursal</span>
+                                  <span class="sort-icon"></span>
+                              </span>
+                </th>
+                <th class="min-w-[80px] text-center" data-datatable-column="sale_date">
                               <span class="sort">
                                   <span class="sort-label">Fecha</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="min-w-[110px] text-center" data-datatable-column="sale_date">
+                <th class="min-w-[80px] text-center" data-datatable-column="sale_date">
                               <span class="sort">
                                   <span class="sort-label">Tipo</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-min-[100px] text-center" data-datatable-column="origigal_code">
+                <th class="w-min-[50px] text-center" data-datatable-column="origigal_code">
                               <span class="sort">
                                   <span class="sort-label">#</span>
                                   <span class="sort-icon"></span>
@@ -96,7 +102,7 @@
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[100px] text-center" data-datatable-column="brand">
+                <th class="min-w-[120px] text-center" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Vendedor</span>
                                   <span class="sort-icon"></span>
@@ -108,7 +114,7 @@
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[120px] text-center" data-datatable-column="brand">
+                <th class="w-[100px] text-center" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Condición</span>
                                   <span class="sort-icon"></span>
@@ -120,7 +126,7 @@
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[120px] text-right" data-datatable-column="brand">
+                <th class="w-[150px] text-right" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Total</span>
                                   <span class="sort-icon"></span>
