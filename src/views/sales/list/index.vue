@@ -8,7 +8,7 @@
             <i class="ki-filled ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3">
             </i>
             <input class="input input-md pl-8 w-100 " data-datatable-search="#kt_remote_table"
-                   placeholder="Buscar producto, descripción o código..."
+                   placeholder="Buscar Cliente, vendedor o # documento..."
                    id="search_description"
                    type="text">
           </div>
@@ -20,6 +20,17 @@
                    id="code"
                    type="text">
           </div>
+          <div class="w-full md:w-3/12 p-2">
+            <VueDatePicker
+                v-model="date"
+                range
+                :enable-time-picker="false"
+                :format="'dd/MM/yyyy'"
+                :clearable="true"
+                placeholder="Seleccione un rango de fechas"
+            />
+          </div>
+
           <div class="w-full md:w-2/12 p-2">
             <select class="select min-w-32" data-datatable-filter-column="warehouse_id">
               <option value="">Seleccionar sucursal</option>
@@ -51,35 +62,35 @@
                 <th class="w-14">
                   <input class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox"/>
                 </th>
-                <th class="min-w-[220px]">Acciones
+                <th class="min-w-[230px]">Acciones
                 </th>
 
-                <th class="min-w-[50px] text-center" data-datatable-column="inventory">
+                <th class="min-w-[50px] text-center" data-datatable-column="sale_date">
                               <span class="sort">
                                   <span class="sort-label">Fecha</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="min-w-[110px] text-center" data-datatable-column="barcode">
+                <th class="min-w-[110px] text-center" data-datatable-column="sale_date">
                               <span class="sort">
                                   <span class="sort-label">Tipo</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-min-[150px] text-center" data-datatable-column="origigal_code">
+                <th class="w-min-[100px] text-center" data-datatable-column="origigal_code">
                               <span class="sort">
                                   <span class="sort-label">#</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
 
-                <th class="w-[100px] text-center" data-datatable-column="category">
+                <th class="min-w-[75px] text-center" data-datatable-column="category">
                               <span class="sort">
                                   <span class="sort-label">DTE</span>
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[100px] text-center" data-datatable-column="description_measurement_id">
+                <th class="min-w-[50px] text-center" data-datatable-column="description_measurement_id">
                               <span class="sort">
                                   <span class="sort-label">Facturación</span>
                                   <span class="sort-icon"></span>
@@ -91,7 +102,7 @@
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[120px] text-center" data-datatable-column="brand">
+                <th class="min-w-[150px] text-center" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Cliente</span>
                                   <span class="sort-icon"></span>
@@ -109,17 +120,11 @@
                                   <span class="sort-icon"></span>
                               </span>
                 </th>
-                <th class="w-[120px] text-center" data-datatable-column="brand">
+                <th class="w-[120px] text-right" data-datatable-column="brand">
                               <span class="sort">
                                   <span class="sort-label">Total</span>
                                   <span class="sort-icon"></span>
                               </span>
-                </th>
-
-
-                <th class="w-[60px]">
-                </th>
-                <th class="w-[60px]">
                 </th>
 
 

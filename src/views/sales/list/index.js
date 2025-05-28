@@ -244,7 +244,7 @@ export default {
 
                 await this.loadOptions();
                 try {
-                    console.log("Antes de cargar price "+this.entity.id);
+                    console.log("Antes de cargar price " + this.entity.id);
                     // await this.$nextTick();
                     this.loadPriceTable(this.entity.id);
                 } catch (error) {
@@ -412,59 +412,49 @@ export default {
                 this.warehouses = [];
             }
         },
-        async save() {
-            if (!this.validationForm()) return;
-            // this.loading = true;
 
-            try {
-                // Preparamos FormData para ambos casos (create y update)
-                const formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('id', this.entity.id);
-                formData.append('warehouse_id', this.entity.warehouse_id);
-                formData.append('product_id', this.entity.product_id);
-                formData.append('last_cost_without_tax', this.entity.last_cost_without_tax);
-                formData.append('last_cost_with_tax', this.entity.last_cost_with_tax);
-                formData.append('stock_actual_quantity', this.entity.stock_actual_quantity);
-                formData.append('stock_min', this.entity.stock_min);
-                formData.append('alert_stock_min', this.entity.alert_stock_min ? '1' : '0');
-                formData.append('stock_max', this.entity.stock_max);
-                formData.append('alert_stock_max', this.entity.alert_stock_max ? '1' : '0');
-                formData.append('last_purchase', this.entity.last_purchase);
-                formData.append('provider_id', this.entity.provider_id);
-                formData.append('is_temp', '0');
-                formData.append('is_active', this.entity.is_active ? '1' : '0');
-                const inventory = await Inventory.update(formData);
-                console.log(inventory);
-                if (inventory.status === 'success') {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        timer: 1500,
-                        showConfirmButton: true,
-                        timerProgressBar: true,
-                        text: inventory.message,
-                        confirmButtonText: 'Aceptar'
-                    });
-                    location.reload();
-
-                    // this.loadInventoryTable();
-                } else {
-                    await Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: inventory.message,
-                        confirmButtonText: 'Aceptar'
-                    });
+       async sendDte(_idsale){
+                await Swal.fire({
+                    title: '¿Generar DTE?',
+                    text: "¿Estás seguro de que deseas generar el DTE?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, generar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        confirmButton: 'btn btn-danger me-2',
+                        cancelButton: 'btn btn-info'
+                    }
+                })
+        },
+        async cancelDte(_idsale) {
+            await Swal.fire({
+                title: '¿Invalidar DTE?',
+                text: "¿Estás seguro de que deseas invalidar el DTE?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, Invalidar',
+                cancelButtonText: 'Cancelar proceso',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: 'btn btn-info'
                 }
-            } catch (error) {
-                this.isEditing = true;
-                this.loading = false;
-                console.error('Error al guardar el producto:', error);
-            } finally {
-                this.isEditing = true;
-                this.loading = false;
-            }
+            })
+        },
+        async sendEmail(_idsale) {
+            await Swal.fire({
+                title: 'Enviar correo',
+                text: "¿Estás seguro de que deseas enviar el correo?",
+                icon: 'info',
+                allowEscapeKey: false,
+                showCancelButton: true,
+                confirmButtonText: 'Sí, enviar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    confirmButton: 'btn btn-success me-2',
+                    cancelButton: 'btn btn-info'
+                }
+            })
         },
 
 
@@ -489,39 +479,66 @@ export default {
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {
                         render: (data, type, rowData) => {
+                            console.log("Row Data: ", type);
+
+                            if (type.is_dte === 0) {
+                                return `
+                <!--Send DTE-->
+                <button class="btn btn-sm btn-icon btn-danger btn-outline btn-light send-dte">
+                    <i class="ki-outline ki-rocket text-lg text-danger text-center"></i>
+                    
+                </button>
+            `;
+                            }
+
                             return `
-                                <!-- print pdf-->
-                                <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-pdf-btn">
-                                    <i class="ki-filled ki-printer"></i>
-                                    <span class="tooltip"></span>
-                                </button>
-                                <!--print ticket-->
-                                 <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
-                                    <i class="ki-filled ki-printer"></i>
-                                </button>
-                                <!--Send Email-->
-                                   <button class="btn btn-sm btn-icon btn-outline btn-warning btn-light me-1 print-ticket-btn">
-                                    <i class="ki-filled ki-sms"></i>
-                                </button>
-                                <!--Cancel DTE-->
-                                   <button class="btn btn-sm btn-icon  btn-danger btn-outline btn-light me-1 print-ticket-btn">
-                                    <i class="ki-filled ki-dislike"></i>
-                                </button>
-                                <!--log DTE-->
-                                <button class="btn btn-sm btn-icon btn-success btn-outline btn-light delete-btn">
-                                    <i class="ki-outline ki-medal-star text-lg text-danger text-center"></i>
-                                </button>
-                            `;
+            <!-- print pdf-->
+            <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-pdf-btn">
+                <i class="ki-filled ki-printer"></i>
+            </button>
+            <!--print ticket-->
+            <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
+                <i class="ki-filled ki-printer"></i>
+            </button>
+            <!--Send Email-->
+            <button class="btn btn-sm btn-icon btn-outline btn-warning btn-light me-1 send-email">
+                <i class="ki-filled ki-sms"></i>
+            </button>
+            <!--Cancel DTE-->
+            <button class="btn btn-sm btn-icon btn-danger btn-outline btn-light me-1 cancel-dte">
+                <i class="ki-filled ki-dislike"></i>
+            </button>
+            <!--log DTE-->
+            <button class="btn btn-sm btn-icon btn-success btn-outline btn-light log-dte">
+                <i class="ki-outline ki-medal-star text-lg text-danger text-center"></i>
+            </button>
+            
+        `;
                         },
                         createdCell: (cell, cellData, rowData) => {
-                            cell.querySelector('.edit-btn')?.addEventListener('click', () => {
-                                this.editModal(rowData);
+                            cell.querySelector('.print-pdf-btn')?.addEventListener('click', () => {
+                                this.printPdf(rowData.id);
                             });
-                            cell.querySelector('.delete-btn')?.addEventListener('click', () => {
-                                this.deleteProductModal(rowData.id);
+                            cell.querySelector('.print-ticket-btn')?.addEventListener('click', () => {
+                                this.printTicket(rowData.id);
                             });
+                            cell.querySelector('.send-email')?.addEventListener('click', () => {
+                                this.sendEmail(rowData.id);
+                            });
+                            cell.querySelector('.cancel-dte')?.addEventListener('click', () => {
+                                this.cancelDte(rowData.id);
+                            });
+                            cell.querySelector('.log-dte')?.addEventListener('click', () => {
+                                this.showLog(rowData.id);
+                            });
+                            cell.querySelector('.send-dte')?.addEventListener('click', () => {
+                                this.sendDte(rowData.id);
+                            });
+
+                            cell.classList.add('text-right');
                         }
                     },
+
 
 
                     formatted_date: {
@@ -531,8 +548,8 @@ export default {
 
                     document_type_id: {
                         title: 'document_type_id',
-                        render:function (data, type, row) {
-                            return type?.document_type?.name ??'SN';
+                        render: function (data, type, row) {
+                            return type?.document_type?.name ?? 'SN';
                         }
                     },
                     document_internal_number: {
@@ -540,10 +557,10 @@ export default {
 
 
                     },
-                    is_dte:{
+                    is_dte: {
                         title: 'is_dte',
-                        render: function (data, type, row) {
-                            return type?.is_dte ? `<badge class="badge badge-success badge-outline text-center">Enviado</badge>` : `<badge class="badge badge-danger badge-outline text-center">Pendiente</badge>`;
+                        render: function (item, data, row) {
+                            return data?.is_dte ? `<badge class="badge badge-success badge-outline text-center">Enviado</badge>` : `<badge class="badge badge-danger badge-outline text-center">Pendiente</badge>`;
                         },
                     },
                     billing_model: {
@@ -562,25 +579,45 @@ export default {
 
                     seller: {
                         title: 'seller',
-                        render: (price) => `<badge class="badge badge-info text-center w-75">$ ${price}</badge>`,
-                        createdCell(cell) {
-                            cell.classList.add('text-center');
-                        },
-
-                    },
-                    last_purchase: {
-                        title: 'Last purchase',
                         render: function (data, type, row) {
-                            if (!type?.last_purchase) return 'S/N';
-                            const date = new Date(type.last_purchase);
-                            return new Intl.DateTimeFormat('en-US', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                            }).format(date);
+                            const seller = type?.seller.name + ' ' + type?.seller.last_name;
+                            return seller ?? 'SN';
                         }
                     },
 
+                    customer_id: {
+                        title: 'Cliente',
+                        render: function (data, type, row) {
+                            const customer = type?.customer.name + ' ' + type?.customer.last_name;
+                            return customer ?? 'SN';
+                        }
+                    },
+                    payment_method: {
+                        title: 'Forma de pago',
+                        render: function (data, type, row) {
+                            return type?.operation_condition?.name ?? 'SN';
+                        }
+                    },
+                    sale_status: {
+                        title: 'Estado de venta',
+                        render: function (sale_status) {
+                            const status = {
+                                1: 'Procesando',
+                                2: 'Finalizada',
+                                3: 'Anulada'
+                            }[sale_status] ?? 'Finalizada';
+                            return status;
+                        }
+                    },
+                    total_sale_formatted:{
+                      title: 'Total de venta',
+                        render: function (data, type, row) {
+                            return '$ ' +type?.total_sale_formatted ?? 'SN';
+                        },
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.classList.add('text-right')
+                        }
+                    },
 
 
                 },
@@ -609,26 +646,26 @@ export default {
 
                 const optionsTablePrice = {
                     type: 'remote',
-                    apiEndpoint:  `${urlApi}/v1/prices/inventory/${id}?_=${Date.now()}`,
+                    apiEndpoint: `${urlApi}/v1/prices/inventory/${id}?_=${Date.now()}`,
                     requestHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
                     columns: {
 
-                        price_description:{
+                        price_description: {
                             title: 'Descripción',
                         },
-                        price:{
+                        price: {
                             title: 'Precio',
                         },
-                        utility:{
+                        utility: {
                             title: 'Utilidad',
                         },
-                        is_default:{
+                        is_default: {
                             title: 'Predeterminado',
                         },
                     },
-                    layout: { scroll: true },
+                    layout: {scroll: true},
                     sortable: true,
                     stateSave: true,
                 };
@@ -641,7 +678,7 @@ export default {
 
                 this.dataTablePrices = new KTDataTable(tablePrices, optionsTablePrice);
                 console.log('Nueva tabla de precios inicializada');
-            }catch (error){
+            } catch (error) {
                 console.error('Error al cargar la tabla de precios:', error);
             }
         },
@@ -679,11 +716,14 @@ export default {
         },
 
 
-    },
+    }
+    ,
 
     mounted() {
         this.loadWarehouse();
         this.loadSales();
         // window.editModal = this.editModal.bind(this);
-    },
-};
+    }
+    ,
+}
+;

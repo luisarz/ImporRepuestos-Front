@@ -9,10 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@keenthemes/ktui": "^1.0.11",
+    "@heroicons/vue": "^2.2.0",
     "@popperjs/core": "^2.11.8",
     "@primeuix/themes": "^1.1.1",
     "@tailwindcss/vite": "^4.1.6",
+    "@vue-hero-icons/outline": "^1.7.2",
+    "@vue-hero-icons/solid": "^1.7.2",
+    "@vuepic/vue-datepicker": "^11.0.2",
     "axios": "^1.8.1",
     "bootstrap": "^5.3.6",
     "moment": "^2.30.1",
