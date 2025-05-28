@@ -300,7 +300,7 @@ import {ref, nextTick, onMounted} from 'vue';
 import {KTDataTable, KTModal} from './../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '../../components/QuestionModal.vue';
-import companyService from "@/services/CompanyService";
+import companyService from "@/services/companyService.js";
 import LongModal from "@/components/LongModal.vue";
 
 export default {
