@@ -1,5 +1,8 @@
 {
   "files": [],
+  "compilerOptions": {
+    "declaration": true,
+  },
   "exclude": [
     "src/metronic/vendors/**"
   ],
