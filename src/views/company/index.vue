@@ -301,7 +301,7 @@ import {KTDataTable, KTModal} from './../../metronic/core/index';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '../../components/QuestionModal.vue';
 import companyService from "@/services/CompanyService";
-import LongModal from "@/components/longModal.vue";
+import LongModal from "@/components/LongModal.vue";
 
 export default {
   components: {LongModal, GeneralModal, QuestionModal},

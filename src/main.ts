@@ -1,4 +1,3 @@
-import "./jquery-global";
 import "./style.css";
 import { createApp } from "vue";
 import App from "./App.vue";
