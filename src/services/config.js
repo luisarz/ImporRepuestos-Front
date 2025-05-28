@@ -3,7 +3,12 @@ import axios from 'axios';
 import authService from './authService';
 
 // export const urlApi = 'https://impor-api.laravel.cloud/api';
-export const urlApi = 'http://127.0.0.1:8000/api';
+// export const urlApi = 'http://127.0.0.1:8000/api';
+export const urlApi =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000/api'
+        : 'https://impor-api.laravel.cloud/api';
+
 export const VUE_APP_STORAGE_URL = 'http://127.0.0.1:8000';
 
 export const configApi = axios.create({
