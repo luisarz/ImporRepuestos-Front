@@ -1,16 +1,11 @@
 {
   "files": [],
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": false,
-    "skipLibCheck": true,
-    "declaration": true
+    "declaration": true,
   },
   "exclude": [
-    "node_modules",
-    "src/metronic/vendors/**/*"
+    "src/metronic/vendors/**"
   ],
-
   "references": [
     {
       "path": "./tsconfig.app.json"

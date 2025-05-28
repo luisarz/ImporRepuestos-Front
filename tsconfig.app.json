@@ -24,5 +24,9 @@
     "noImplicitAny": true,
     "allowJs": true,
   },
+  "exclude": [
+    "node_modules",
+    "src/metronic/vendors/**/*"
+  ],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.vue"]
 }
