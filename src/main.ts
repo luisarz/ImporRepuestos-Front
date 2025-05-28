@@ -5,6 +5,6 @@ import router from './router';
 import vSelect from 'vue-select'
 const app = createApp(App);
 app.use(router)
-app.component('v-select', vSelect)
+app.component('v-select', vSelect as any)
 
     .mount("#app");
