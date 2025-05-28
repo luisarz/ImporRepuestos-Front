@@ -1,4 +1,4 @@
-import {KTDataTable, KTModal} from '../../metronic/core/index';
+import {KTDataTable, KTModal} from '../../../metronic/core/index.js';
 import GeneralModal from '@/components/GeneralModal.vue';
 import QuestionModal from '@/components/QuestionModal.vue';
 import LongModal from "@/components/LongModal.vue";
@@ -486,6 +486,43 @@ export default {
                             return checkbox.outerHTML.trim();
                         },
                     },
+                    // comercial_name: {title: 'Nombre Comercial'},
+                    edit: {
+                        render: (data, type, rowData) => {
+                            return `
+                                <!-- print pdf-->
+                                <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-pdf-btn">
+                                    <i class="ki-filled ki-printer"></i>
+                                    <span class="tooltip"></span>
+                                </button>
+                                <!--print ticket-->
+                                 <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
+                                    <i class="ki-filled ki-printer"></i>
+                                </button>
+                                <!--Send Email-->
+                                   <button class="btn btn-sm btn-icon btn-outline btn-warning btn-light me-1 print-ticket-btn">
+                                    <i class="ki-filled ki-sms"></i>
+                                </button>
+                                <!--Cancel DTE-->
+                                   <button class="btn btn-sm btn-icon  btn-danger btn-outline btn-light me-1 print-ticket-btn">
+                                    <i class="ki-filled ki-dislike"></i>
+                                </button>
+                                <!--log DTE-->
+                                <button class="btn btn-sm btn-icon btn-success btn-outline btn-light delete-btn">
+                                    <i class="ki-outline ki-medal-star text-lg text-danger text-center"></i>
+                                </button>
+                            `;
+                        },
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.querySelector('.edit-btn')?.addEventListener('click', () => {
+                                this.editModal(rowData);
+                            });
+                            cell.querySelector('.delete-btn')?.addEventListener('click', () => {
+                                this.deleteProductModal(rowData.id);
+                            });
+                        }
+                    },
+
 
                     formatted_date: {
                         title: 'formatted_date',
@@ -494,9 +531,9 @@ export default {
 
                     document_type_id: {
                         title: 'document_type_id',
-                        // render: function (data, type, row) {
-                        //     return type?.product?.original_code ?? 'SN'
-                        // }
+                        render:function (data, type, row) {
+                            return type?.document_type?.name ??'SN';
+                        }
                     },
                     document_internal_number: {
                         title: 'document_internal_number',
@@ -505,14 +542,24 @@ export default {
                     },
                     is_dte:{
                         title: 'is_dte',
+                        render: function (data, type, row) {
+                            return type?.is_dte ? `<badge class="badge badge-success badge-outline text-center">Enviado</badge>` : `<badge class="badge badge-danger badge-outline text-center">Pendiente</badge>`;
+                        },
                     },
-                    seller: {
-                        title: 'Inventario en lotes',
-                        render: (actual_stock) => `<badge class="badge badge-light-primary text-center">Previa</badge>`,
+                    billing_model: {
+                        title: 'Modelo de facturación',
+                        render: function (data, type, row) {
+                            return type.billing_model === 1
+                                ? `<span class="badge badge-success badge-outline text-center">Previo</span>`
+                                : row.billing_model === 0
+                                    ? `<span class="badge badge-danger badge-outline text-center">Diferido</span>`
+                                    : row?.billing_model?.name ?? 'SN';
+                        },
                         createdCell(cell) {
                             cell.classList.add('text-center');
                         },
                     },
+
                     seller: {
                         title: 'seller',
                         render: (price) => `<badge class="badge badge-info text-center w-75">$ ${price}</badge>`,
@@ -535,20 +582,7 @@ export default {
                     },
 
 
-                    // comercial_name: {title: 'Nombre Comercial'},
-                    edit: {
-                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light">
-                            <i class="ki-filled ki-notepad-edit" ></i></button>`,
-                        createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.editModal(rowData));
-                        },
-                    },
-                    delete: {
-                        render: () => `<button class="btn btn-sm btn-icon btn-clear btn-light"><i class="ki-outline ki-trash text-lg text-danger text-center"></i></button>`,
-                        createdCell: (cell, cellData, rowData) => {
-                            cell.addEventListener('click', () => this.deleteProductModal(rowData.id));
-                        },
-                    },
+
                 },
                 layout: {scroll: true},
                 sortable: true,

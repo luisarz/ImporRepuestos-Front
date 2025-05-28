@@ -26,6 +26,7 @@
       nextTick(() => {
           KTLayout.init();
           KTComponent.init();
+
       });
   });
 

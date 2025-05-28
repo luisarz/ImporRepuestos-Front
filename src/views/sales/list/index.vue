@@ -51,6 +51,9 @@
                 <th class="w-14">
                   <input class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox"/>
                 </th>
+                <th class="min-w-[220px]">Acciones
+                </th>
+
                 <th class="min-w-[50px] text-center" data-datatable-column="inventory">
                               <span class="sort">
                                   <span class="sort-label">Fecha</span>

@@ -25,7 +25,7 @@ import Vehicles from "@/views/parque_vehicular/vehicles/index.vue";
 import Equivalents from "@/views/products/equivalents/index.vue";
 import Interchanges from "@/views/products/interchanges/index.vue";
 import Inventory from "@/views/products/inventory/index.vue";
-import SaleHeader from "@/views/sales/index.vue";
+import SaleHeader from "@/views/sales/list/index.vue";
 import Lotes from "@/views/products/lotes/index.vue";
 import SaleNew from "@/views/sales/new/newsale.vue";
 const routes = [
