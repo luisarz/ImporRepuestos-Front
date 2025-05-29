@@ -22,7 +22,7 @@
 
       </div>
       <div class="flex items-center ">
-        <span class="badge badge-outline badge-success me-2">
+        <span class="badge badge-outline badge-success me-2 ">
   Sucursal/Bodega
   <span class="badge badge-outline badge-warning ms-2">{{ warehouse_name }}</span>
 </span>
