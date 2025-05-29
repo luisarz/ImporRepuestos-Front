@@ -123,7 +123,38 @@ export default {
             }
         },
 
-        async addItemSale(product) {
+        async addItemSale(inventoryId) {
+            let priceItem = document.getElementById(`price-selected-${inventoryId}`);
+            let price = priceItem ? Number(priceItem.value) : 0;
+
+            if (price === 0) {
+                const result = await Swal.fire({
+                    title: 'Error',
+                    text: 'Estás intentando agregar un producto sin precio. ¿Deseas continuar de todas formas?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        confirmButton: 'btn btn-primary',
+                        cancelButton: 'btn btn-secondary'
+                    },
+                    buttonsStyling: false
+                });
+
+                if (!result.isConfirmed) {
+                    return; // Usuario canceló
+                }
+                price = 0; // Confirmó continuar con precio 0
+            }
+
+
+// ✅ Continúa con el precio 0 si el usuario confirmó
+
+
+// ✅ Si llegó aquí es porque el usuario aceptó continuar
+
+
 
             let message = "";
             try {
@@ -149,10 +180,10 @@ export default {
                 try {
                     // 2. Crear el ítem de venta
                     this.sale_items.sale_id = this.sale_header.id;
-                    this.sale_items.inventory_id = 7; // Aquí deberías asignar el ID del inventario correspondiente
+                    this.sale_items.inventory_id = inventoryId; // Aquí deberías asignar el ID del inventario correspondiente
                     this.sale_items.batch_id = 1; // Aquí deberías asignar el ID del lote correspondiente
                     this.sale_items.quantity = 1; // Cantidad por defecto
-                    this.sale_items.price = 10.25; // Asignar el primer precio del producto
+                    this.sale_items.price = price; // Asignar el primer precio del producto
                     this.sale_items.discount = 0; // Descuento por defecto
                     this.sale_items.total = this.sale_items.quantity * this.sale_items.price; // Calcular el total
                     this.sale_items.is_saled = false; // Marcar como no vendido
@@ -306,6 +337,7 @@ export default {
                         render: function (data, type, row) {
                             const code = type?.product?.description ?? 'S/N';
                             const prices_sale = type?.prices || [];
+                            const  inventoryId = type?.id
 
                             // Buscar el precio por defecto
                             const typePrice = prices_sale.find(price => Number(price.is_default) === 1);
@@ -313,7 +345,7 @@ export default {
                             // Generar las opciones si hay precios
                             const price_sale = prices_sale.length
                                 ? prices_sale.map(price => `
-                          <option value="${price.id}" ${Number(price.is_default) === 1 ? 'selected' : ''}>
+                          <option value="${price.price}" ${Number(price.is_default) === 1 ? 'selected' : ''}>
                             $ ${Number(price.price).toLocaleString('en-US', {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
@@ -333,7 +365,7 @@ export default {
                                         <div class="flex flex-col gap-1">
                                          <div class="flex items-center  -mt-1">
                                           <a class="hover:text-primary text-sm font-medium text-mono leading-5.5" data-kt-drawer-toggle="#drawers_shop_product_details" href="#">
-                                          ${type.product.description ?? 'S/N'}
+                                          ${type.product.description ?? 'S/N'} ${inventoryId ?? 'S/N'}
                                           </a>
                                          </div>
                                          <div class="flex items-center flex-wrap">
@@ -362,13 +394,13 @@ export default {
                                         </div>
                                        </div>
                                        <div class="flex items-center gap-1">
-                                       <select class="select w-[150px]">
+                                       <select class="select w-[150px]" id="price-selected-${type.id}"">
                                             ${price_sale} 
                                          </select>
                                         
                                        <button 
                                           class="btn btn-outline btn-success btn-light ms-2 shrink-0"  
-                                          onclick="addItemSale(${type.id})">
+                                          onclick="addItemSale(${inventoryId})">
                                           <i class="ki-filled ki-handcart"></i> Agregar a venta
                                         </button>
 
