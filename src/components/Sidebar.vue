@@ -3,15 +3,15 @@
       class="sidebar dark:bg-coal-600 bg-light border-r border-r-gray-200 dark:border-r-coal-100 fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0"
       data-drawer="true" data-drawer-class="drawer drawer-start top-0 bottom-0" data-drawer-enable="true|lg:false"
       id="sidebar">
-      <div class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
+      <div class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0 border-2"
          id="sidebar_header">
-         <a class="dark:hidden" href="/">
-            <img class="default-logo max-h-[100px] max-w-none" src="/media/app/default-logo-dark.svg" />
-            <img class="small-logo min-h-[22px] max-w-none" src="/media/app/importlogo.png" />
+         <a class="dark:hidden items-center" href="/">
+            <img class="default-logo max-h-[50px] max-w-none" src="/media/app/logo-ligth.png" />
+            <img class="small-logo max-h-[50px] max-w-none" src="/media/app/logo-ligth.png" />
          </a>
          <a class="hidden dark:block" href="/">
-            <img class="default-logo min-h-[22px] max-w-none" src="/media/app/default-logo-dark.svg" />
-            <img class="small-logo min-h-[22px] max-w-none" src="/media/app/mini-logo.svg" />
+            <img class="default-logo max-h-[50px] max-w-none" src="/media/app/logo-ligth.png" />
+            <img class="small-logo max-h-[50px] max-w-none" src="/media/app/logo-ligth.png" />
          </a>
          <button
             class="btn btn-icon btn-icon-md size-[30px] rounded-lg border border-gray-200 dark:border-gray-300 bg-light text-gray-500 hover:text-gray-700 toggle absolute left-full top-2/4 -translate-x-2/4 -translate-y-2/4"

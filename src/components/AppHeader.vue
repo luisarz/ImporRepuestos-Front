@@ -19,7 +19,7 @@
       <!-- Mobile logo -->
       <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <router-link to="/" class="d-lg-none">
-          <img alt="Logo" src="@/metronic8/media/logos/default-small.svg" class="h-30px" />
+          <img alt="Logo" src="/metronic8/media/logos/default-small.svg" class="h-30px" />
         </router-link>
       </div>
 
@@ -102,7 +102,7 @@
                  data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                  data-kt-menu-attach="parent"
                  data-kt-menu-placement="bottom-end">
-              <img src="@/metronic8/media/avatars/300-3.jpg" class="rounded-3" alt="user" />
+              <img src="/media/avatars/300-2.png" class="rounded-3" alt="user" />
             </div>
             <!-- User dropdown menu would go here -->
           </div>
