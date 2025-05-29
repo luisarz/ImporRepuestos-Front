@@ -163,6 +163,7 @@ const routes = [
             {
                 path: 'sales/add',
                 component: SaleNew,
+                name: 'sale-new',
                 meta: {requiresAuth: true}
 
             }

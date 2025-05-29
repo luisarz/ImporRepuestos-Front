@@ -41,9 +41,9 @@
           <div class="w-full md:w-1/12 p-2 ">
 
             <label class="switch switch-sm">
-              <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">
+              <button class="btn btn-success" @click="newSale()" :disabled="loading">
                 <i class="ki-filled ki-plus-squared"></i>
-                {{ loading ? 'Preparando datos...' : 'Levantar ' }} {{ moduleName }}
+                {{ loading ? 'Preparando datos...' : 'Nueva Venta' }}
 
               </button>
             </label>

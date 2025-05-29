@@ -71,6 +71,10 @@ export default {
         const response = await authService.login(this.username, this.password);
         // Almacena el token en el localStorage
         localStorage.setItem('auth_token', response.access_token);
+        localStorage.setItem('warehouse_id', response.warehouse_id);
+        localStorage.setItem('warehouse_name', response.warehouse_name);
+        localStorage.setItem('employee_name', response.employee_name);
+        localStorage.setItem('employee_id', response.employee_id);
 
         // Redirige al dashboard después de un inicio de sesión exitoso
         this.$router.push('/');

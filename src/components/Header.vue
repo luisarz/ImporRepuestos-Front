@@ -3,7 +3,7 @@
           data-sticky="true" data-sticky-class="shadow-sm dark:border-b dark:border-b-coal-100"
           data-sticky-name="header" id="header">
     <!-- begin: container -->
-    <div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container">
+    <div class="container-fluid flex justify-between items-stretch lg:gap-1" id="header_container">
       <div class="flex gap-1 lg:hidden items-center -ml-1">
         <a class="shrink-0" href="/">
           <img class="max-h-[25px] w-full" src="/media/app/logo-ligth.png"/>
@@ -21,8 +21,11 @@
         </div>
 
       </div>
-      <div class="flex items-center">
-        <span class="badge badge-info  mr-2">In process</span>
+      <div class="flex items-center ">
+        <span class="badge badge-outline badge-success me-2">
+  Sucursal/Bodega
+  <span class="badge badge-outline badge-warning ms-2">{{ warehouse_name }}</span>
+</span>
 
       </div>
       <div class="flex items-stretch" id="megamenu_container">
@@ -114,18 +117,23 @@
 import authService from "@/services/authService.js";
 
 export default {
+  data() {
+    return {
+      warehouse_name: ''
+    }
+  },
+  mounted() {
+    this.warehouse_name = localStorage.getItem('warehouse_name') || 'Sin sucursal';
+  },
   methods: {
     async logout() {
       try {
-        // Llama al servicio de login
         await authService.logout();
         this.$router.push('/sign-in');
       } catch (error) {
-        // Si ocurre un error, muestra un mensaje de error
         this.errorMessage = error.message;
       }
     }
   }
 }
-
 </script>

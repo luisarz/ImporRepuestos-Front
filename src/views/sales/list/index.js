@@ -22,12 +22,9 @@ export default {
     data() {
         return {
             loading: false,
-            isEditing: false,
-            providers: [],
-            products: [],
             warehouses: [],
 
-            entity: {
+            sale: {
                 id: 0,
                 warehouse_id: 0,
                 product_id: 0,
@@ -43,46 +40,15 @@ export default {
                 is_active: false,
 
             },
-            form: {
-                warehouse_id: {isRequired: true, validationSuccess: true},
-                product_id: {isRequired: true, validationSuccess: true},
-                provider_id: {isRequired: true, validationSuccess: true},
-                last_cost_without_tax: {isRequired: true, validationSuccess: true},
-                last_cost_with_tax: {isRequired: true, validationSuccess: true},
-                stock_actual_quantity: {isRequired: true, validationSuccess: true},
-                stock_min: {isRequired: true, validationSuccess: true},
-                stock_max: {isRequired: true, validationSuccess: true},
-                alert_stock_min: {isRequired: false, validationSuccess: true},
-                alert_stock_max: {isRequired: false, validationSuccess: true},
-                is_active: {isRequired: false, validationSuccess: true},
-            },
+
         };
     },
-    computed: {
-        modalTitle() {
-            return this.isEditing ? `Modificar -${this.moduleName}` : `Levantar - ${this.moduleName}`;
-        },
-        moduleName() {
-            return ' Inventarios';
-        },
-        formattedDate: {
-            get() {
-                const date = this.entity.last_purchase; // Ajusta la clave si es diferente
-                return date ? new Date(date).toISOString().split('T')[0] : '';
-            },
-            set(value) {
-                this.entity.last_purchase = value; // Devuelve el formato correcto
-            }
-        },
 
-
-    },
     methods: {
-        VUE_APP_STORAGE_URL() {
-            return VUE_APP_STORAGE_URL
+
+        newSale() {
+            this.$router.push({name: 'sale-new'});
         },
-
-
 
         async loadWarehouse() {
             try {
@@ -93,7 +59,6 @@ export default {
                 this.warehouses = [];
             }
         },
-
        async sendDte(_idsale){
                 await Swal.fire({
                     title: '¿Generar DTE?',
