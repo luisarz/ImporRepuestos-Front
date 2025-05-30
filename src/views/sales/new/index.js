@@ -153,12 +153,18 @@ export default {
             }
 
             const cantidadResult = await Swal.fire({
-                title: 'Agregar producto',
+                title: 'Cantidad a vender',
                 html: `
         <input id="cantidad" type="number" min="1" step="1" class="swal2-input" placeholder="Cantidad a vender" value="1">
     `,
                 showCancelButton: true,
                 confirmButtonText: 'Agregar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary',
+                    input: 'swal2-input'
+                },
                 focusConfirm: false, // desactiva el foco automático en el botón
                 didOpen: () => {
                     const input = document.getElementById('cantidad');
