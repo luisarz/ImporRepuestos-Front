@@ -127,6 +127,10 @@ export default {
             let priceItem = document.getElementById(`price-selected-${inventoryId}`);
             let price = priceItem ? Number(priceItem.value) : 0;
 
+
+
+
+
             if (price === 0) {
                 const result = await Swal.fire({
                     title: 'Error',
@@ -147,6 +151,39 @@ export default {
                 }
                 price = 0; // Confirmó continuar con precio 0
             }
+
+            const cantidadResult = await Swal.fire({
+                title: 'Agregar producto',
+                html: `
+        <input id="cantidad" type="number" min="1" step="1" class="swal2-input" placeholder="Cantidad a vender" value="1">
+    `,
+                showCancelButton: true,
+                confirmButtonText: 'Agregar',
+                focusConfirm: false, // desactiva el foco automático en el botón
+                didOpen: () => {
+                    const input = document.getElementById('cantidad');
+                    input.focus();
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            Swal.clickConfirm(); // simula clic en "Agregar"
+                        }
+                    });
+                },
+                preConfirm: () => {
+                    const cantidad = parseInt(document.getElementById('cantidad').value, 10);
+                    if (isNaN(cantidad) || cantidad <= 0) {
+                        Swal.showValidationMessage('Ingrese una cantidad válida (entero mayor a 0)');
+                        return false;
+                    }
+                    return cantidad;
+                }
+            });
+
+
+            // Cancelado
+            if (!cantidadResult.isConfirmed) return;
+
+            const quantitySell = cantidadResult.value;
 
 
             let message = "";
@@ -174,7 +211,7 @@ export default {
                     this.sale_items.sale_id = this.sale_header.id;
                     this.sale_items.inventory_id = inventoryId; // Aquí deberías asignar el ID del inventario correspondiente
                     this.sale_items.batch_id = 1; // Aquí deberías asignar el ID del lote correspondiente
-                    this.sale_items.quantity = 1; // Cantidad por defecto
+                    this.sale_items.quantity = quantitySell; // Cantidad por defecto
                     this.sale_items.price = price; // Asignar el primer precio del producto
                     this.sale_items.discount = 0; // Descuento por defecto
                     this.sale_items.total = this.sale_items.quantity * this.sale_items.price; // Calcular el total
