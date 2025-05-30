@@ -149,12 +149,6 @@ export default {
             }
 
 
-// ✅ Continúa con el precio 0 si el usuario confirmó
-
-
-// ✅ Si llegó aquí es porque el usuario aceptó continuar
-
-
 
             let message = "";
             try {
@@ -162,7 +156,6 @@ export default {
                 try {
                     if (!this.sale_header.id) {
                         const id_warehouse = localStorage.getItem("warehouse_id");
-
                         this.sale_header.warehouse_id = id_warehouse ? Number(id_warehouse) : 0;
                         this.sale_header.is_dte = false;
                         this.sale_header.document_type_id = 1;
@@ -189,10 +182,8 @@ export default {
                     this.sale_items.is_saled = false; // Marcar como no vendido
                     this.sale_items.is_active = true; // Marcar como activo
                     await SaleItemService.store(this.sale_items);
-                    message += " Ítem agregado a la venta correctamente.";
                     await Swal.fire({
-                        title: 'Éxito',
-                        text: message,
+                        text: "Prodúcto agregado a la venta correctamente",
                         icon: 'success',
                     });
                     this.loadSaleItems(this.sale_header.id);
@@ -200,12 +191,6 @@ export default {
                 } catch (error) {
                     console.error('Error al agregar el ítem a la venta:', error);
                 }
-                try {
-                    // this.loadSaleItems();
-                } catch (error) {
-                    console.error('Error al cargar los ítems de la venta:', error);
-                }
-
 
             } catch (error) {
                 await Swal.fire({
@@ -234,7 +219,7 @@ export default {
 
                                 const item=`
                             <div class="card hover:shadow-lg">
-                                      <div class="card-content flex items-center flex-wrap justify-between p-1 pe-1 gap-1">
+                                      <div class="kt-card-content flex items-center flex-wrap justify-between p-1 pe-1 gap-1">
                                        <div class="flex items-center ">
 <!--                                        <div class="kt-card flex items-center justify-center bg-accent/50 h-[70px] w-[90px] shadow-none">-->
 <!--                                         <img alt="img" class="h-[70px] cursor-pointer" loading="lazy" data-kt-drawer-toggle="#drawers_shop_product_details" src="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/store/client/600x600/11.png">-->
@@ -260,12 +245,7 @@ export default {
                                             ${inventory?.product?.category.description ?? 'S/N'}
                                             </span>
                                            </span>
-                                           <span class="text-xs font-normal text-secondary-foreground">
-                                            Medida:
-                                            <span class="text-xs font-medium text-foreground">
-                                            ${inventory?.product?.description_measurement_id??'S/N'}
-                                            </span>
-                                           </span>
+                                           
                                           </div>
                                          </div>
                                         </div>

@@ -6,8 +6,8 @@
 <!--    items cart-->
     <div class="order-1 sm:order-none row-span-1 sm:col-span-4 sm:row-span-4 border-red-300 shadow-lg">
       <div class="card card-grid min-w-full">
-        <div class="card-header flex-wrap py-2">
-          Productos en el carrito
+        <div class="card-header flex-wrap py-1">
+          Esta venta
         </div>
 
         <div class="card-body">
