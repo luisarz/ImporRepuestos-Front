@@ -120,6 +120,26 @@ export default {
       }
     }
   },
+  async mounted() {
+    try {
+      const response = await moduloService.get();
+      this.modulos = response;
+
+      const actual = this.modulos.find(m => m.ruta === this.$route.path);
+      if (actual) {
+        const body = document.body;
+        if (actual.is_minimazed === 1) {
+          body.classList.add('sidebar-collapse');
+        } else {
+          body.classList.remove('sidebar-collapse');
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar módulos:', error);
+    }
+  },
+
+
   async created() {
     try {
       const response = await moduloService.get();

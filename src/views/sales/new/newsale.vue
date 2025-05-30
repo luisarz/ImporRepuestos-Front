@@ -4,7 +4,7 @@
               sm:grid-flow-col sm:grid-rows-6 sm:grid-cols-12 min-h-[82vh]">
 
 <!--    items cart-->
-    <div class="order-1 sm:order-none row-span-1 sm:col-span-4 sm:row-span-4 border-red-300 shadow-lg">
+    <div class="order-1 sm:order-none row-span-2 sm:col-span-5 sm:row-span-4 border-red-300 shadow-lg">
       <div class="card card-grid min-w-full">
         <div class="card-header flex-wrap py-1">
           Esta venta
@@ -15,13 +15,19 @@
           <div data-datatable="true" data-datatable-page-size="10" id="items_cart_table" class="datatable-initialized">
             <div class="scrollable-y-auto max-h-[68vh]">
 
-              <table class="table ki-tab-tablet " data-datatable-table="true">
+              <table class="table table-auto hover:shadow-sm " data-datatable-table="true">
                 <thead>
                 <tr>
 
-                  <th class="min-w-[250px] text-center" data-datatable-column="inventory">
-
+                  <th class="min-w-[50px]">
+                    Quitar
                   </th>
+                  <th  data-datatable-column="inventory">
+                    Producto</th>
+                  <th>cant.</th>
+                  <th>Precio.</th>
+                  <th>Desc.</th>
+                  <th>Total.</th>
 
 
                 </tr>
@@ -40,7 +46,7 @@
     </div>
 <!--    /Items cart-->
 <!--    footer cart-->
-    <div class="order-3 sm:order-none row-span-1 sm:col-span-4 sm:row-span-2 shadow-lg">
+    <div class="order-3 sm:order-none row-span-1 sm:col-span-5 sm:row-span-2 shadow-lg">
       <select v-model="sale_header.customer_id"
               class="select select-sm w-full" id="customer_id"
               data-datatable-filter-column="sale_header.customer_id">

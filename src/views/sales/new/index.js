@@ -149,7 +149,6 @@ export default {
             }
 
 
-
             let message = "";
             try {
                 // 1. Crear venta si aún no existe
@@ -185,6 +184,8 @@ export default {
                     await Swal.fire({
                         text: "Prodúcto agregado a la venta correctamente",
                         icon: 'success',
+                        timer: 1000,
+                        timerProgressBar: true,
                     });
                     this.loadSaleItems(this.sale_header.id);
 
@@ -211,64 +212,42 @@ export default {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
                     },
                     columns: {
-
-
-                        delete: {
-                            render: function (data, type, row) {
-                                const inventory=type?.inventory;
-
-                                const item=`
-                            <div class="card hover:shadow-lg">
-                                      <div class="kt-card-content flex items-center flex-wrap justify-between p-1 pe-1 gap-1">
-                                       <div class="flex items-center ">
-<!--                                        <div class="kt-card flex items-center justify-center bg-accent/50 h-[70px] w-[90px] shadow-none">-->
-<!--                                         <img alt="img" class="h-[70px] cursor-pointer" loading="lazy" data-kt-drawer-toggle="#drawers_shop_product_details" src="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/store/client/600x600/11.png">-->
-<!--                                        </div>-->
-                                        <div class="flex flex-col gap-1">
-                                         <div class="flex items-center  -mt-1">
-                                          <a class="hover:text-primary text-sm font-medium text-mono leading-5.5" data-kt-drawer-toggle="#drawers_shop_product_details" href="#">
-                                         ${inventory?.product?.description ?? 'S/N'}
-                                          </a>
-                                         </div>
-                                         <div class="flex items-center flex-wrap">
-                            
-                                          <div class="flex items-center flex-wrap gap-2 lg:gap-4">
-                                           <span class="text-xs font-normal text-secondary-foreground uppercase">
-                                            SKU:
-                                            <span class="text-xs font-medium text-foreground">
-                                             ${inventory?.product?.code ?? 'S/N'}
-                                            </span>
-                                           </span>
-                                           <span class="text-xs font-normal text-secondary-foreground">
-                                            Category:
-                                            <span class="text-xs font-medium text-foreground">
-                                            ${inventory?.product?.category.description ?? 'S/N'}
-                                            </span>
-                                           </span>
-                                           
-                                          </div>
-                                         </div>
+                        action: {
+                            render: (data, type, rowdata) => {
+                                return `  <div class="flex items-center">
+                                          <button class="btn btn-sm btn-outline btn-danger btn-light ms-2 shrink-0" onclick="removeItem(${type.id})">
+                                            <i class="ki-filled ki-handcart"></i>
+                                          </button>
                                         </div>
-                                       </div>
-                                       <div class="flex items-center gap-1">
-                                       
-                                        
-                                       <button class="btn btn-outline btn-danger btn-light ms-2 shrink-0" onclick="removeItem(${row.id})">
-                                          <i class="ki-filled ki-handcart"></i> Quitar
-                                        </button>
+                                        `;
 
+                            }
 
-                                       </div>
-                                      </div>
-                                     </div>`;
-                                return item;
-                                }
-                            
-                            ,
-                            createdCell: (cell, cellData, rowData) => {
-                                cell.addEventListener('click', () => this.deleteEquivalente(rowData.id));
-                            },
                         },
+                        product: {
+                            title: 'Producto',
+                            render: function (data, type, row) {
+                                return `${type?.inventory?.product?.description}`;
+                            },
+                            createdCell(cell) {
+                                cell.classList.add('font-normal');
+                            }
+                        },
+                        quantity: {
+                            title: 'Quantity',
+                        },
+                        formatted_price: {
+                            title: 'Price',
+                        },
+                        discount: {},
+                        formatted_total: {
+                            title: 'Total',
+
+                            cellCreated(cell) {
+                                cell.classList.add('text-end');
+                            }
+                        },
+
                     },
                     layout: {scroll: true},
                     sortable: true,
@@ -317,7 +296,7 @@ export default {
                         render: function (data, type, row) {
                             const code = type?.product?.description ?? 'S/N';
                             const prices_sale = type?.prices || [];
-                            const  inventoryId = type?.id
+                            const inventoryId = type?.id
 
                             // Buscar el precio por defecto
                             const typePrice = prices_sale.find(price => Number(price.is_default) === 1);
