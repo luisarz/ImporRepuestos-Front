@@ -15,9 +15,9 @@ import vSelect from 'vue-select'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 
-function resolveGLobalComponents(instance: App<Element>) {
-    instance.use(Antd);
-}
+// function resolveGLobalComponents(instance: App<Element>) {
+//     instance.use(Antd);
+// }
 const app = createApp(App);
 app.use(router)
 app.component('v-select', vSelect as any)
@@ -27,7 +27,7 @@ app.use(Vue3Toastify, {
     autoClose: 2000,
     hideProgressBar: false,
     closeOnClick: true,
-    useHandler: resolveGLobalComponents,
+    // useHandler: resolveGLobalComponents,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
