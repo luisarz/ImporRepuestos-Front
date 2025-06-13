@@ -199,9 +199,8 @@ export default {
         },
         async printPdfDTE(_idsale) {
             try {
+                // 1. Llamar al servicio para obtener el PDF
                 const response = await dteService.printPdfDTE(_idsale);
-// console.log(response.data.pdf);
-
                 // 2. Verificar estructura de respuesta
                 if (!response.data || !response.data.pdf) {
                     throw new Error('La respuesta no contiene datos PDF');
@@ -209,7 +208,6 @@ export default {
 
                 // 3. Convertir a string seguro
                 const base64Data = this.ensureString(response.data.pdf);
-
                 // 4. Limpiar y decodificar
                 const cleanedBase64 = base64Data.replace(/\s/g, '');
                 const binaryString = atob(cleanedBase64);
