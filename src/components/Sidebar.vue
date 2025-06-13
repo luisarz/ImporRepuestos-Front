@@ -36,7 +36,7 @@
                            <i :class="`ki-outline ki-${modulo.icono} text-lg`"></i>
                         </span>
                 <span
-                    class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
+                    class="menu-title text-sm  text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
                            {{ modulo.nombre }}
                         </span>
                 <span class="menu-arrow text-gray-400 w-[25px] shrink-0 justify-end ml-1 mr-[-10px]">

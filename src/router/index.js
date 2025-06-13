@@ -1,11 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import Home from '../views/Home.vue';
-import Category from '../views/category/index.vue';
-import MainLayout from '../views/layouts/MainLayout.vue';
-import SignIn from '../views/authentication/SignIn.vue';
-import NotFound from '../views/layouts/404.vue';
-import Module from '../views/module/index.vue';
-import Company from '../views/company/index.vue';
+import Home from '@/views/Home.vue';
+import Category from '@/views/category/index.vue';
+import MainLayout from '@/views/layouts/MainLayout.vue';
+import SignIn from '@/views/authentication/SignIn.vue';
+import NotFound from '@/views/layouts/404.vue';
+import Module from '@/views/module/index.vue';
+import Company from '@/views/company/index.vue';
 import Warehouse from "@/views/warehouse/index.vue";
 import JobTitle from "@/views/jobtitle/index.vue";
 import Brand from "@/views/brand/index.vue";
@@ -28,10 +28,13 @@ import Inventory from "@/views/products/inventory/index.vue";
 import SaleHeader from "@/views/sales/list/index.vue";
 import Lotes from "@/views/products/lotes/index.vue";
 import SaleNew from "@/views/sales/new/newsale.vue";
+import SaleEdit from "@/views/sales/edit/editSale.vue";
+
 const routes = [
     {
         path: '/',
         component: MainLayout,
+        history: createWebHistory(),
         children: [
             {
                 path: '',
@@ -164,12 +167,23 @@ const routes = [
                 path: 'sales/add',
                 component: SaleNew,
                 name: 'sale-new',
-                meta: {requiresAuth: true}
+                // meta: {requiresAuth: true}
 
-            }
-            ,
+            },
+            {
+                path: 'sales/edit/:id',  // :id es un parámetro dinámico para el ID de la venta
+                component: SaleEdit,
+                name: 'sale-edit',
+                meta: {requiresAuth: true}
+            },
             {
                 path: '/lotes',
+                component: Lotes,
+                meta: {requiresAuth: true}
+
+            },
+            {
+                path: '/printDTETicket/:idVenta',
                 component: Lotes,
                 meta: {requiresAuth: true}
 

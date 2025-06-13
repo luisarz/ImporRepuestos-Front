@@ -3,34 +3,17 @@
               grid-cols-1 grid-rows-6
               sm:grid-flow-col sm:grid-rows-6 sm:grid-cols-12 min-h-[82vh]">
 
-    <!--    items cart-->
+<!--    items cart-->
     <div class="order-1 sm:order-none row-span-2 sm:col-span-5 sm:row-span-4 border-red-300 shadow-lg">
       <div class="card card-grid min-w-full">
         <div class="card-header flex-wrap py-1">
-          <div class="min-w-[100%]">
-            <div class="flex gap-4 w-full">
-              <div class="flex-1">
-                <span>  Neto <span class="badge badge-outline badge-info text-lg">$100.00</span></span>
-              </div>
-              <div class="flex-1">
-                Neto <span class="badge badge-outline badge-info text-lg">$100.00</span>
-              </div>
-              <div class="flex-1">
-                Neto <span class="badge badge-outline badge-info  text-lg">$100.00</span>
-              </div>
-              <div class="flex-1">
-                Total <span class="badge badge-outline badge-success text-lg">$100.00</span>
-              </div>
-            </div>
-          </div>
-
-
+          Esta venta
         </div>
 
         <div class="card-body">
 
           <div data-datatable="true" data-datatable-page-size="10" id="items_cart_table" class="datatable-initialized">
-            <div class="scrollable-y-auto max-h-[68vh]">
+            <div class="scrollable-y-auto max-h-[60vh]">
 
               <table class="table table-auto hover:shadow-sm " data-datatable-table="true">
                 <thead>
@@ -39,9 +22,8 @@
                   <th class="min-w-[50px]">
                     Quitar
                   </th>
-                  <th data-datatable-column="inventory">
-                    Producto
-                  </th>
+                  <th  data-datatable-column="inventory">
+                    Producto</th>
                   <th>cant.</th>
                   <th>Precio.</th>
                   <th>Desc.</th>
@@ -62,24 +44,12 @@
       </div>
 
     </div>
-    <!--    /Items cart-->
-    <!--    footer cart-->
-
+<!--    /Items cart-->
+<!--    footer cart-->
     <div class="order-3 sm:order-none row-span-1 sm:col-span-5 sm:row-span-2 shadow-lg">
       <div class="card">
-        <div class="card-header items-end">
-
-          <button class="btn btn-success btn-finalizar-venta" @click="finalizarVentaModal()">Finalizar Venta</button>
-          <label class="switch">Retención
-            <input
-                type="checkbox"
-                v-model="sale_header.have_retention"
-                :true-value="1"
-                :false-value="0"
-                :checked="sale_header.have_retention == 1"
-            />
-          </label>
-
+        <div class="card-header">
+          Datos de la venta <span>{{ sale_header.total_sale }}</span>
         </div>
         <div class="card-body">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -87,29 +57,26 @@
               <label class="label">
                 <span class="label-text">Cliente</span>
               </label>
-              <Multiselect
-                  v-model="sale_header.customer_id"
-                  v-bind="customers"
-                  :options="async function(query) {
-                    return await CustomerService.get(query) // check JS block for implementation
-                  }"
-              >
-              </Multiselect>
-              <!--              <select v-model="sale_header.customer_id"-->
-              <!--                      class="select select-sm w-full select2" id="customer_id"-->
-              <!--                      data-datatable-filter-column="sale_header.customer_id">-->
-              <!--                <option value="">Seleccione un cliente</option>-->
-              <!--                <option v-for="customer in customers" :key="customer.id" :value="customer.id">-->
-              <!--                  {{ customer.name }} {{ customer.last_name }}-->
-              <!--                </option>-->
-              <!--              </select>-->
+              <select v-model="sale_header.customer_id"
+                      class="select select-sm w-full select2" id="customer_id"
+                      data-datatable-filter-column="sale_header.customer_id">
+                <option value="">Seleccione un cliente</option>
+                <option v-for="customer in customers" :key="customer.id" :value="customer.id">
+                  {{ customer.name }} {{ customer.last_name }}
+                </option>
+              </select>
             </div>
-
             <div class="form-control">
               <label class="label">
                 <span class="label-text">Fecha de venta</span>
               </label>
-              <input type="date" v-model="sale_header.sale_date" class="input input-sm w-full"/>
+              <input type="date" v-model="sale_header.sale_date" class="input input-sm w-full" />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Fecha de venta</span>
+              </label>
+              <input type="date" v-model="sale_header.sale_date" class="input input-sm w-full" />
             </div>
             <div class="form-control">
               <label class="label">
@@ -130,9 +97,9 @@
       </div>
 
 
+
     </div>
     <!--    /footer cart-->
-    <!--    Productos disponibles-->
     <div class="order-2 sm:order-none row-span-4 sm:row-span-6 sm:col-span-8 shadow-lg">
 
       <div class="card card-grid min-w-full">
@@ -158,11 +125,11 @@
             <div class="w-full md:w-1/12 p-2 ">
 
               <label class="switch switch-sm">
-                <!--                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">-->
-                <!--                  <i class="ki-filled ki-plus-squared"></i>-->
-                <!--                  {{ loading ? 'Preparando datos...' : 'Levantar ' }} {{ moduleName }}-->
+<!--                <button class="btn btn-success" @click="openStoreModal()" :disabled="loading">-->
+<!--                  <i class="ki-filled ki-plus-squared"></i>-->
+<!--                  {{ loading ? 'Preparando datos...' : 'Levantar ' }} {{ moduleName }}-->
 
-                <!--                </button>-->
+<!--                </button>-->
               </label>
             </div>
           </div>
@@ -207,7 +174,7 @@
 
       </div>
     </div>
-    <!--  /Productos disponibles-->
+<!--  /Productos disponibles-->
   </div>
 </template>
 <script src="./index.js"></script>

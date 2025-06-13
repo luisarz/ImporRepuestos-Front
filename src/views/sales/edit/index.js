@@ -17,21 +17,9 @@ import MediumModal from "@/components/MediumModal.vue";
 import SaleHeader from "@/services/saleService.js";
 import SaleItemService from "@/services/saleItemService.js";
 import InventoryService from "@/services/inventoryService.js";
-import {toast} from "vue3-toastify";
-import SaleService from "@/services/saleService.js";
-import DteService from "@/services/DTE/dteService.js";
-import dteService from "@/services/DTE/dteService.js";
-import Multiselect from '@vueform/multiselect/dist/multiselect.vue2.js'
-import CustomerService from "@/services/customerService.js";
-
 // @ts-ignore
 // @ts-ignore
 export default {
-    computed: {
-        CustomerService() {
-            return CustomerService
-        }
-    },
     components: {MediumModal, LongModal, GeneralModal, QuestionModal},
     data() {
         return {
@@ -44,18 +32,6 @@ export default {
             documentTypes: [],
             operationConditions: [],
             paymentMethods: [],
-            example6: {
-                value: null,
-                placeholder: 'Choose a programming language',
-                filterResults: false,
-                minChars: 1,
-                resolveOnLoad: false,
-                delay: 0,
-                searchable: true,
-                options: async (query) => {
-                    return await fetchLanguages(query)
-                }
-            },
 
 
             sale_header: {
@@ -106,11 +82,39 @@ export default {
 
         };
     },
-
+    async created() {
+        // Verificar si estamos en modo edición (hay un ID en la ruta)
+        if (this.$route.params.id) {
+            this.isEditing = true;
+            this.saleId = this.$route.params.id;
+            await this.loadSaleData(this.$route.params.id);
+            console.log("Editando venta con ID:", this.saleId);
+        }
+    },
 
     methods: {
-
-
+        async loadSaleData(saleId) {
+            try {
+                this.loading = true;
+                // 1. Cargar datos del encabezado de la venta
+                const headerResponse = await SaleHeader.getById(saleId);
+                this.sale_header = headerResponse.data;
+                // 2. Cargar items de la venta
+                // this.loadSaleItems(saleId);
+                // 3. Cargar otras opciones necesarias
+                await this.loadOptions();
+            } catch (error) {
+                console.error('Error al cargar datos de la venta:', error);
+                await Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo cargar la venta para edición',
+                    icon: 'error'
+                });
+                this.$router.push({name: 'sale-new'}); // Redirigir a creación si hay error
+            } finally {
+                this.loading = false;
+            }
+        },
         async loadOptions() {
             try {
 
@@ -152,27 +156,6 @@ export default {
         },
 
         async addItemSale(inventoryId) {
-            // Verificar si han seleccionado el cliente
-            if (!this.sale_header.customer_id) {
-                toast.error('Por favor, selecciona un cliente antes de agregar productos a la venta.');
-                const customerInput = document.getElementById('customer_id');
-                if (customerInput) {
-                    customerInput.scrollIntoView({behavior: 'smooth'});
-                    customerInput.focus();
-                    customerInput.click();
-                }
-                return;
-            }
-            // Verificar si han seleccionado el vendedor
-            if (!this.sale_header.seller_id) {
-                toast.error('Por favor, selecciona un vendedor antes de agregar productos a la venta.');
-                const sellerInput = document.getElementById('seller_id');
-                if (sellerInput) {
-                    sellerInput.focus();
-                }
-                return;
-            }
-
             let priceItem = document.getElementById(`price-selected-${inventoryId}`);
             let price = priceItem ? Number(priceItem.value) : 0;
 
@@ -295,109 +278,42 @@ export default {
             }
         },
         // Método para guardar cambios (tanto para nueva venta como edición)
-        async finalizarVentaModal() {
-            Swal.fire({
-                title: 'Finalizar Venta ' + this.sale_items.sale_id,
-                html: `
-    <div style="text-align: left;">
-      <label for="tipoDocumento">Tipo de Documento:</label>
-      <select id="tipoDocumento" class="select">
-        <option  value="1">Consumidor Final</option>
-        <option  value="3">CCF</option>
-      </select>
+        async saveSale() {
+            try {
+                this.loading = true;
 
-      <label for="condicionPago">Condición de Pago:</label>
-      <select id="condicionPago" class="select">
-        <option  value="1">Contado</option>
-        <option  value="2">Crédito</option>
-      </select>
-
-      <label for="efectivo">Efectivo Recibido:</label>
-      <input type="number" id="efectivo" class="input" placeholder="0.00" />
-
-      <label for="cambio">Cambio:</label>
-      <input type="text" id="cambio" class="input" readonly />
-    </div>
-  `,
-                focusConfirm: false,
-                preConfirm: () => {
-                    const tipo = document.getElementById('tipoDocumento').value;
-                    const condicion = document.getElementById('condicionPago').value;
-                    const efectivo = parseFloat(document.getElementById('efectivo').value) || 0;
-                    const cambio = parseFloat(document.getElementById('cambio').value) || 0;
-
-                    return {tipo, condicion, efectivo, cambio};
-                },
-                didOpen: () => {
-                    const efectivoInput = document.getElementById('efectivo');
-                    const cambioInput = document.getElementById('cambio');
-                    const totalVenta = 100; // Reemplaza con el valor real de la venta
-
-                    efectivoInput.addEventListener('input', () => {
-                        const efectivo = parseFloat(efectivoInput.value) || 0;
-                        const cambio = efectivo - totalVenta;
-                        cambioInput.value = cambio >= 0 ? cambio.toFixed(2) : '0.00';
-                    });
-                },
-                confirmButtonText: 'Aceptar',
-                cancelButtonText: 'Cancelar',
-                showCancelButton: true
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    console.log(result.value); // Aquí manejas los datos recogidos
-
-
-                    this.sale_header.document_type_id = parseInt(result.value.tipo);
-                    this.sale_header.operation_condition_id = parseInt(result.value.condicion);
-                    this.sale_header.payment_method_id = 1; // Asignar un método de pago por defecto
-                    this.sale_header.payment_status = 1;
-                    this.sale_header.sale_status = 2; // List para facturar
-                    this.sale_header.cashbox_open_id = 1; // Asignar una caja por defecto
-                    this.sale_header.sale_headerbilling_model = 1;
-                    this.sale_header.transmision_type = 1;
-                    this.sale_header.document_internal_number = 1;
-                    const updateSale = SaleService.update(this.sale_header);
+                if (this.isEditing) {
+                    // Actualizar venta existente
+                    await SaleHeader.update(this.saleId, this.sale_header);
                     Swal.fire({
-                        icon: 'reload',
-                        title: 'venta procesada, procediendo a generar DTE',
-                        timer: 1000,
-                        timerProgressBar: true,
-                    })
-
-                    Swal.fire({
-                        title: 'Procesando DTE...',
-                        text: 'Por favor, espere un momento.',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
+                        text: "Venta actualizada correctamente",
+                        icon: 'success'
                     });
-
-                    try {
-                        const response = await dteService.generateDTE(this.sale_header.id);
-
-                        if (response.estado === "EXITO") {
-                            await Swal.fire({
-                                title: 'Emisión DTE',
-                                icon: 'success',
-                                text: "DTE generado correctamente",
-                            })
-                        } else {
-                            await Swal.fire({
-                                title: 'Emisión DTE',
-                                icon: 'error',
-                                text: response.mensaje || "Ocurrió un error al generar el DTE.",
-                            })
-                        }
-                    } catch (error) {
-                        Swal.close();
-                        Swal.fire('Error', 'Ocurrió un error al generar el DTE.', 'error');
+                } else {
+                    // Crear nueva venta (si no se creó al agregar items)
+                    if (!this.sale_header.id) {
+                        const response = await SaleHeader.store(this.sale_header);
+                        this.sale_header.id = response.data.id;
                     }
-
-
+                    await Swal.fire({
+                        text: "Venta creada correctamente",
+                        icon: 'success'
+                    });
                 }
-            });
 
+                // Redirigir a lista de ventas o donde corresponda
+                this.$router.push({name: 'sales-list'});
+
+            } catch (error) {
+                console.error('Error al guardar venta:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo guardar la venta',
+                    icon: 'error'
+                });
+            } finally {
+                this.loading = false;
+            }
         },
 
 
@@ -595,11 +511,11 @@ export default {
     ,
 
     mounted() {
+        this.loadSaleItems(this.saleId);
+
         window.addItemSale = this.addItemSale.bind(this);
-        this.loadOptions();
-        // console.log(this.sale_header);
-        // this.loadSaleData(this.sale_header.id);
         this.loadInventory();
+        this.loadOptions();
 
     },
 };

@@ -1,6 +1,6 @@
 import {configApi, urlApi} from "./../config.js";
 
-const documentTyoeService = {
+const documentTypesService = {
     get: async () => {
         try {
             const response = await configApi.get(`/v1/countries`);
@@ -53,4 +53,4 @@ const documentTyoeService = {
 
 };
 
-export default documentTyoeService;
+export default documentTypesService;

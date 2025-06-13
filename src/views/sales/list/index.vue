@@ -1,4 +1,12 @@
 <template>
+  <!-- Opción para mostrar en iframe -->
+  <iframe
+      v-if="pdfUrl"
+      :src="pdfUrl"
+      width="100%"
+      height="600"
+      style="border: none; margin-top: 20px;"
+  ></iframe>
   <div class="grid">
 
     <div class="card card-grid min-w-full">

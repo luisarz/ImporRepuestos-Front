@@ -15,12 +15,14 @@ import ProviderService from "@/services/providers/providerService.js";
 import MediumModal from "@/components/MediumModal.vue";
 import PricesService from "@/services/pricesService.js";
 import SaleHeader from "@/services/saleService.js";
+import dteService from "@/services/DTE/dteService.js";
 // @ts-ignore
 // @ts-ignore
 export default {
     components: {MediumModal, LongModal, GeneralModal, QuestionModal},
     data() {
         return {
+            pdfUrl: null,
             loading: false,
             warehouses: [],
 
@@ -59,19 +61,73 @@ export default {
                 this.warehouses = [];
             }
         },
-       async sendDte(_idsale){
-                await Swal.fire({
-                    title: '¿Generar DTE?',
-                    text: "¿Estás seguro de que deseas generar el DTE?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, generar',
-                    cancelButtonText: 'Cancelar',
-                    customClass: {
-                        confirmButton: 'btn btn-danger me-2',
-                        cancelButton: 'btn btn-info'
+        async generateDTE(_idsale) {
+            const confirmGenerateDTE = await Swal.fire({
+                title: '¿Generar DTE?',
+                text: "¿Estás seguro de que deseas generar el DTE?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, generar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: 'btn btn-info'
+                }
+            });
+            if (confirmGenerateDTE.isConfirmed) {
+                console.log("Usuario confirmó generación del DTE");
+
+                // Mostrar loading spinner
+                let loadingSwal = Swal.fire({
+                    title: 'Generando DTE...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
-                })
+                });
+
+                try {
+                    const response = await dteService.generateDTE(_idsale);
+
+                    // Cerrar el loading spinner antes de mostrar el resultado
+                    await Swal.close();
+
+                    if (response.estado === "EXITO") {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'DTE generado',
+                            text: response.mensaje,
+                            customClass: {
+                                confirmButton: 'btn btn-success me-2',
+                            }
+                        });
+                        location.reload();
+                    } else {
+                        await Swal.fire({
+                            icon: 'error',
+                            title: 'Error al generar DTE',
+                            text: response.original.message || 'Ocurrió un error al generar el DTE.',
+                            customClass: {
+                                confirmButton: 'btn btn-danger me-2',
+                            }
+                        });
+                    }
+                } catch (error) {
+                    // Cerrar el loading spinner antes de mostrar el error
+                    await Swal.close();
+                    console.error("Error al generar el DTE", error);
+
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo generar el DTE.'
+                    });
+                }
+            }
+
+
         },
         async cancelDte(_idsale) {
             await Swal.fire({
@@ -102,7 +158,91 @@ export default {
                 }
             })
         },
+        async printTicketDTE(_idsale) {
+            try {
+                const response = await dteService.printTicketDTE(_idsale);
+// console.log(response.data.pdf);
 
+                // 2. Verificar estructura de respuesta
+                if (!response.data || !response.data.pdf) {
+                    throw new Error('La respuesta no contiene datos PDF');
+                }
+
+                // 3. Convertir a string seguro
+                const base64Data = this.ensureString(response.data.pdf);
+
+                // 4. Limpiar y decodificar
+                const cleanedBase64 = base64Data.replace(/\s/g, '');
+                const binaryString = atob(cleanedBase64);
+                const bytes = new Uint8Array(binaryString.length);
+
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // 5. Crear y mostrar PDF
+                const blob = new Blob([bytes], {type: 'application/pdf'});
+                const url = URL.createObjectURL(blob);
+
+                // Opción 1: Abrir en nueva pestaña
+                window.open(url, '_blank');
+
+
+            } catch (error) {
+                console.error("Error al imprimir el ticket DTE", error);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo imprimir el ticket DTE.'
+                });
+            }
+        },
+        async printPdfDTE(_idsale) {
+            try {
+                const response = await dteService.printPdfDTE(_idsale);
+// console.log(response.data.pdf);
+
+                // 2. Verificar estructura de respuesta
+                if (!response.data || !response.data.pdf) {
+                    throw new Error('La respuesta no contiene datos PDF');
+                }
+
+                // 3. Convertir a string seguro
+                const base64Data = this.ensureString(response.data.pdf);
+
+                // 4. Limpiar y decodificar
+                const cleanedBase64 = base64Data.replace(/\s/g, '');
+                const binaryString = atob(cleanedBase64);
+                const bytes = new Uint8Array(binaryString.length);
+
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // 5. Crear y mostrar PDF
+                const blob = new Blob([bytes], {type: 'application/pdf'});
+                const url = URL.createObjectURL(blob);
+
+                // Opción 1: Abrir en nueva pestaña
+                window.open(url, '_blank');
+
+
+            } catch (error) {
+                console.error("Error al imprimir el ticket DTE", error);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo imprimir el ticket DTE.'
+                });
+            }
+        },
+        // Función auxiliar para asegurar string
+        ensureString(data) {
+            if (typeof data === 'string') return data;
+            if (data instanceof String) return data.toString();
+            if (data && data.toString) return data.toString();
+            return String(data);
+        },
 
         loadSales() {
             const tablePriceElement = document.querySelector("#kt_remote_table");
@@ -125,26 +265,63 @@ export default {
                     // comercial_name: {title: 'Nombre Comercial'},
                     edit: {
                         render: (data, type, rowData) => {
-
-                            if (type.is_dte === 0) {
+                            if (type.is_dte === 0 && type.sale_status == 2) {//Procesando
                                 return `
-                <!--Send DTE-->
-                <button class="btn btn-sm btn-icon btn-danger btn-outline btn-light send-dte">
-                    <i class="ki-outline ki-rocket text-lg text-danger text-center"></i>
-                    
-                </button>
-            `;
+                                    <!--Send DTE-->
+                                    <button class="btn btn-sm btn-icon btn-danger btn-outline btn-light generate-dte" data-offset="60px 0px" data-toggle="tooltip" data-placement="top" title="Generar DTE">
+                                        <i class="ki-outline ki-satellite text-lg text-danger text-center"></i>
+                                    </button>
+                                      <!--log DTE-->
+                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light log-dte">
+                                        <i class="ki-outline ki-fingerprint-scanning text-lg text-danger text-center"></i>
+                                    </button>
+                                `;
+                            }
+                            if (type.is_dte === 0 && type.sale_status == 1) {//Procesando
+                                return `
+                                    <!--Editar venta-->
+                                    <button class="btn btn-sm btn-icon btn-warning btn-outline btn-light edit-sale-btn" 
+                                        data-offset="60px 0px" 
+                                        data-toggle="tooltip" 
+                                        data-placement="top" 
+                                        title="Modificar venta">
+                                        <i class="ki-outline ki-pencil text-lg text-danger text-center"></i>
+                                    </button>
+                                   
+                                `;
+                            }
+                            if (type.is_dte === 1 && type.sale_status == 3) {//Procesando
+                                return `
+                                    <!--print ticket-->
+                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
+                                        <i class="ki-filled ki-printer"></i>
+                                    </button>
+                                    
+                                    <!-- print pdf-->
+                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-pdf-btn">
+                                        <i class="ki-filled ki-printer"></i>
+                                    </button>
+                                    
+                                    <!--log DTE-->
+                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light log-dte">
+                                        <i class="ki-outline ki-fingerprint-scanning text-lg text-danger text-center"></i>
+                                    </button>
+                                   
+                                `;
                             }
 
+
                             return `
+          <!--print ticket-->
+            <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
+                <i class="ki-filled ki-printer"></i>
+            </button>
+            
             <!-- print pdf-->
             <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-pdf-btn">
                 <i class="ki-filled ki-printer"></i>
             </button>
-            <!--print ticket-->
-            <button class="btn btn-sm btn-icon btn-info btn-outline btn-light me-1 print-ticket-btn">
-                <i class="ki-filled ki-printer"></i>
-            </button>
+        
             <!--Send Email-->
             <button class="btn btn-sm btn-icon btn-outline btn-warning btn-light me-1 send-email">
                 <i class="ki-filled ki-sms"></i>
@@ -161,23 +338,27 @@ export default {
         `;
                         },
                         createdCell: (cell, cellData, rowData) => {
-                            cell.querySelector('.print-pdf-btn')?.addEventListener('click', () => {
-                                this.printPdf(rowData.id);
+                            // Editar
+                            cell.querySelector('.edit-sale-btn')?.addEventListener('click', () => {
+                                this.$router.push({name: 'sale-edit', params: {id: rowData.id}});
                             });
                             cell.querySelector('.print-ticket-btn')?.addEventListener('click', () => {
-                                this.printTicket(rowData.id);
+                                this.printTicketDTE(rowData.generationCode);
+                            });
+                            cell.querySelector('.print-pdf-btn')?.addEventListener('click', () => {
+                                this.printPdfDTE(rowData.generationCode);
                             });
                             cell.querySelector('.send-email')?.addEventListener('click', () => {
-                                this.sendEmail(rowData.id);
+                                this.sendEmail(rowData.generationCode);
                             });
                             cell.querySelector('.cancel-dte')?.addEventListener('click', () => {
-                                this.cancelDte(rowData.id);
+                                this.cancelDte(rowData.generationCode);
                             });
                             cell.querySelector('.log-dte')?.addEventListener('click', () => {
                                 this.showLog(rowData.id);
                             });
-                            cell.querySelector('.send-dte')?.addEventListener('click', () => {
-                                this.sendDte(rowData.id);
+                            cell.querySelector('.generate-dte')?.addEventListener('click', () => {
+                                this.generateDTE(rowData.id);
                             });
 
                             cell.classList.add('text-right');
@@ -276,7 +457,7 @@ export default {
                         title: 'Forma de pago',
                         render: function (data, type, row) {
                             return type?.operation_condition?.name ?? 'SN';
-                        },createdCell: (cell, cellData, rowData) => {
+                        }, createdCell: (cell, cellData, rowData) => {
                             cell.classList.add('font-normal');
                         },
                     },
@@ -284,19 +465,19 @@ export default {
                         title: 'Estado de venta',
                         render: function (sale_status) {
                             const status = {
-                                1: 'Procesando',
-                                2: 'Finalizada',
-                                3: 'Anulada'
-                            }[sale_status] ?? 'Finalizada';
+                                1: 'En progreso',
+                                2: 'Facturada',
+                                3: 'Cancelada',
+                            }[sale_status];
                             return status;
-                        },createdCell: (cell, cellData, rowData) => {
+                        }, createdCell: (cell, cellData, rowData) => {
                             cell.classList.add('font-normal');
                         },
                     },
-                    total_sale_formatted:{
-                      title: 'Total de venta',
+                    total_sale_formatted: {
+                        title: 'Total de venta',
                         render: function (data, type, row) {
-                            return '$ ' +type?.total_sale_formatted ?? 'SN';
+                            return '$ ' + type?.total_sale_formatted ?? 'SN';
                         },
                         createdCell: (cell, cellData, rowData) => {
                             cell.classList.add('text-right', 'font-bold');
@@ -318,8 +499,6 @@ export default {
             };
             const dataTable = new KTDataTable(tablePriceElement, options);
             dataTable.showSpinner();
-
-
 
 
         },
