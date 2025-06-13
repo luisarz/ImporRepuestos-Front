@@ -129,8 +129,8 @@ export default {
 
 
         },
-        async cancelDte(_idsale) {
-            await Swal.fire({
+        async cancelDTE(_idsale) {
+            const invalidarDTE = await Swal.fire({
                 title: '¿Invalidar DTE?',
                 text: "¿Estás seguro de que deseas invalidar el DTE?",
                 icon: 'warning',
@@ -142,6 +142,43 @@ export default {
                     cancelButton: 'btn btn-info'
                 }
             })
+            if (invalidarDTE.isConfirmed) {
+                let loadingSwal = Swal.fire({
+                    title: 'Invalidando DTE...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                const response = await dteService.cancelDTE(_idsale);
+                await Swal.close();
+                if (response.estado === "EXITO") {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'DTE invalidado',
+                        timer: 1000,
+                        timerProgressBar: true,
+                        text: response.message,
+                        customClass: {
+                            confirmButton: 'btn btn-success me-2',
+                        }
+                    });
+                    location.reload();
+                } else {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error al invalidar DTE',
+                        text: response.message || 'Ocurrió un error al invalidar el DTE.',
+                        customClass: {
+                            confirmButton: 'btn btn-danger me-2',
+                        }
+                    });
+                }
+
+            }
+
         },
         async sendEmail(_idsale) {
             await Swal.fire({
@@ -157,8 +194,45 @@ export default {
                     cancelButton: 'btn btn-info'
                 }
             })
+            let loadingSwal = Swal.fire({
+                title: 'Enviando DTE...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             const response = await dteService.sendEmailDTE(_idsale);
-            console.log(response.data);
+            await Swal.close();
+            if (response.status) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Correo enviado',
+                    timer: 1000,
+                    timerProgressBar: true,
+                    text: response.message,
+                    customClass: {
+                        confirmButton: 'btn btn-success me-2',
+                    }
+                });
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error al enviar correo',
+                    text: response.message || 'Ocurrió un error al enviar el correo.',
+                    customClass: {
+                        confirmButton: 'btn btn-danger me-2',
+                    }
+                });
+            }
+        },
+        async showLog(_idsale) {
+
+            const modal = KTModal.getInstance(document.querySelector('#kt_modal_log_dte'));
+            modal.show();
+            this.logDTE(_idsale);
+
         },
         async printTicketDTE(_idsale) {
             try {
@@ -272,7 +346,7 @@ export default {
                                         <i class="ki-outline ki-satellite text-lg text-danger text-center"></i>
                                     </button>
                                       <!--log DTE-->
-                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light log-dte">
+                                    <button class="btn btn-sm btn-icon btn-success btn-outline btn-light log-dte">
                                         <i class="ki-outline ki-fingerprint-scanning text-lg text-danger text-center"></i>
                                     </button>
                                 `;
@@ -303,7 +377,7 @@ export default {
                                     </button>
                                     
                                     <!--log DTE-->
-                                    <button class="btn btn-sm btn-icon btn-info btn-outline btn-light log-dte">
+                                    <button class="btn btn-sm btn-icon btn-success btn-outline btn-light log-dte">
                                         <i class="ki-outline ki-fingerprint-scanning text-lg text-danger text-center"></i>
                                     </button>
                                    
@@ -332,7 +406,7 @@ export default {
             </button>
             <!--log DTE-->
             <button class="btn btn-sm btn-icon btn-success btn-outline btn-light log-dte">
-                <i class="ki-outline ki-medal-star text-lg text-danger text-center"></i>
+                <i class="ki-outline ki-fingerprint-scanning text-lg text-danger text-center"></i>
             </button>
             
         `;
@@ -352,7 +426,7 @@ export default {
                                 this.sendEmail(rowData.id);
                             });
                             cell.querySelector('.cancel-dte')?.addEventListener('click', () => {
-                                this.cancelDte(rowData.generationCode);
+                                this.cancelDTE(rowData.id);
                             });
                             cell.querySelector('.log-dte')?.addEventListener('click', () => {
                                 this.showLog(rowData.id);
@@ -499,6 +573,76 @@ export default {
             };
             const dataTable = new KTDataTable(tablePriceElement, options);
             dataTable.showSpinner();
+
+
+        },
+        logDTE(idSale) {
+            const tableLogsElement = document.querySelector("#table_logs");
+            const options = {
+                apiEndpoint: `${urlApi}/v1/logDTE/${idSale}`,
+                requestHeaders: {
+                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                },
+                columns: {
+
+                    ambiente: {
+                        title: 'ambiente',
+                    },
+                    // versionApp: {
+                    //     title: 'versionApp',
+                    // },
+                    estado: {
+                        title: 'estado',
+                        render: function (data, type, row) {
+                            if (type?.estado === "PROCESADO") {
+                                return `<span class="badge badge-success badge-outline text-center">PROCESADO</span>`;
+                            } else {
+                                return `<span class="badge badge-danger badge-outline text-center">${type?.estado ?? 'DESCONOCIDO'}</span>`;
+                            }
+                        }
+                                
+                    },
+                    codigoGeneracion: {
+                        title: 'codigoGeneracion',
+
+                        createdCell: (cell, cellData, rowData) => {
+                            cell.classList.add('text-right', 'font-normal');
+                        }
+                    },
+                    selloRecibido: {
+                        title: 'selloRecibido',
+                    },
+                    fhProcesamiento: {
+                        title: 'fhProcesamiento',
+                    },
+                    // clasificaMsg: {
+                    //     title: 'clasificaMsg',
+                    // },
+                    // codigoMsg: {
+                    //     title: 'codigoMsg',
+                    // },
+                    descripcionMsg: {
+                        title: 'descripcionMsg',
+                    },
+                    observaciones: {
+                        title: 'observaciones',
+                    },
+
+
+                },
+
+                layout: {scroll: true},
+                sortable: true,
+                stateSave: true,
+
+                search: {
+                    input: document.getElementById('kt_datatable_search_query'), // Elemento input para búsqueda
+                    key: 'search', // Parámetro que se enviará al servidor
+                    delay: 400, // Retraso en milisegundos después de escribir para realizar la búsqueda
+                },
+            };
+            const dataTableLog = new KTDataTable(tableLogsElement, options);
+            // dataTableLog.showSpinner();
 
 
         },

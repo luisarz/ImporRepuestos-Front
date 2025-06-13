@@ -10,10 +10,10 @@ const dteService = {
             console.log("Generando DTE "+error)
         }
     },
-    cancelDTE: async (jobTitle) => {
+    cancelDTE: async (idVenta) => {
         try {
             // console.log(jobTitle.stablishment_type_id);
-            const response = await configApi.put(`/v1/jobs-titles/${jobTitle.id}`, jobTitle);
+            const response = await configApi.get(`/v1/sendAnularDTE/${idVenta}`);
             return response.data;
         } catch (error) {
             console.log(error)
@@ -40,6 +40,14 @@ const dteService = {
     printPdfDTE: async (idVenta) => {
         try {
             return await configApi.get(`/v1/printDTEPdf/${idVenta}`);
+        }catch(error) {
+            console.log("Error al imprimir el PDF "+error)
+        }
+    },
+    logDTE: async (idVenta) => {
+        try {
+            const response = await configApi.get(`/v1/logDTE/${idVenta}`);
+            return response.data;
         }catch(error) {
             console.log("Error al imprimir el PDF "+error)
         }

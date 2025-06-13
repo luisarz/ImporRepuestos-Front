@@ -28,16 +28,16 @@
                    id="code"
                    type="text">
           </div>
-<!--          <div class="w-full md:w-3/12 p-2">-->
-<!--            <VueDatePicker-->
-<!--                v-model="date"-->
-<!--                range-->
-<!--                :enable-time-picker="false"-->
-<!--                :format="'dd/MM/yyyy'"-->
-<!--                :clearable="true"-->
-<!--                placeholder="Seleccione un rango de fechas"-->
-<!--            />-->
-<!--          </div>-->
+          <!--          <div class="w-full md:w-3/12 p-2">-->
+          <!--            <VueDatePicker-->
+          <!--                v-model="date"-->
+          <!--                range-->
+          <!--                :enable-time-picker="false"-->
+          <!--                :format="'dd/MM/yyyy'"-->
+          <!--                :clearable="true"-->
+          <!--                placeholder="Seleccione un rango de fechas"-->
+          <!--            />-->
+          <!--          </div>-->
 
           <div class="w-full md:w-2/12 p-2">
             <select class="select min-w-32" data-datatable-filter-column="warehouse_id">
@@ -168,6 +168,114 @@
     </div>
   </div>
 
+  <LongModal id="kt_modal_log_dte" :title="modalTitle">
+    <template #body>
 
+      <div data-datatable="true" data-datatable-page-size="10" id="table_logs" class="datatable-initialized">
+        <div class="card  flex flex-col overflow-hidden mt-2">
+          <div class="card-header">
+            <h3 class="text-sm font-semibold mb-4 border-b pb-2 modal-title ">Bitacora procesos DTE</h3>
+
+          </div>
+          <div class="card-body flex-1 overflow-y-auto">
+            <div id="">
+
+              <div class="scrollable-x-auto">
+                <table class="table table-hover table-auto " data-datatable-table="true">
+                  <thead>
+                  <tr>
+
+                    <th class="max-w-[100]" data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Ambiente</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+                    <!--                    <th class="w-[160px] " data-datatable-column="status">-->
+                    <!--                                      <span class="sort">-->
+                    <!--                                          <span class="sort-label">Version App</span>-->
+                    <!--                                          <span class="sort-icon"></span>-->
+                    <!--                                      </span>-->
+                    <!--                    </th>-->
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Estado</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Código Generación</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Sello Recibido</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Fecha Procesamiento</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+<!--                    <th class="w-[160px] " data-datatable-column="status">-->
+<!--                                      <span class="sort">-->
+<!--                                          <span class="sort-label">Clasifica Mensaje</span>-->
+<!--                                          <span class="sort-icon"></span>-->
+<!--                                      </span>-->
+<!--                    </th>-->
+<!--                    <th class="w-[160px] " data-datatable-column="status">-->
+<!--                                      <span class="sort">-->
+<!--                                          <span class="sort-label">Código Mensaje</span>-->
+<!--                                          <span class="sort-icon"></span>-->
+<!--                                      </span>-->
+<!--                    </th>-->
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Descripción Mensaje</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+                    <th class="w-[160px] " data-datatable-column="status">
+                                      <span class="sort">
+                                          <span class="sort-label">Observaciones</span>
+                                          <span class="sort-icon"></span>
+                                      </span>
+                    </th>
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div
+              class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+            <div class="flex items-center gap-2">
+              Mostrar
+              <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+              </select>
+              por Pagina
+            </div>
+            <div class="flex items-center gap-4">
+              <span data-datatable-info="true"></span>
+              <div class="pagination" data-datatable-pagination="true"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </template>
+    <template #footer>
+      <button class="btn btn-light" data-modal-dismiss="true">Cancelar</button>
+    </template>
+  </LongModal>
 </template>
 <script src="./index.js"></script>

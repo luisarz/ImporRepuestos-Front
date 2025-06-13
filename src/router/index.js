@@ -29,6 +29,9 @@ import SaleHeader from "@/views/sales/list/index.vue";
 import Lotes from "@/views/products/lotes/index.vue";
 import SaleNew from "@/views/sales/new/newsale.vue";
 import SaleEdit from "@/views/sales/edit/editSale.vue";
+import OperationCondition from "@/views/catalogs/operationCondition/index.vue";
+import PaymentMethod from "@/views/catalogs/paymentMethod/index.vue";
+import DocumentTax from "@/views/catalogs/documentTax/index.vue";
 
 const routes = [
     {
@@ -187,8 +190,24 @@ const routes = [
                 component: Lotes,
                 meta: {requiresAuth: true}
 
-            }
+            },
 
+            //Catalogos hacienda
+            {
+                path: '/operation-condition',
+                component: OperationCondition,
+                meta: {requiresAuth: true}  // Esta ruta requiere autenticación
+            },
+            {
+                path: '/payment-methods',
+                component: PaymentMethod,
+                meta: {requiresAuth: true}
+            },
+            {
+                path: '/cat-doc-tributario',
+                component: DocumentTax,
+                meta: {requiresAuth: true}
+            }
 
         ]
     },
