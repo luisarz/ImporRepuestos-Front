@@ -20,9 +20,9 @@ const dteService = {
             throw new Error('Error al Obtener las Sucursales');
         }
     },
-    sendEmailDTE: async (id) => {
+    sendEmailDTE: async (idVenta) => {
         try {
-            const response = await configApi.get(`/v1/jobs-titles/${id}`);
+            const response = await configApi.get(`/v1/sendDTE/${idVenta}`);
             return response.data;
         } catch (error) {
             console.log(error)

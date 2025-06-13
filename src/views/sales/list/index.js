@@ -157,6 +157,8 @@ export default {
                     cancelButton: 'btn btn-info'
                 }
             })
+            const response = await dteService.sendEmailDTE(_idsale);
+            console.log(response.data);
         },
         async printTicketDTE(_idsale) {
             try {
@@ -347,7 +349,7 @@ export default {
                                 this.printPdfDTE(rowData.generationCode);
                             });
                             cell.querySelector('.send-email')?.addEventListener('click', () => {
-                                this.sendEmail(rowData.generationCode);
+                                this.sendEmail(rowData.id);
                             });
                             cell.querySelector('.cancel-dte')?.addEventListener('click', () => {
                                 this.cancelDte(rowData.generationCode);
